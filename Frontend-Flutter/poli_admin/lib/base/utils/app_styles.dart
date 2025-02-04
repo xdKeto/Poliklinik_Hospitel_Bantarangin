@@ -12,7 +12,34 @@ class AppStyles {
   static Color greyColor2 = const Color(0xffA9A9A9);
   static Color inputBox = const Color(0xffF6F6F6);
 
-  static TextStyle normalFont = TextStyle(
-    fontWeight: FontWeight.bold,
+  static TextStyle normalText = TextStyle(
+    fontFamily: 'Inter',
   );
+
+  static TextStyle headingText = TextStyle(fontFamily: 'Inter', fontSize: 24);
+  static TextStyle subheadingText =
+      TextStyle(fontFamily: 'Inter', fontSize: 20);
+  static TextStyle contentText = TextStyle(fontFamily: 'Inter', fontSize: 14);
+  static TextStyle tambahanText = TextStyle(fontFamily: 'Inter', fontSize: 18);
+  static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
+
+  static InputDecoration loginInput = InputDecoration(
+    filled: true,
+    fillColor: Colors.white,
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.white),
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.blue),
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+  );
+
+  static BoxDecoration buttonBox(Color color) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(6),
+    );
+  }
 }

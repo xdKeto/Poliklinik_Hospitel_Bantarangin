@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage(AppMedia.loginBG), fit: BoxFit.fill)),
+                    image: AssetImage(AppMedia.loginBG), fit: BoxFit.cover)),
             child: Center(
               child: Material(
                 elevation: 4,

@@ -20,6 +20,7 @@ class AppStyles {
   static TextStyle subheadingText =
       TextStyle(fontFamily: 'Inter', fontSize: 20);
   static TextStyle contentText = TextStyle(fontFamily: 'Inter', fontSize: 14);
+  static TextStyle sidebarText = TextStyle(fontFamily: 'Inter', fontSize: 16);
   static TextStyle tambahanText = TextStyle(fontFamily: 'Inter', fontSize: 18);
   static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
 

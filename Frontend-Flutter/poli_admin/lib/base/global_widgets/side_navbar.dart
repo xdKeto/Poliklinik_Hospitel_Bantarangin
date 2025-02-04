@@ -1,6 +1,5 @@
-import 'package:collapsible_sidebar/collapsible_sidebar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
@@ -13,86 +12,62 @@ class SideNavbar extends StatefulWidget {
 }
 
 class _SideNavbarState extends State<SideNavbar> {
-  late List<CollapsibleItem> _items;
-  bool _isCollapsed = true;
-  late PageController _pageController;
+  int _selected = 0;
+  bool isExpanded = true;
 
-  List<CollapsibleItem> get _generateItems {
-    return [
-      CollapsibleItem(
-          text: 'List Pasien',
-          onPressed: () {
-            _navigateToPage(0);
-          },
-          icon: CupertinoIcons.person,
-          isSelected: true),
-      CollapsibleItem(
-          text: 'Billing',
-          onPressed: () {
-            _navigateToPage(1);
-          },
-          icon: Icons.home)
-    ];
+  void toggleSidebar() {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
   }
+
+  late final List<Widget> appScreens;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
-    _items = _generateItems;
-  }
-
-  void _navigateToPage(int index) {
-    setState(() {
-      _pageController.jumpToPage(index);
-    });
+    appScreens = [
+      ListPasienScreen(onMenuPressed: toggleSidebar),
+      BillingScreen(onMenuPressed: toggleSidebar),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppStyles.primaryColor,
-        leading: IconButton(
-            onPressed: () {
-              setState(() {
-                _isCollapsed = !_isCollapsed;
-              });
-            },
-            icon: Icon(
-              Icons.menu,
-              size: 28,
-              color: Colors.white,
-            )),
-      ),
       body: Row(
         children: [
-          CollapsibleSidebar(
-              // itemPadding: 0,
-              // badgeBackgroundColor: Colors.red,
-              iconSize: 18,
-              textStyle:
-                  AppStyles.sidebarText.copyWith(fontWeight: FontWeight.w600),
-              isCollapsed: _isCollapsed,
-              items: _items,
-              showTitle: false,
-              showToggleButton: false,
-              sidebarBoxShadow: [],
-              backgroundColor: AppStyles.primaryColor,
-              borderRadius: 0,
-              screenPadding: 0,
-              topPadding: 20,
-              selectedIconColor: AppStyles.primaryColor,
-              selectedTextColor: AppStyles.primaryColor,
-              selectedIconBox: Colors.white,
-              unselectedIconColor: Colors.white,
-              unselectedTextColor: Colors.white,
-              body: Container()),
-          Expanded(
-              child: PageView(
-            controller: _pageController,
-            children: [ListPasienScreen(), BillingScreen()],
-          ))
+          NavigationRail(
+            useIndicator: true,
+            indicatorColor: Colors.white,
+            extended: isExpanded,
+            backgroundColor: AppStyles.primaryColor,
+            unselectedIconTheme: IconThemeData(color: Colors.white, opacity: 1),
+            unselectedLabelTextStyle: const TextStyle(
+              color: Colors.white,
+            ),
+            selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
+            destinations: const [
+              NavigationRailDestination(
+                indicatorColor: Colors.white,
+                icon: Icon(Icons.home),
+                label: Text("List Pasien"),
+              ),
+              NavigationRailDestination(
+                indicatorColor: Colors.white,
+                // indicatorShape: Border(),
+                icon: Icon(Icons.bar_chart),
+                label: Text("Billing"),
+              ),
+            ],
+            selectedIndex: _selected,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selected = index;
+              });
+            },
+          ),
+          Expanded(child: appScreens[_selected]),
         ],
       ),
     );

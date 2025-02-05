@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
@@ -36,7 +37,7 @@ class _SideNavbarState extends State<SideNavbar> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Row(
         children: [
@@ -85,29 +86,31 @@ class _SideNavbarState extends State<SideNavbar> {
                       height: 45,
                       fit: BoxFit.contain,
                     )),
-            trailing: Column(
-              children: [
-                SizedBox(
-                  height: screenHeight * 0.65,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // print('logout');
-                  },
-                  child: isExpanded
-                      ? IconText(
-                          icon: Icons.logout,
-                          text: 'Logout',
-                          isIcon: true,
-                          style: AppStyles.sidebarText.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.w600),
-                          iconColor: Colors.white)
-                      : IconText(
-                          icon: Icons.logout,
-                          isIcon: false,
-                          iconColor: Colors.white),
-                )
-              ],
+            trailing: Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    },
+                    child: isExpanded
+                        ? IconText(
+                            icon: Icons.logout,
+                            text: 'Logout',
+                            isIcon: true,
+                            style: AppStyles.sidebarText.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                            iconColor: Colors.white)
+                        : IconText(
+                            icon: Icons.logout,
+                            isIcon: false,
+                            iconColor: Colors.white),
+                  )
+                ],
+              ),
             ),
             destinations: [
               NavigationRailDestination(

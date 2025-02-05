@@ -22,7 +22,7 @@ class TheButton extends StatelessWidget {
     return InkWell(
       onTap: onTapFunc,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
         decoration: AppStyles.buttonBox(color),
         child: isIcon
             ? Row(

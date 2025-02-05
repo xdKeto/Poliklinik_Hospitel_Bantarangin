@@ -19,20 +19,22 @@ class AppStyles {
   static TextStyle headingText = TextStyle(fontFamily: 'Inter', fontSize: 24);
   static TextStyle subheadingText =
       TextStyle(fontFamily: 'Inter', fontSize: 20);
+  static TextStyle loginHeadText =
+      TextStyle(fontFamily: 'Montserrat', fontSize: 24);
   static TextStyle contentText = TextStyle(fontFamily: 'Inter', fontSize: 14);
   static TextStyle sidebarText = TextStyle(fontFamily: 'Inter', fontSize: 16);
   static TextStyle tambahanText = TextStyle(fontFamily: 'Inter', fontSize: 18);
   static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
 
-  static InputDecoration loginInput = InputDecoration(
+  static InputDecoration formBox = InputDecoration(
     filled: true,
-    fillColor: Colors.white,
+    fillColor: AppStyles.inputBox,
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.white),
+      borderSide: BorderSide(color: AppStyles.greyColor2),
       borderRadius: BorderRadius.circular(10.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.blue),
+      borderSide: BorderSide(color: Colors.black),
       borderRadius: BorderRadius.circular(10.0),
     ),
   );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -43,52 +44,55 @@ class _LoginScreenState extends State<LoginScreen> {
                     image: AssetImage(AppMedia.loginBG), fit: BoxFit.cover)),
             child: Center(
               child: Material(
-                elevation: 4,
+                // elevation: 4,
                 borderRadius: BorderRadius.circular(12),
-                color: AppStyles.secondaryColor,
+                color: Colors.transparent,
                 child: Container(
                   width: screenWidth * 0.3,
                   height: screenHeight * 0.87,
-                  padding: EdgeInsets.all(56),
+                  padding: EdgeInsets.all(24),
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(12)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(AppMedia.loginLogo),
+                      Image.asset(
+                        AppMedia.loginLogo,
+                        width: 130,
+                        height: 130,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                      ),
                       SizedBox(
-                        height: 8,
+                        height: 5,
                       ),
                       Text(
                         'HOSPITEL BANTARANGIN',
-                        style: AppStyles.subheadingText.copyWith(
-                            color: AppStyles.backgroundColor,
+                        style: AppStyles.loginHeadText.copyWith(
+                            color: AppStyles.textColor,
                             fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.07,
                       ),
                       Text(
-                        'LOGIN',
-                        style: AppStyles.subheadingText.copyWith(
-                            color: AppStyles.backgroundColor,
+                        'GENERAL HOSPITAL',
+                        style: AppStyles.loginHeadText.copyWith(
+                            color: AppStyles.textColor,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        height: screenHeight * 0.03,
+                        height: screenHeight * 0.05,
                       ),
                       LabelRequired(
                           text: 'Username',
                           style: AppStyles.normalText.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppStyles.backgroundColor)),
+                              color: AppStyles.textColor)),
                       SizedBox(
                         height: screenHeight * 0.01,
                       ),
                       TextFormField(
                         cursorColor: Colors.black,
-                        decoration: AppStyles.loginInput,
+                        decoration: AppStyles.formBox,
                         onChanged: (value) {},
                       ),
                       SizedBox(
@@ -99,14 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: AppStyles.normalText.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppStyles.backgroundColor)),
+                              color: AppStyles.textColor)),
                       SizedBox(
                         height: screenHeight * 0.01,
                       ),
                       TextFormField(
                         cursorColor: Colors.black,
                         obscureText: isHidden,
-                        decoration: AppStyles.loginInput.copyWith(
+                        decoration: AppStyles.formBox.copyWith(
                             suffixIcon: IconButton(
                                 onPressed: () => togglePassword(),
                                 icon: Icon(isHidden
@@ -121,7 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Expanded(
                               child: TheButton(
-                                  text: 'Login', color: AppStyles.accentColor)),
+                            text: 'Login',
+                            color: AppStyles.accentColor,
+                            onTapFunc: () {
+                              Navigator.pushReplacementNamed(
+                                  context, AppRoutes.homeScreen);
+                            },
+                          )),
                         ],
                       )
                     ],

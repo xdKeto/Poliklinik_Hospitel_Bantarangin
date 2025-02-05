@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/side_navbar.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
+// import 'package:poli_admin/base/global_widgets/side_navbar.dart';
 import 'package:poli_admin/screens/login/login_screen.dart';
 // import 'package:poli_admin/base/utils/app_styles.dart';
 
@@ -16,7 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Poliklinik Hospitel Bantarangin',
       // home: LoginScreen(),
-      home: SideNavbar(),
+      home: LoginScreen(),
+      routes: {AppRoutes.homeScreen: (context) => SideNavbar()},
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
@@ -62,7 +63,7 @@ class _SideNavbarState extends State<SideNavbar> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          AppMedia.loginLogo,
+                          AppMedia.logoRS,
                           width: 45,
                           height: 45,
                           fit: BoxFit.contain,
@@ -79,50 +80,32 @@ class _SideNavbarState extends State<SideNavbar> {
                 : Padding(
                     padding: EdgeInsets.only(bottom: 16, top: 8),
                     child: Image.asset(
-                      AppMedia.loginLogo,
+                      AppMedia.logoRS,
                       width: 45,
                       height: 45,
                       fit: BoxFit.contain,
                     )),
             trailing: Column(
               children: [
-                Divider(
-                  color: Colors.white,
-                  thickness: 4,
-                ),
                 SizedBox(
-                  height: screenHeight * 0.67,
+                  height: screenHeight * 0.65,
                 ),
                 GestureDetector(
                   onTap: () {
                     // print('logout');
                   },
                   child: isExpanded
-                      ? Row(
-                          children: [
-                            Icon(
-                              Icons.logout,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text(
-                              "Logout",
-                              style: AppStyles.sidebarText.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        )
-                      : Row(
-                          children: [
-                            Icon(
-                              Icons.logout,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
+                      ? IconText(
+                          icon: Icons.logout,
+                          text: 'Logout',
+                          isIcon: true,
+                          style: AppStyles.sidebarText.copyWith(
+                              color: Colors.white, fontWeight: FontWeight.w600),
+                          iconColor: Colors.white)
+                      : IconText(
+                          icon: Icons.logout,
+                          isIcon: false,
+                          iconColor: Colors.white),
                 )
               ],
             ),

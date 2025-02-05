@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,114 +25,140 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return Row(
-      children: [
-        Expanded(
-          flex: 5,
-          child: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(AppMedia.loginImage), fit: BoxFit.fill)),
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Left Image (65% of screen width)
+          Positioned(
+            left: 0,
+            right: screenWidth * 0.35, // Takes 65% width
+            top: 0,
+            bottom: 0,
+            child: Image.asset(
+              AppMedia.loginImage,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        Expanded(
-          flex: 5,
-          child: Container(
-            // padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
+
+          // Right Image (stacked on top)
+          Positioned(
+            left: screenWidth * 0.55, // Slight overlap for better visual
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  bottomLeft: Radius.circular(32),
+                ),
                 image: DecorationImage(
-                    image: AssetImage(AppMedia.loginBG), fit: BoxFit.fill)),
-            child: Center(
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(12),
-                color: AppStyles.secondaryColor,
-                child: Container(
-                  width: screenWidth * 0.3,
-                  height: screenHeight * 0.87,
-                  padding: EdgeInsets.all(56),
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(AppMedia.loginLogo),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        'HOSPITEL BANTARANGIN',
-                        style: AppStyles.subheadingText.copyWith(
-                            color: AppStyles.backgroundColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.07,
-                      ),
-                      Text(
-                        'LOGIN',
-                        style: AppStyles.subheadingText.copyWith(
-                            color: AppStyles.backgroundColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.03,
-                      ),
-                      LabelRequired(
-                          text: 'Username',
-                          style: AppStyles.normalText.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppStyles.backgroundColor)),
-                      SizedBox(
-                        height: screenHeight * 0.01,
-                      ),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        decoration: AppStyles.loginInput,
-                        onChanged: (value) {},
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.02,
-                      ),
-                      LabelRequired(
-                          text: 'Password',
-                          style: AppStyles.normalText.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppStyles.backgroundColor)),
-                      SizedBox(
-                        height: screenHeight * 0.01,
-                      ),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        obscureText: isHidden,
-                        decoration: AppStyles.loginInput.copyWith(
-                            suffixIcon: IconButton(
-                                onPressed: () => togglePassword(),
-                                icon: Icon(isHidden
-                                    ? Icons.visibility_off
-                                    : Icons.visibility))),
-                        onChanged: (value) {},
-                      ),
-                      SizedBox(
-                        height: screenHeight * 0.04,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: TheButton(
-                                  text: 'Login', color: AppStyles.accentColor)),
-                        ],
-                      )
-                    ],
+                  image: AssetImage(AppMedia.loginBG),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(
+                child: Material(
+                  // elevation: 4,
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.transparent,
+                  child: Container(
+                    width: screenWidth * 0.3,
+                    height: screenHeight * 0.87,
+                    padding: EdgeInsets.all(24),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          AppMedia.loginLogo,
+                          width: 130,
+                          height: 130,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.high,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'HOSPITEL BANTARANGIN',
+                          style: AppStyles.loginHeadText.copyWith(
+                              color: AppStyles.textColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'GENERAL HOSPITAL',
+                          style: AppStyles.loginHeadText.copyWith(
+                              color: AppStyles.textColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.05,
+                        ),
+                        LabelRequired(
+                            text: 'Username',
+                            style: AppStyles.normalText.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppStyles.textColor)),
+                        SizedBox(
+                          height: screenHeight * 0.01,
+                        ),
+                        TextFormField(
+                          cursorColor: Colors.black,
+                          decoration: AppStyles.formBox,
+                          onChanged: (value) {},
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.02,
+                        ),
+                        LabelRequired(
+                            text: 'Password',
+                            style: AppStyles.normalText.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppStyles.textColor)),
+                        SizedBox(
+                          height: screenHeight * 0.01,
+                        ),
+                        TextFormField(
+                          cursorColor: Colors.black,
+                          obscureText: isHidden,
+                          decoration: AppStyles.formBox.copyWith(
+                              suffixIcon: IconButton(
+                                  onPressed: () => togglePassword(),
+                                  icon: Icon(isHidden
+                                      ? Icons.visibility_off
+                                      : Icons.visibility))),
+                          onChanged: (value) {},
+                        ),
+                        SizedBox(
+                          height: screenHeight * 0.04,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: TheButton(
+                              text: 'Login',
+                              color: AppStyles.accentColor,
+                              onTapFunc: () {
+                                Navigator.pushReplacementNamed(
+                                    context, AppRoutes.homeScreen);
+                              },
+                            )),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

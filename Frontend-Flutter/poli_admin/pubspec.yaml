@@ -39,6 +39,9 @@ dependencies:
   fluentui_system_icons: ^1.1.273
   data_table_2: ^2.5.18
   get: ^4.6.6
+  dropdown_button2: ^2.3.9
+  modal_bottom_sheet: ^3.0.0
+  animated_icon: ^0.0.9
 
 dev_dependencies:
   flutter_test:

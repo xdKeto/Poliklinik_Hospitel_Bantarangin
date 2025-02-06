@@ -15,11 +15,12 @@ class SideNavbar extends StatefulWidget {
 }
 
 class _SideNavbarState extends State<SideNavbar> {
-  int _selected = 0;
-  bool isExpanded = true;
+  int _selected = 1;
+  bool isExpanded = false;
 
   void toggleSidebar() {
     setState(() {
+      print(isExpanded);
       isExpanded = !isExpanded;
     });
   }
@@ -30,8 +31,14 @@ class _SideNavbarState extends State<SideNavbar> {
   void initState() {
     super.initState();
     appScreens = [
-      ListPasienScreen(onMenuPressed: toggleSidebar),
-      BillingScreen(onMenuPressed: toggleSidebar),
+      ListPasienScreen(
+        onMenuPressed: toggleSidebar,
+        isExpanded: isExpanded,
+      ),
+      BillingScreen(
+        onMenuPressed: toggleSidebar,
+        isExpanded: isExpanded,
+      ),
     ];
   }
 
@@ -124,7 +131,7 @@ class _SideNavbarState extends State<SideNavbar> {
                 icon: Icon(FluentIcons.receipt_16_regular),
                 selectedIcon: Icon(FluentIcons.receipt_16_filled),
                 label: Text(
-                  "Billing",
+                  "Tagihan",
                 ),
               ),
             ],

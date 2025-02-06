@@ -2,13 +2,16 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
+import 'package:poli_admin/screens/list_pasien/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
+import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
-  const ListPasienScreen({super.key, required this.onMenuPressed});
+  final bool isExpanded;
+  const ListPasienScreen({super.key, required this.onMenuPressed, required this.isExpanded});
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -49,10 +52,14 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
 
   void onSearch(String query) {
     setState(() {
-      filteredList = pasienList
-          .where((pasien) =>
-              pasien['nama_pasien'].toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredList = pasienList.where((pasien) {
+        String namaPasien = pasien['nama_pasien'].toLowerCase();
+        String noRekamMedis = pasien['no_rekam_medis'].toLowerCase();
+        String searchQuery = query.toLowerCase();
+
+        return namaPasien.toString().contains(searchQuery) ||
+            noRekamMedis.toString().contains(searchQuery);
+      }).toList();
     });
   }
 
@@ -62,7 +69,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed, title: 'List Pasien'),
+          onMenuPressed: widget.onMenuPressed, title: 'List Pasien', isExpanded: widget.isExpanded,),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
@@ -91,7 +98,30 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                     },
                     icon: Icon(Icons.refresh)),
                 SizedBox(
-                  width: screenWidth * 0.5,
+                  width: screenWidth * 0.08,
+                ),
+                Text('Entries:  ',
+                    style: AppStyles.contentText.copyWith(
+                        color: AppStyles.primaryColor,
+                        fontWeight: FontWeight.bold)),
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    decoration: AppStyles.formBox,
+                    value: rowsPerPage,
+                    items: [10, 25, 50, 100]
+                        .map((e) =>
+                            DropdownMenuItem(value: e, child: Text('$e Rows')))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        rowsPerPage = value!;
+                        print(rowsPerPage);
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: screenWidth * 0.02,
                 ),
                 TheButton(
                   text: "Registrasi",
@@ -102,32 +132,63 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ],
             ),
             SizedBox(height: 12),
-            DropdownButton<int>(
-              value: rowsPerPage,
-              items: [10, 25, 50, 100]
-                  .map(
-                      (e) => DropdownMenuItem(value: e, child: Text('$e Rows')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  rowsPerPage = value!;
-                });
-              },
-            ),
             Expanded(
               child: PaginatedDataTable2(
                 sortColumnIndex: sortColumnIndex,
                 sortAscending: sortAscending,
-                rowsPerPage: 10,
+
+                // style
+                headingTextStyle: AppStyles.sidebarText.copyWith(
+                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                // headingTextStyle: Theme.of(context).textTheme.titleMedium,
+                headingRowColor: WidgetStateProperty.resolveWith(
+                    (states) => AppStyles.greyColor),
+                headingRowDecoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12))),
+                dataTextStyle:
+                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
+                minWidth: 768,
+                dividerThickness: 0,
+                horizontalMargin: 12,
+                dataRowHeight: 56,
+                rowsPerPage: rowsPerPage,
                 columnSpacing: 12,
                 availableRowsPerPage: [10, 25, 50, 100],
+                onRowsPerPageChanged: (value) {},
+                isHorizontalScrollBarVisible: true,
+
+                // pagination
+                showFirstLastButtons: true,
+                renderEmptyRowsInTheEnd: false,
+
+                // sorting
+                sortArrowAlwaysVisible: true,
+                sortArrowBuilder: (bool ascending, bool sorted) {
+                  if (sorted) {
+                    return Icon(
+                      ascending
+                          ? FluentIcons.arrow_sort_up_16_regular
+                          : FluentIcons.arrow_sort_down_16_regular,
+                      size: 12,
+                    );
+                  } else {
+                    return Icon(
+                      FluentIcons.arrow_sort_16_regular,
+                      size: 12,
+                    );
+                  }
+                },
+
                 columns: [
                   DataColumn(label: Text('No. Antrian'), onSort: onSort),
-                  DataColumn(label: Text('No. Rekam Medis'), onSort: onSort),
+                  DataColumn(label: Text('No. Rekam Medis')),
                   DataColumn(label: Text('Nama Pasien'), onSort: onSort),
                   DataColumn(label: Text('Poli Tujuan')),
-                  DataColumn(label: Text('Status')),
-                  DataColumn(label: Text('Aksi')),
+                  DataColumn(label: Center(child: Text('Status'))),
+                  DataColumn(label: Center(child: Text('Aksi'))),
                 ],
                 source:
                     RowSource(myData: filteredList, count: filteredList.length),
@@ -155,8 +216,8 @@ class RowSource extends DataTableSource {
       DataCell(Text(data['no_rekam_medis'])),
       DataCell(Text(data['nama_pasien'])),
       DataCell(Text(data['poli_tujuan'])),
-      DataCell(Text(data['status'])),
-      DataCell(IconButton(icon: Icon(Icons.menu), onPressed: () {})),
+      DataCell(Center(child: StatusBox(status: data['status']))),
+      DataCell(Center(child: IconDropdown())),
     ]);
   }
 

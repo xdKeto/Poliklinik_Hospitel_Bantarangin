@@ -19,7 +19,10 @@ class MyApp extends StatelessWidget {
       title: 'Poliklinik Hospitel Bantarangin',
       // home: LoginScreen(),
       home: LoginScreen(),
-      routes: {AppRoutes.homeScreen: (context) => SideNavbar()},
+      routes: {
+        AppRoutes.homeScreen: (context) => SideNavbar(),
+        AppRoutes.login: (context) => LoginScreen()
+      },
     );
   }
 }

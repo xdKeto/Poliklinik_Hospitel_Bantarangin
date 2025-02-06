@@ -10,7 +10,9 @@ class IconText extends StatelessWidget {
       {super.key,
       required this.icon,
       this.text,
-      required this.isIcon, this.style, required this.iconColor});
+      required this.isIcon,
+      this.style,
+      required this.iconColor});
 
   @override
   Widget build(BuildContext context) {

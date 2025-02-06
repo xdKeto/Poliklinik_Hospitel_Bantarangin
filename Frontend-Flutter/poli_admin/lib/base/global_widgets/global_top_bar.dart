@@ -4,8 +4,12 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 class GlobalTopBar extends StatelessWidget implements PreferredSize {
   final String title;
   final VoidCallback onMenuPressed;
+  final bool isExpanded;
   const GlobalTopBar(
-      {super.key, required this.onMenuPressed, required this.title});
+      {super.key,
+      required this.onMenuPressed,
+      required this.title,
+      required this.isExpanded});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,17 @@ class GlobalTopBar extends StatelessWidget implements PreferredSize {
       automaticallyImplyLeading: false,
       backgroundColor: AppStyles.primaryColor,
       leading: IconButton(
-        icon: const Icon(Icons.menu),
+        icon: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(scale: animation, child: child),
+          ),
+          child: Icon(
+            isExpanded ? Icons.close : Icons.menu,
+            key: ValueKey(isExpanded),
+          ),
+        ),
         color: Colors.white,
         onPressed: onMenuPressed,
       ),

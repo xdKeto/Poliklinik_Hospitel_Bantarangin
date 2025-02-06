@@ -1,231 +1,248 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
+import 'package:poli_admin/screens/list_pasien/widgets/status_box.dart';
+import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
-// import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/dummy/data.dart';
+import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
-  const ListPasienScreen({super.key, required this.onMenuPressed});
+  final bool isExpanded;
+  final Function(int) navigateToChild;
+  const ListPasienScreen(
+      {super.key,
+      required this.onMenuPressed,
+      required this.isExpanded,
+      required this.navigateToChild});
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
 }
 
 class _ListPasienScreenState extends State<ListPasienScreen> {
+  bool sortAscending = true;
+  int sortColumnIndex = 0;
+  int rowsPerPage = 10;
+  List<Map<String, dynamic>> filteredList = [];
+  final TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredList = List.from(pasienList);
+  }
+
+  void onSort(int columnIndex, bool ascending) {
+    setState(() {
+      sortColumnIndex = columnIndex;
+      sortAscending = ascending;
+      filteredList.sort((a, b) {
+        var valueA = a[sortColumnIndex == 0
+            ? 'no_antrian'
+            : sortColumnIndex == 1
+                ? 'no_rekam_medis'
+                : 'nama_pasien'];
+        var valueB = b[sortColumnIndex == 0
+            ? 'no_antrian'
+            : sortColumnIndex == 1
+                ? 'no_rekam_medis'
+                : 'nama_pasien'];
+        return ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+      });
+    });
+  }
+
+  void onSearch(String query) {
+    setState(() {
+      filteredList = pasienList.where((pasien) {
+        String namaPasien = pasien['nama_pasien'].toLowerCase();
+        String noRekamMedis = pasien['no_rekam_medis'].toLowerCase();
+        String searchQuery = query.toLowerCase();
+
+        return namaPasien.toString().contains(searchQuery) ||
+            noRekamMedis.toString().contains(searchQuery);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final DashboardController controller = Get.put(DashboardController());
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed, title: 'List Pasien'),
+        onMenuPressed: widget.onMenuPressed,
+        title: 'List Pasien',
+        isExpanded: widget.isExpanded,
+      ),
       body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                  controller: controller.searchtextController,
-                  onChanged: (value) {
-                    controller.searchQuery(value);
-                  },
-                  cursorColor: AppStyles.textColor,
-                  decoration: AppStyles.formBox.copyWith(
-                      hintText: 'Search', prefixIcon: Icon(Icons.search))),
-              SizedBox(
-                height: 12,
-              ),
-              Expanded(
-                child: Obx(
-                  () {
-                    Visibility(
-                      visible: false,
-                      child:
-                          Text(controller.filteredDatalist.length.toString()),
-                    );
-
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        cardTheme: CardTheme(
-                          color: Colors.white,
-                          elevation: 0,
-                        ),
-                      ),
-                      child: PaginatedDataTable2(
-                        columnSpacing: 12,
-                        minWidth: 786,
-                        dividerThickness: 0,
-                        horizontalMargin: 12,
-                        dataRowHeight: 56,
-                        rowsPerPage: 10,
-                        availableRowsPerPage: [
-                          10,
-                          25,
-                          50,
-                          100,
-                        ],
-                        headingTextStyle:
-                            Theme.of(context).textTheme.titleMedium,
-                        headingRowColor: WidgetStateProperty.resolveWith(
-                            (states) => AppStyles.greyColor),
-                        headingRowDecoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12))),
-                        showCheckboxColumn: true,
-
-                        // pagination
-                        showFirstLastButtons: true,
-                        onPageChanged: (value) {},
-                        renderEmptyRowsInTheEnd: false,
-                        onRowsPerPageChanged: (rows) {},
-
-                        // sorting
-                        sortAscending: controller.sortAscending.value,
-                        sortArrowAlwaysVisible: true,
-                        sortArrowIcon: Icons.line_axis,
-                        sortColumnIndex: controller.sortColumnIndex.value,
-                        sortArrowBuilder: (bool ascending, bool sorted) {
-                          if (sorted) {
-                            return Icon(
-                              ascending
-                                  ? FluentIcons.arrow_sort_up_16_regular
-                                  : FluentIcons.arrow_sort_down_16_regular,
-                              size: 12,
-                            );
-                          } else {
-                            return Icon(
-                              FluentIcons.arrow_sort_16_regular,
-                              size: 12,
-                            );
-                          }
-                        },
-
-                        columns: [
-                          DataColumn(
-                              label: Text('Nama Pasien'),
-                              onSort: (columnIndex, ascending) =>
-                                  controller.sortById(columnIndex, ascending)),
-                          DataColumn(label: Text('No. Rekam Medis')),
-                          DataColumn(label: Text('Poli Tujuan')),
-                          DataColumn(
-                              label: Text('No. Antrian'),
-                              onSort: (columnIndex, ascending) =>
-                                  controller.sortById(columnIndex, ascending)),
-                          DataColumn(label: Text('Status')),
-                          DataColumn(label: Text('Aksi')),
-                        ],
-                        source: MyData(),
-                      ),
-                    );
-                  },
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: controller,
+                    onChanged: onSearch,
+                    decoration: AppStyles.formBox.copyWith(
+                      hintText: 'Search',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  ),
                 ),
+                SizedBox(
+                  width: screenWidth * 0.01,
+                ),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        controller.clear();
+                        filteredList = List.from(pasienList);
+                      });
+                    },
+                    icon: Icon(Icons.refresh)),
+                SizedBox(
+                  width: screenWidth * 0.08,
+                ),
+                // Text('Entries:  ',
+                //     style: AppStyles.contentText.copyWith(
+                //         color: AppStyles.primaryColor,
+                //         fontWeight: FontWeight.bold)),
+                // Expanded(
+                //   child: DropdownButtonFormField<int>(
+                //     decoration: AppStyles.formBox,
+                //     value: rowsPerPage,
+                //     items: [10, 25, 50, 100]
+                //         .map((e) =>
+                //             DropdownMenuItem(value: e, child: Text('$e Rows')))
+                //         .toList(),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         rowsPerPage = value!;
+                //         print(rowsPerPage);
+                //       });
+                //     },
+                //   ),
+                // ),
+                // SizedBox(
+                //   width: screenWidth * 0.08,
+                // ),
+                SizedBox(
+                  width: screenWidth * 0.5,
+                ),
+                TheButton(
+                  text: "Registrasi",
+                  color: AppStyles.accentColor,
+                  isIcon: true,
+                  icon: FluentIcons.clipboard_edit_20_regular,
+                  onTapFunc: () {
+                    widget.navigateToChild(1);
+                  },
+                )
+              ],
+            ),
+            SizedBox(height: 12),
+            Expanded(
+              child: PaginatedDataTable2(
+                sortColumnIndex: sortColumnIndex,
+                sortAscending: sortAscending,
+
+                // style
+                headingTextStyle: AppStyles.sidebarText.copyWith(
+                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                headingRowColor: WidgetStateProperty.resolveWith(
+                    (states) => AppStyles.greyColor),
+                headingRowDecoration: BoxDecoration(
+                    // border: Border.all(),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12))),
+                dataTextStyle:
+                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
+                minWidth: 768,
+                dividerThickness: 0,
+                horizontalMargin: 12,
+                dataRowHeight: 56,
+                columnSpacing: 12,
+
+                // pagination
+                showFirstLastButtons: true,
+                renderEmptyRowsInTheEnd: false,
+                rowsPerPage: rowsPerPage,
+                availableRowsPerPage: [10, 25, 50, 100],
+                onRowsPerPageChanged: (value) {
+                  if (value != null && [10, 25, 50, 100].contains(value)) {
+                    setState(() {
+                      rowsPerPage = value;
+                    });
+                  }
+                },
+
+                // sorting
+                sortArrowAlwaysVisible: true,
+                sortArrowBuilder: (bool ascending, bool sorted) {
+                  if (sorted) {
+                    return Icon(
+                      ascending
+                          ? FluentIcons.arrow_sort_up_16_regular
+                          : FluentIcons.arrow_sort_down_16_regular,
+                      size: 12,
+                    );
+                  } else {
+                    return Icon(
+                      FluentIcons.arrow_sort_16_regular,
+                      size: 12,
+                    );
+                  }
+                },
+
+                columns: [
+                  DataColumn(label: Text('No. Antrian'), onSort: onSort),
+                  DataColumn(label: Text('No. Rekam Medis')),
+                  DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                  DataColumn(label: Text('Poli Tujuan')),
+                  DataColumn(label: Center(child: Text('Status'))),
+                  DataColumn(label: Center(child: Text('Aksi'))),
+                ],
+                source:
+                    RowSource(myData: filteredList, count: filteredList.length),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class MyData extends DataTableSource {
-  final DashboardController controller = Get.put(DashboardController());
+class RowSource extends DataTableSource {
+  final List<Map<String, dynamic>> myData;
+  final int count;
+
+  RowSource({required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
-    final data = controller.datalist[index];
-
-    return DataRow2(
-        onTap: () {},
-        selected: controller.selectedRows[index],
-        onSelectChanged: (value) =>
-            controller.selectedRows[index] = value ?? false,
-        cells: [
-          DataCell(Text(data['Column1'] ?? '')),
-          DataCell(Text(data['Column2'] ?? '')),
-          DataCell(Text(data['Column3'] ?? '')),
-          DataCell(Text(data['Column4'] ?? '')),
-          DataCell(Text(data['Column5'] ?? '')),
-          DataCell(Text(data['Column6'] ?? '')),
-        ]);
+    if (index >= myData.length) return null;
+    var data = myData[index];
+    return DataRow(cells: [
+      DataCell(Text(data['no_antrian'].toString())),
+      DataCell(Text(data['no_rekam_medis'])),
+      DataCell(Text(data['nama_pasien'])),
+      DataCell(Text(data['poli_tujuan'])),
+      DataCell(Center(child: StatusBox(status: data['status']))),
+      DataCell(Center(child: IconDropdown())),
+    ]);
   }
 
   @override
   bool get isRowCountApproximate => false;
-
   @override
-  int get rowCount => controller.datalist.length;
-
+  int get rowCount => count;
   @override
   int get selectedRowCount => 0;
-}
-
-class DashboardController extends GetxController {
-  var datalist = <Map<String, String>>[].obs;
-  var filteredDatalist = <Map<String, String>>[].obs;
-  RxList<bool> selectedRows = <bool>[].obs;
-
-  RxInt sortColumnIndex = 1.obs;
-  RxBool sortAscending = true.obs;
-
-  final searchtextController = TextEditingController();
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchDummyData();
-  }
-
-  void sortById(int sortColumnIndex, bool ascending) {
-    sortAscending.value = ascending;
-    datalist.sort((a, b) {
-      if (ascending) {
-        return datalist[0]['Column1']
-            .toString()
-            .toLowerCase()
-            .compareTo(datalist[0]['Column1'].toString().toLowerCase());
-      } else {
-        return datalist[0]['Column1']
-            .toString()
-            .toLowerCase()
-            .compareTo(datalist[0]['Column1'].toString().toLowerCase());
-      }
-    });
-
-    this.sortColumnIndex.value = sortColumnIndex;
-  }
-
-  void searchQuery(String query) {
-    filteredDatalist.assignAll(datalist
-        .where((item) => item['Column1']!.contains(query.toLowerCase())));
-  }
-
-  void fetchDummyData() {
-    selectedRows.assignAll(List.generate(36, (index) => false));
-
-    datalist.addAll(List.generate(
-        36,
-        (index) => {
-              'Column1': 'Data ${index + 1} - 1',
-              'Column2': 'Data ${index + 1} - 2',
-              'Column3': 'Data ${index + 1} - 3',
-              'Column4': 'Data ${index + 1} - 4',
-              'Column5': 'Data ${index + 1} - 5',
-              'Column6': 'Data ${index + 1} - 6',
-            }));
-
-    filteredDatalist.addAll(List.generate(
-        36,
-        (index) => {
-              'Column1': 'Data ${index + 1} - 1',
-              'Column2': 'Data ${index + 1} - 2',
-              'Column3': 'Data ${index + 1} - 3',
-              'Column4': 'Data ${index + 1} - 4',
-              'Column5': 'Data ${index + 1} - 5',
-              'Column6': 'Data ${index + 1} - 6',
-            }));
-  }
 }

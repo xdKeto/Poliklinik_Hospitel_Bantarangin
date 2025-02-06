@@ -29,10 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Left Image (65% of screen width)
           Positioned(
             left: 0,
-            right: screenWidth * 0.35, // Takes 65% width
+            right: screenWidth * 0.35,
             top: 0,
             bottom: 0,
             child: Image.asset(
@@ -40,10 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
               fit: BoxFit.cover,
             ),
           ),
-
-          // Right Image (stacked on top)
           Positioned(
-            left: screenWidth * 0.55, // Slight overlap for better visual
+            left: screenWidth * 0.55,
             right: 0,
             top: 0,
             bottom: 0,
@@ -60,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: Center(
                 child: Material(
-                  // elevation: 4,
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.transparent,
                   child: Container(

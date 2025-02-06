@@ -2,9 +2,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
+import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
+import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
 
 class SideNavbar extends StatefulWidget {
   const SideNavbar({super.key});
@@ -14,29 +17,55 @@ class SideNavbar extends StatefulWidget {
 }
 
 class _SideNavbarState extends State<SideNavbar> {
-  int _selected = 0;
+  int _selectedParent = 0;
   bool isExpanded = true;
+  Map<int, int> _selectedChild = {0: 0, 1: 0};
 
   void toggleSidebar() {
     setState(() {
+      print(isExpanded);
       isExpanded = !isExpanded;
     });
   }
 
-  late final List<Widget> appScreens;
+  void navigateToChild(int parentIndex, int childIndex) {
+    setState(() {
+      _selectedParent = parentIndex;
+      _selectedChild[parentIndex] = childIndex;
+    });
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    appScreens = [
-      ListPasienScreen(onMenuPressed: toggleSidebar),
-      BillingScreen(onMenuPressed: toggleSidebar),
-    ];
+  Widget _getScreen() {
+    if (_selectedParent == 0) {
+      return _selectedChild[0] == 0
+          ? ListPasienScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            )
+          : RegistrasiScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            );
+    } else {
+      return _selectedChild[1] == 0
+          ? BillingScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            )
+          : DetailBilling(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Row(
         children: [
@@ -45,7 +74,6 @@ class _SideNavbarState extends State<SideNavbar> {
             indicatorColor: Colors.white,
             indicatorShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
-              side: BorderSide(color: Colors.white, width: 2),
             ),
             extended: isExpanded,
             backgroundColor: AppStyles.primaryColor,
@@ -54,7 +82,7 @@ class _SideNavbarState extends State<SideNavbar> {
                 AppStyles.sidebarText.copyWith(color: Colors.white),
             selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
             selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
-              color: Colors.white,
+              color: AppStyles.primaryColor,
             ),
             leading: isExpanded
                 ? Padding(
@@ -85,54 +113,77 @@ class _SideNavbarState extends State<SideNavbar> {
                       height: 45,
                       fit: BoxFit.contain,
                     )),
-            trailing: Column(
-              children: [
-                SizedBox(
-                  height: screenHeight * 0.65,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // print('logout');
-                  },
-                  child: isExpanded
-                      ? IconText(
-                          icon: Icons.logout,
-                          text: 'Logout',
-                          isIcon: true,
-                          style: AppStyles.sidebarText.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.w600),
-                          iconColor: Colors.white)
-                      : IconText(
-                          icon: Icons.logout,
-                          isIcon: false,
-                          iconColor: Colors.white),
-                )
-              ],
+            trailing: Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    },
+                    child: isExpanded
+                        ? IconText(
+                            icon: Icons.logout,
+                            text: 'Logout',
+                            isIcon: true,
+                            style: AppStyles.sidebarText.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                            iconColor: Colors.white)
+                        : IconText(
+                            icon: Icons.logout,
+                            isIcon: false,
+                            iconColor: Colors.white),
+                  )
+                ],
+              ),
             ),
             destinations: [
               NavigationRailDestination(
                 icon: Icon(FluentIcons.contact_card_16_regular),
                 selectedIcon: Icon(FluentIcons.contact_card_16_filled),
-                label: Text(
-                  "List Pasien",
+                label: Container(
+                  width: 150,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _selectedParent == 0
+                        ? Colors.white
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text(
+                    "List Pasien",
+                  ),
                 ),
               ),
               NavigationRailDestination(
                 icon: Icon(FluentIcons.receipt_16_regular),
                 selectedIcon: Icon(FluentIcons.receipt_16_filled),
-                label: Text(
-                  "Billing",
+                label: Container(
+                  width: 150,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _selectedParent == 1
+                        ? Colors.white
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text(
+                    "Tagihan",
+                  ),
                 ),
               ),
             ],
-            selectedIndex: _selected,
+            selectedIndex: _selectedParent,
             onDestinationSelected: (int index) {
               setState(() {
-                _selected = index;
+                _selectedParent = index;
+                _selectedChild[_selectedParent] = 0;
               });
             },
           ),
-          Expanded(child: appScreens[_selected]),
+          Expanded(child: _getScreen()),
         ],
       ),
     );

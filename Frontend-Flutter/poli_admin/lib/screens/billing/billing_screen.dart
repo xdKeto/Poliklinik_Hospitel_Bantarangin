@@ -2,7 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
-import 'package:poli_admin/screens/billing/detail_billing.dart';
+// import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/billing/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
@@ -11,8 +11,12 @@ import 'package:poli_admin/dummy/data.dart';
 class BillingScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
   final bool isExpanded;
+  final Function(int) navigateToChild;
   const BillingScreen(
-      {super.key, required this.onMenuPressed, required this.isExpanded});
+      {super.key,
+      required this.onMenuPressed,
+      required this.isExpanded,
+      required this.navigateToChild});
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -101,94 +105,98 @@ class _BillingScreenState extends State<BillingScreen> {
                       });
                     },
                     icon: Icon(Icons.refresh)),
+                // SizedBox(
+                //   width: screenWidth * 0.08,
+                // ),
+                // Text('Entries:  ',
+                //     style: AppStyles.contentText.copyWith(
+                //         color: AppStyles.primaryColor,
+                //         fontWeight: FontWeight.bold)),
+                // Expanded(
+                //   child: DropdownButtonFormField<int>(
+                //     decoration: AppStyles.formBox,
+                //     value: rowsPerPage,
+                //     items: [10, 25, 50, 100]
+                //         .map((e) =>
+                //             DropdownMenuItem(value: e, child: Text('$e Rows')))
+                //         .toList(),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         rowsPerPage = value!;
+                //       });
+                //     },
+                //   ),
+                // ),
                 SizedBox(
-                  width: screenWidth * 0.08,
-                ),
-                Text('Entries:  ',
-                    style: AppStyles.contentText.copyWith(
-                        color: AppStyles.primaryColor,
-                        fontWeight: FontWeight.bold)),
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    decoration: AppStyles.formBox,
-                    value: rowsPerPage,
-                    items: [10, 25, 50, 100]
-                        .map((e) =>
-                            DropdownMenuItem(value: e, child: Text('$e Rows')))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        rowsPerPage = value!;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: screenWidth * 0.02,
+                  width: screenWidth * 0.638,
                 ),
               ],
             ),
             SizedBox(height: 12),
             Expanded(
               child: PaginatedDataTable2(
-                sortColumnIndex: sortColumnIndex,
-                sortAscending: sortAscending,
+                  sortColumnIndex: sortColumnIndex,
+                  sortAscending: sortAscending,
 
-                // style
-                headingTextStyle: AppStyles.sidebarText.copyWith(
-                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                // headingTextStyle: Theme.of(context).textTheme.titleMedium,
-                headingRowColor: WidgetStateProperty.resolveWith(
-                    (states) => AppStyles.greyColor),
-                headingRowDecoration: BoxDecoration(
-                    border: Border.all(),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12))),
-                dataTextStyle:
-                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
-                minWidth: 768,
-                dividerThickness: 0,
-                horizontalMargin: 12,
-                dataRowHeight: 56,
-                rowsPerPage: 10,
-                columnSpacing: 12,
-                availableRowsPerPage: [10, 25, 50, 100],
-                isHorizontalScrollBarVisible: true,
+                  // style
+                  headingTextStyle: AppStyles.sidebarText.copyWith(
+                      fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                  // headingTextStyle: Theme.of(context).textTheme.titleMedium,
+                  headingRowColor: WidgetStateProperty.resolveWith(
+                      (states) => AppStyles.greyColor),
+                  headingRowDecoration: BoxDecoration(
+                      // border: Border.all(),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12))),
+                  dataTextStyle: AppStyles.contentText
+                      .copyWith(color: AppStyles.textColor),
+                  minWidth: 768,
+                  dividerThickness: 0,
+                  horizontalMargin: 12,
+                  dataRowHeight: 56,
+                  columnSpacing: 12,
 
-                // pagination
-                showFirstLastButtons: true,
-                renderEmptyRowsInTheEnd: false,
+                  // pagination
+                  showFirstLastButtons: true,
+                  renderEmptyRowsInTheEnd: false,
+                  rowsPerPage: rowsPerPage,
+                  availableRowsPerPage: [10, 25, 50, 100],
+                  onRowsPerPageChanged: (value) {
+                    if (value != null && [10, 25, 50, 100].contains(value)) {
+                      setState(() {
+                        rowsPerPage = value;
+                      });
+                    }
+                  },
 
-                // sorting
-                sortArrowAlwaysVisible: true,
-                sortArrowBuilder: (bool ascending, bool sorted) {
-                  if (sorted) {
-                    return Icon(
-                      ascending
-                          ? FluentIcons.arrow_sort_up_16_regular
-                          : FluentIcons.arrow_sort_down_16_regular,
-                      size: 12,
-                    );
-                  } else {
-                    return Icon(
-                      FluentIcons.arrow_sort_16_regular,
-                      size: 12,
-                    );
-                  }
-                },
-
-                columns: [
-                  DataColumn(label: Text('No.'), onSort: onSort),
-                  DataColumn(label: Text('No. Rekam Medis')),
-                  DataColumn(label: Text('Nama Pasien'), onSort: onSort),
-                  DataColumn(label: Text('Poli Tujuan')),
-                  DataColumn(label: Center(child: Text('Status'))),
-                  DataColumn(label: Center(child: Text('Rincian'))),
-                ],
-                source:
-                    RowSource(myData: filteredList, count: filteredList.length),
-              ),
+                  // sorting
+                  sortArrowAlwaysVisible: true,
+                  sortArrowBuilder: (bool ascending, bool sorted) {
+                    if (sorted) {
+                      return Icon(
+                        ascending
+                            ? FluentIcons.arrow_sort_up_16_regular
+                            : FluentIcons.arrow_sort_down_16_regular,
+                        size: 12,
+                      );
+                    } else {
+                      return Icon(
+                        FluentIcons.arrow_sort_16_regular,
+                        size: 12,
+                      );
+                    }
+                  },
+                  columns: [
+                    DataColumn(label: Text('No.'), onSort: onSort),
+                    DataColumn(label: Text('No. Rekam Medis')),
+                    DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                    DataColumn(label: Text('Poli Tujuan')),
+                    DataColumn(label: Center(child: Text('Status'))),
+                    DataColumn(label: Center(child: Text('Rincian'))),
+                  ],
+                  source: RowSource(widget.navigateToChild,
+                      myData: filteredList, count: filteredList.length)),
             ),
           ],
         ),
@@ -200,8 +208,9 @@ class _BillingScreenState extends State<BillingScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
+  final Function(int) navigateToChild;
 
-  RowSource({required this.myData, required this.count});
+  RowSource(this.navigateToChild, {required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -219,6 +228,9 @@ class RowSource extends DataTableSource {
         color: AppStyles.accentColor,
         isIcon: true,
         icon: Icons.menu_open_rounded,
+        onTapFunc: () {
+          navigateToChild(1);
+        },
       ))),
     ]);
   }

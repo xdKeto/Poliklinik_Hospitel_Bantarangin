@@ -18,7 +18,7 @@ class StatusBox extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 2),
+      padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 2),  
       height: 30,
       width: 100,
       decoration: BoxDecoration(

@@ -11,7 +11,12 @@ import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 class ListPasienScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
   final bool isExpanded;
-  const ListPasienScreen({super.key, required this.onMenuPressed, required this.isExpanded});
+  final Function(int) navigateToChild;
+  const ListPasienScreen(
+      {super.key,
+      required this.onMenuPressed,
+      required this.isExpanded,
+      required this.navigateToChild});
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -69,7 +74,10 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed, title: 'List Pasien', isExpanded: widget.isExpanded,),
+        onMenuPressed: widget.onMenuPressed,
+        title: 'List Pasien',
+        isExpanded: widget.isExpanded,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
@@ -77,7 +85,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
                     controller: controller,
                     onChanged: onSearch,
                     decoration: AppStyles.formBox.copyWith(
@@ -100,34 +108,40 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 SizedBox(
                   width: screenWidth * 0.08,
                 ),
-                Text('Entries:  ',
-                    style: AppStyles.contentText.copyWith(
-                        color: AppStyles.primaryColor,
-                        fontWeight: FontWeight.bold)),
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    decoration: AppStyles.formBox,
-                    value: rowsPerPage,
-                    items: [10, 25, 50, 100]
-                        .map((e) =>
-                            DropdownMenuItem(value: e, child: Text('$e Rows')))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        rowsPerPage = value!;
-                        print(rowsPerPage);
-                      });
-                    },
-                  ),
-                ),
+                // Text('Entries:  ',
+                //     style: AppStyles.contentText.copyWith(
+                //         color: AppStyles.primaryColor,
+                //         fontWeight: FontWeight.bold)),
+                // Expanded(
+                //   child: DropdownButtonFormField<int>(
+                //     decoration: AppStyles.formBox,
+                //     value: rowsPerPage,
+                //     items: [10, 25, 50, 100]
+                //         .map((e) =>
+                //             DropdownMenuItem(value: e, child: Text('$e Rows')))
+                //         .toList(),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         rowsPerPage = value!;
+                //         print(rowsPerPage);
+                //       });
+                //     },
+                //   ),
+                // ),
+                // SizedBox(
+                //   width: screenWidth * 0.08,
+                // ),
                 SizedBox(
-                  width: screenWidth * 0.02,
+                  width: screenWidth * 0.5,
                 ),
                 TheButton(
                   text: "Registrasi",
                   color: AppStyles.accentColor,
                   isIcon: true,
                   icon: FluentIcons.clipboard_edit_20_regular,
+                  onTapFunc: () {
+                    widget.navigateToChild(1);
+                  },
                 )
               ],
             ),
@@ -140,11 +154,10 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 // style
                 headingTextStyle: AppStyles.sidebarText.copyWith(
                     fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                // headingTextStyle: Theme.of(context).textTheme.titleMedium,
                 headingRowColor: WidgetStateProperty.resolveWith(
                     (states) => AppStyles.greyColor),
                 headingRowDecoration: BoxDecoration(
-                    border: Border.all(),
+                    // border: Border.all(),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12),
                         topRight: Radius.circular(12))),
@@ -154,15 +167,20 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 dividerThickness: 0,
                 horizontalMargin: 12,
                 dataRowHeight: 56,
-                rowsPerPage: rowsPerPage,
                 columnSpacing: 12,
-                availableRowsPerPage: [10, 25, 50, 100],
-                onRowsPerPageChanged: (value) {},
-                isHorizontalScrollBarVisible: true,
 
                 // pagination
                 showFirstLastButtons: true,
                 renderEmptyRowsInTheEnd: false,
+                rowsPerPage: rowsPerPage,
+                availableRowsPerPage: [10, 25, 50, 100],
+                onRowsPerPageChanged: (value) {
+                  if (value != null && [10, 25, 50, 100].contains(value)) {
+                    setState(() {
+                      rowsPerPage = value;
+                    });
+                  }
+                },
 
                 // sorting
                 sortArrowAlwaysVisible: true,

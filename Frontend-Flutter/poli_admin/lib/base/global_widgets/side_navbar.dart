@@ -5,7 +5,9 @@ import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
+import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
+import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
 
 class SideNavbar extends StatefulWidget {
   const SideNavbar({super.key});
@@ -15,8 +17,9 @@ class SideNavbar extends StatefulWidget {
 }
 
 class _SideNavbarState extends State<SideNavbar> {
-  int _selected = 1;
-  bool isExpanded = false;
+  int _selectedParent = 0;
+  bool isExpanded = true;
+  Map<int, int> _selectedChild = {0: 0, 1: 0};
 
   void toggleSidebar() {
     setState(() {
@@ -25,21 +28,39 @@ class _SideNavbarState extends State<SideNavbar> {
     });
   }
 
-  late final List<Widget> appScreens;
+  void navigateToChild(int parentIndex, int childIndex) {
+    setState(() {
+      _selectedParent = parentIndex;
+      _selectedChild[parentIndex] = childIndex;
+    });
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    appScreens = [
-      ListPasienScreen(
-        onMenuPressed: toggleSidebar,
-        isExpanded: isExpanded,
-      ),
-      BillingScreen(
-        onMenuPressed: toggleSidebar,
-        isExpanded: isExpanded,
-      ),
-    ];
+  Widget _getScreen() {
+    if (_selectedParent == 0) {
+      return _selectedChild[0] == 0
+          ? ListPasienScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            )
+          : RegistrasiScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            );
+    } else {
+      return _selectedChild[1] == 0
+          ? BillingScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            )
+          : DetailBilling(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            );
+    }
   }
 
   @override
@@ -53,7 +74,6 @@ class _SideNavbarState extends State<SideNavbar> {
             indicatorColor: Colors.white,
             indicatorShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
-              side: BorderSide(color: Colors.white, width: 2),
             ),
             extended: isExpanded,
             backgroundColor: AppStyles.primaryColor,
@@ -62,7 +82,7 @@ class _SideNavbarState extends State<SideNavbar> {
                 AppStyles.sidebarText.copyWith(color: Colors.white),
             selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
             selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
-              color: Colors.white,
+              color: AppStyles.primaryColor,
             ),
             leading: isExpanded
                 ? Padding(
@@ -123,26 +143,47 @@ class _SideNavbarState extends State<SideNavbar> {
               NavigationRailDestination(
                 icon: Icon(FluentIcons.contact_card_16_regular),
                 selectedIcon: Icon(FluentIcons.contact_card_16_filled),
-                label: Text(
-                  "List Pasien",
+                label: Container(
+                  width: 150,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _selectedParent == 0
+                        ? Colors.white
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text(
+                    "List Pasien",
+                  ),
                 ),
               ),
               NavigationRailDestination(
                 icon: Icon(FluentIcons.receipt_16_regular),
                 selectedIcon: Icon(FluentIcons.receipt_16_filled),
-                label: Text(
-                  "Tagihan",
+                label: Container(
+                  width: 150,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _selectedParent == 1
+                        ? Colors.white
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text(
+                    "Tagihan",
+                  ),
                 ),
               ),
             ],
-            selectedIndex: _selected,
+            selectedIndex: _selectedParent,
             onDestinationSelected: (int index) {
               setState(() {
-                _selected = index;
+                _selectedParent = index;
+                _selectedChild[_selectedParent] = 0;
               });
             },
           ),
-          Expanded(child: appScreens[_selected]),
+          Expanded(child: _getScreen()),
         ],
       ),
     );

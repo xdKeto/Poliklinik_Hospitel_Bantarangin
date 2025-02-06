@@ -23,20 +23,17 @@ class GlobalTopBar extends StatelessWidget implements PreferredSize {
       backgroundColor: AppStyles.primaryColor,
       leading: IconButton(
         icon: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, anim) => RotationTransition(
-            turns: Tween<double>(
-              begin: isExpanded ? 1 : 0.75,
-              end: isExpanded ? 0.75 : 1,
-            ).animate(anim),
-            child: FadeTransition(opacity: anim, child: child),
+          duration: Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(scale: animation, child: child),
           ),
-          child: isExpanded
-              ? const Icon(Icons.close,
-                  color: Colors.white, key: ValueKey('icon1'))
-              : const Icon(Icons.menu,
-                  color: Colors.white, key: ValueKey('icon2')),
+          child: Icon(
+            isExpanded ? Icons.close : Icons.menu,
+            key: ValueKey(isExpanded),
+          ),
         ),
+        color: Colors.white,
         onPressed: onMenuPressed,
       ),
       actions: [

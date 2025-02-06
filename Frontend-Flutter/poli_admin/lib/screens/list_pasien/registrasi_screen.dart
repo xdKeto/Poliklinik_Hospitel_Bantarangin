@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
-class DetailBilling extends StatefulWidget {
+class RegistrasiScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
   final bool isExpanded;
-  const DetailBilling(
+  const RegistrasiScreen(
       {super.key, required this.onMenuPressed, required this.isExpanded});
 
   @override
-  State<DetailBilling> createState() => _DetailBillingState();
+  State<RegistrasiScreen> createState() => _RegistrasiScreenState();
 }
 
-class _DetailBillingState extends State<DetailBilling> {
+class _RegistrasiScreenState extends State<RegistrasiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
           onMenuPressed: widget.onMenuPressed,
-          title: 'Detail Billing',
+          title: 'Registrasi',
           isExpanded: widget.isExpanded),
       body: Center(
-        child: Text('ini detail billing'),
+        child: Text('ini registrasi screen'),
       ),
     );
   }

@@ -16,15 +16,31 @@ class SideNavbar extends StatefulWidget {
   State<SideNavbar> createState() => _SideNavbarState();
 }
 
-class _SideNavbarState extends State<SideNavbar> {
+class _SideNavbarState extends State<SideNavbar>
+    with SingleTickerProviderStateMixin {
   int _selectedParent = 0;
-  bool isExpanded = true;
-  Map<int, int> _selectedChild = {0: 0, 1: 0};
+  bool isExpanded = false;
+  final Map<int, int> _selectedChild = {0: 0, 1: 0};
+
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+  }
 
   void toggleSidebar() {
     setState(() {
-      print(isExpanded);
       isExpanded = !isExpanded;
+      if (isExpanded) {
+        _animationController.forward(); // Animate forward when expanding
+      } else {
+        _animationController.reverse(); // Animate reverse when collapsing
+      }
     });
   }
 
@@ -69,129 +85,182 @@ class _SideNavbarState extends State<SideNavbar> {
     return Scaffold(
       body: Row(
         children: [
-          NavigationRail(
-            useIndicator: true,
-            indicatorColor: Colors.white,
-            indicatorShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            extended: isExpanded,
-            backgroundColor: AppStyles.primaryColor,
-            unselectedIconTheme: IconThemeData(color: Colors.white, opacity: 1),
-            unselectedLabelTextStyle:
-                AppStyles.sidebarText.copyWith(color: Colors.white),
-            selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
-            selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
-              color: AppStyles.primaryColor,
-            ),
-            leading: Column(
-              children: [
-                isExpanded
-                    ? Padding(
-                        padding: EdgeInsets.only(bottom: 16.0, top: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AppMedia.logoRS,
-                              width: 45,
-                              height: 45,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Hospitel\nBantarangin',
-                              style: AppStyles.tambahanText.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.only(bottom: 16, top: 8),
-                        child: Image.asset(
-                          AppMedia.logoRS,
-                          width: 45,
-                          height: 45,
-                          fit: BoxFit.contain,
-                        )),
-                Divider(
-                  thickness: 8,
-                  color: Colors.red,
-                  height: 16,
-                )
-              ],
-            ),
-            trailing: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            width: isExpanded ? 230 : 72,
+            child: NavigationRail(
+              useIndicator: true,
+              indicatorColor: Colors.white,
+              indicatorShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              extended: isExpanded,
+              backgroundColor: AppStyles.primaryColor,
+              unselectedIconTheme:
+                  IconThemeData(color: Colors.white, opacity: 1),
+              unselectedLabelTextStyle:
+                  AppStyles.sidebarText.copyWith(color: Colors.white),
+              selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
+              selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
+                  color: AppStyles.primaryColor, fontWeight: FontWeight.w600),
+              minExtendedWidth: 150,
+              leading: Column(
                 children: [
-                  SizedBox(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.login);
-                    },
-                    child: isExpanded
-                        ? IconText(
-                            icon: Icons.logout,
-                            text: 'Logout',
-                            isIcon: true,
-                            style: AppStyles.sidebarText.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600),
-                            iconColor: Colors.white)
-                        : IconText(
-                            icon: Icons.logout,
-                            isIcon: false,
-                            iconColor: Colors.white),
+                  isExpanded
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: 16.0, top: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                AppMedia.logoRS,
+                                width: 45,
+                                height: 45,
+                                fit: BoxFit.contain,
+                              ),
+                              const SizedBox(width: 8),
+                              Opacity(
+                                opacity: isExpanded ? 1.0 : 0.0,
+                                child: Text(
+                                  'Hospitel\nBantarangin',
+                                  style: AppStyles.tambahanText.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600),
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(bottom: 16, top: 8),
+                          child: Image.asset(
+                            AppMedia.logoRS,
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.contain,
+                          )),
+                  Divider(
+                    thickness: 2,
+                    color: Colors.white,
+                    // height: 16,
                   )
                 ],
               ),
+              trailing: Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.login);
+                        },
+                        child: isExpanded
+                            ? AnimatedBuilder(
+                                animation: _animationController,
+                                builder: (context, child) {
+                                  double width = isExpanded ? 2000 : 0;
+                                  return SizedBox(
+                                    width: width,
+                                    child: Opacity(
+                                      opacity: isExpanded ? 1.0 : 0.0,
+                                      child: IconText(
+                                          icon: Icons.logout,
+                                          text: 'Logout',
+                                          isIcon: true,
+                                          style: AppStyles.sidebarText.copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600),
+                                          iconColor: Colors.white),
+                                    ),
+                                  );
+                                },
+                              )
+                            : IconText(
+                                icon: Icons.logout,
+                                isIcon: false,
+                                iconColor: Colors.white),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(FluentIcons.contact_card_16_regular),
+                  selectedIcon: Icon(FluentIcons.contact_card_16_filled),
+                  label: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      double width = isExpanded ? 140 : 0;
+                      return SizedBox(
+                        width: width,
+                        child: Opacity(
+                          opacity: isExpanded ? 1.0 : 0.0,
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: _selectedParent == 0
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Text(
+                              "List Pasien",
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(FluentIcons.contact_card_16_regular),
+                  selectedIcon: Icon(FluentIcons.contact_card_16_filled),
+                  label: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      double width = isExpanded ? 140 : 0;
+                      return SizedBox(
+                        width: width,
+                        child: Opacity(
+                          opacity: isExpanded ? 1.0 : 0.0,
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: _selectedParent == 1
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Text(
+                              "Tagihan",
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+              selectedIndex: _selectedParent,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedParent = index;
+                  _selectedChild[_selectedParent] = 0;
+                });
+              },
             ),
-            destinations: [
-              NavigationRailDestination(
-                icon: Icon(FluentIcons.contact_card_16_regular),
-                selectedIcon: Icon(FluentIcons.contact_card_16_filled),
-                label: Container(
-                  width: 150,
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: _selectedParent == 0
-                        ? Colors.white
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Text(
-                    "List Pasien",
-                  ),
-                ),
-              ),
-              NavigationRailDestination(
-                icon: Icon(FluentIcons.receipt_16_regular),
-                selectedIcon: Icon(FluentIcons.receipt_16_filled),
-                label: Container(
-                  width: 150,
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: _selectedParent == 1
-                        ? Colors.white
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Text(
-                    "Tagihan",
-                  ),
-                ),
-              ),
-            ],
-            selectedIndex: _selectedParent,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedParent = index;
-                _selectedChild[_selectedParent] = 0;
-              });
-            },
           ),
           Expanded(child: _getScreen()),
         ],

@@ -35,6 +35,8 @@ class IconText extends StatelessWidget {
                 Text(
                   text!,
                   style: style,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
                 )
               ],
             )

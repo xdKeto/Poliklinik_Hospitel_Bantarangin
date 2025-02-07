@@ -84,35 +84,45 @@ class _SideNavbarState extends State<SideNavbar> {
             selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
               color: AppStyles.primaryColor,
             ),
-            leading: isExpanded
-                ? Padding(
-                    padding: EdgeInsets.only(bottom: 16.0, top: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
+            leading: Column(
+              children: [
+                isExpanded
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: 16.0, top: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AppMedia.logoRS,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Hospitel\nBantarangin',
+                              style: AppStyles.tambahanText.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(bottom: 16, top: 8),
+                        child: Image.asset(
                           AppMedia.logoRS,
                           width: 45,
                           height: 45,
                           fit: BoxFit.contain,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Hospitel\nBantarangin',
-                          style: AppStyles.tambahanText.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  )
-                : Padding(
-                    padding: EdgeInsets.only(bottom: 16, top: 8),
-                    child: Image.asset(
-                      AppMedia.logoRS,
-                      width: 45,
-                      height: 45,
-                      fit: BoxFit.contain,
-                    )),
+                        )),
+                Divider(
+                  thickness: 8,
+                  color: Colors.red,
+                  height: 16,
+                )
+              ],
+            ),
             trailing: Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

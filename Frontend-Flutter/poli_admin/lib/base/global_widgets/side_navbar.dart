@@ -37,9 +37,9 @@ class _SideNavbarState extends State<SideNavbar>
     setState(() {
       isExpanded = !isExpanded;
       if (isExpanded) {
-        _animationController.forward(); // Animate forward when expanding
+        _animationController.forward();
       } else {
-        _animationController.reverse(); // Animate reverse when collapsing
+        _animationController.reverse();
       }
     });
   }
@@ -223,8 +223,8 @@ class _SideNavbarState extends State<SideNavbar>
                   ),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(FluentIcons.contact_card_16_regular),
-                  selectedIcon: Icon(FluentIcons.contact_card_16_filled),
+                  icon: Icon(FluentIcons.receipt_16_regular),
+                  selectedIcon: Icon(FluentIcons.receipt_16_filled),
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {

@@ -82,68 +82,68 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: controller,
-                    onChanged: onSearch,
-                    decoration: AppStyles.formBox.copyWith(
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 5,
+                right: 8.0,
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 400,
+                    // flex: widget.isExpanded ? 3 : 4,
+                    child: TextFormField(
+                      controller: controller,
+                      onChanged: onSearch,
+                      decoration: AppStyles.formBox.copyWith(
+                        hintText: 'Search',
+                        prefixIcon: Icon(Icons.search),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: screenWidth * 0.01,
-                ),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        controller.clear();
-                        filteredList = List.from(pasienList);
-                      });
+                  SizedBox(
+                    width: screenWidth * 0.01,
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          controller.clear();
+                          filteredList = List.from(pasienList);
+                        });
+                      },
+                      icon: Icon(Icons.refresh)),
+                  // Text('Entries:  ',
+                  //     style: AppStyles.contentText.copyWith(
+                  //         color: AppStyles.primaryColor,
+                  //         fontWeight: FontWeight.bold)),
+                  // Expanded(
+                  //   child: DropdownButtonFormField<int>(
+                  //     decoration: AppStyles.formBox,
+                  //     value: rowsPerPage,
+                  //     items: [10, 25, 50, 100]
+                  //         .map((e) =>
+                  //             DropdownMenuItem(value: e, child: Text('$e Rows')))
+                  //         .toList(),
+                  //     onChanged: (value) {
+                  //       setState(() {
+                  //         rowsPerPage = value!;
+                  //         print(rowsPerPage);
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                  Spacer(),
+                  TheButton(
+                    text: "Registrasi",
+                    color: AppStyles.accentColor,
+                    isIcon: true,
+                    icon: FluentIcons.clipboard_edit_20_regular,
+                    onTapFunc: () {
+                      widget.navigateToChild(1);
                     },
-                    icon: Icon(Icons.refresh)),
-                SizedBox(
-                  width: screenWidth * 0.08,
-                ),
-                // Text('Entries:  ',
-                //     style: AppStyles.contentText.copyWith(
-                //         color: AppStyles.primaryColor,
-                //         fontWeight: FontWeight.bold)),
-                // Expanded(
-                //   child: DropdownButtonFormField<int>(
-                //     decoration: AppStyles.formBox,
-                //     value: rowsPerPage,
-                //     items: [10, 25, 50, 100]
-                //         .map((e) =>
-                //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                //         .toList(),
-                //     onChanged: (value) {
-                //       setState(() {
-                //         rowsPerPage = value!;
-                //         print(rowsPerPage);
-                //       });
-                //     },
-                //   ),
-                // ),
-                // SizedBox(
-                //   width: screenWidth * 0.08,
-                // ),
-                SizedBox(
-                  width: screenWidth * 0.5,
-                ),
-                TheButton(
-                  text: "Registrasi",
-                  color: AppStyles.accentColor,
-                  isIcon: true,
-                  icon: FluentIcons.clipboard_edit_20_regular,
-                  onTapFunc: () {
-                    widget.navigateToChild(1);
-                  },
-                )
-              ],
+                  )
+                ],
+              ),
             ),
             SizedBox(height: 12),
             Expanded(

@@ -2,27 +2,25 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
-// import 'package:poli_admin/screens/billing/detail_billing.dart';
-import 'package:poli_admin/screens/billing/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
-class BillingScreen extends StatefulWidget {
+class RiwayatScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
   final bool isExpanded;
   final Function(int) navigateToChild;
-  const BillingScreen(
+  const RiwayatScreen(
       {super.key,
       required this.onMenuPressed,
       required this.isExpanded,
       required this.navigateToChild});
 
   @override
-  State<BillingScreen> createState() => _BillingScreenState();
+  State<RiwayatScreen> createState() => _RiwayatScreenState();
 }
 
-class _BillingScreenState extends State<BillingScreen> {
+class _RiwayatScreenState extends State<RiwayatScreen> {
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
@@ -32,24 +30,38 @@ class _BillingScreenState extends State<BillingScreen> {
   @override
   void initState() {
     super.initState();
-    filteredList = List.from(billingList);
+    filteredList = List.from(riwayat);
   }
 
   void onSort(int columnIndex, bool ascending) {
     setState(() {
       sortColumnIndex = columnIndex;
       sortAscending = ascending;
+
       filteredList.sort((a, b) {
-        var valueA = a[sortColumnIndex == 0
-            ? 'no_antrian'
-            : sortColumnIndex == 1
-                ? 'no_rekam_medis'
-                : 'nama_pasien'];
-        var valueB = b[sortColumnIndex == 0
-            ? 'no_antrian'
-            : sortColumnIndex == 1
-                ? 'no_rekam_medis'
-                : 'nama_pasien'];
+        var valueA, valueB;
+
+        switch (columnIndex) {
+          case 0:
+            valueA = filteredList.indexOf(a);
+            valueB = filteredList.indexOf(b);
+            break;
+          case 1:
+            valueA = a['nama'];
+            valueB = b['nama'];
+            break;
+          case 2:
+            valueA = DateTime.parse(a['tanggal']);
+            valueB = DateTime.parse(b['tanggal']);
+            break;
+          case 3:
+            valueA = a['poli'];
+            valueB = b['poli'];
+            break;
+          default:
+            return 0;
+        }
+
         return ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
       });
     });
@@ -57,13 +69,11 @@ class _BillingScreenState extends State<BillingScreen> {
 
   void onSearch(String query) {
     setState(() {
-      filteredList = billingList.where((pasien) {
-        String namaPasien = pasien['nama_pasien'];
-        String noRekamMedis = pasien['no_rekam_medis'];
+      filteredList = riwayat.where((pasien) {
+        String namaPasien = pasien['nama'].toLowerCase();
         String searchQuery = query.toLowerCase();
 
-        return namaPasien.toString().contains(searchQuery) ||
-            noRekamMedis.toString().contains(searchQuery);
+        return namaPasien.toString().contains(searchQuery);
       }).toList();
     });
   }
@@ -74,24 +84,19 @@ class _BillingScreenState extends State<BillingScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-        onMenuPressed: widget.onMenuPressed,
-        title: 'Billing',
-        isExpanded: widget.isExpanded,
-      ),
+          onMenuPressed: widget.onMenuPressed,
+          title: 'Riwayat Pembayaran',
+          isExpanded: widget.isExpanded),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(
-                left: 5,
-                right: 8.0,
-              ),
+              padding: EdgeInsets.only(left: 5, right: 8),
               child: Row(
                 children: [
                   SizedBox(
                     width: 400,
-                    // flex: widget.isExpanded ? 3 : 4,
                     child: TextFormField(
                       controller: controller,
                       onChanged: onSearch,
@@ -112,40 +117,13 @@ class _BillingScreenState extends State<BillingScreen> {
                         });
                       },
                       icon: Icon(Icons.refresh)),
-                  // Text('Entries:  ',
-                  //     style: AppStyles.contentText.copyWith(
-                  //         color: AppStyles.primaryColor,
-                  //         fontWeight: FontWeight.bold)),
-                  // Expanded(
-                  //   child: DropdownButtonFormField<int>(
-                  //     decoration: AppStyles.formBox,
-                  //     value: rowsPerPage,
-                  //     items: [10, 25, 50, 100]
-                  //         .map((e) =>
-                  //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                  //         .toList(),
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         rowsPerPage = value!;
-                  //         print(rowsPerPage);
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
-                  Spacer(),
-                  // TheButton(
-                  //   text: "Registrasi",
-                  //   color: AppStyles.accentColor,
-                  //   isIcon: true,
-                  //   icon: FluentIcons.clipboard_edit_20_regular,
-                  //   onTapFunc: () {
-                  //     widget.navigateToChild(1);
-                  //   },
-                  // )
+                  Spacer()
                 ],
               ),
             ),
-            SizedBox(height: 12),
+            SizedBox(
+              height: 12,
+            ),
             Expanded(
               child: PaginatedDataTable2(
                   sortColumnIndex: sortColumnIndex,
@@ -202,10 +180,9 @@ class _BillingScreenState extends State<BillingScreen> {
                   },
                   columns: [
                     DataColumn(label: Text('No.'), onSort: onSort),
-                    DataColumn(label: Text('No. Rekam Medis')),
                     DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                    DataColumn(label: Text('Tanggal Pembayaran')),
                     DataColumn(label: Text('Poli Tujuan')),
-                    DataColumn(label: Center(child: Text('Status'))),
                     DataColumn(label: Center(child: Text('Rincian'))),
                   ],
                   source: RowSource(widget.navigateToChild,
@@ -231,10 +208,9 @@ class RowSource extends DataTableSource {
     var data = myData[index];
     return DataRow(cells: [
       DataCell(Text((index + 1).toString())),
-      DataCell(Text(data['no_rekam_medis'])),
-      DataCell(Text(data['nama_pasien'])),
-      DataCell(Text(data['poli_tujuan'])),
-      DataCell(Center(child: StatusBox(status: data['status']))),
+      DataCell(Text(data['nama'])),
+      DataCell(Text(data['tanggal'])),
+      DataCell(Text(data['poli'])),
       DataCell(Center(
           child: TheButton(
         text: "Lihat Rincian",

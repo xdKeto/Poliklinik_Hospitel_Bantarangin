@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Poliklinik Hospitel Bantarangin',
-      // home: LoginScreen(),
+      // home: SideNavbar(),
       home: LoginScreen(),
       routes: {
         AppRoutes.homeScreen: (context) => SideNavbar(),

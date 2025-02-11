@@ -224,10 +224,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Gigi",
       "nama_dokter": "Dr. Siti Rahma",
       "nama_administrasi": "Admin Poli Gigi",
-      "biaya_dokter": {
-        "biaya_konsultasi": 150000,
-        "biaya_pelayanan": 50000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 150000, "biaya_pelayanan": 50000},
       "biaya_obat_resep": 75000,
       "biaya_obat_racikan": 50000,
       "total_jumlah_bayar": 325000
@@ -244,10 +241,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Anak",
       "nama_dokter": "Dr. Agus Pratama",
       "nama_administrasi": "Admin Poli Anak",
-      "biaya_dokter": {
-        "biaya_konsultasi": 140000,
-        "biaya_pelayanan": 40000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 140000, "biaya_pelayanan": 40000},
       "biaya_obat_resep": 65000,
       "biaya_obat_racikan": 45000,
       "total_jumlah_bayar": 290000
@@ -264,10 +258,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Umum",
       "nama_dokter": "Dr. Rina Safitri",
       "nama_administrasi": "Admin Poli Umum",
-      "biaya_dokter": {
-        "biaya_konsultasi": 120000,
-        "biaya_pelayanan": 30000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 120000, "biaya_pelayanan": 30000},
       "biaya_obat_resep": 50000,
       "biaya_obat_racikan": 35000,
       "total_jumlah_bayar": 235000
@@ -284,10 +275,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Gigi",
       "nama_dokter": "Dr. Siti Rahma",
       "nama_administrasi": "Admin Poli Gigi",
-      "biaya_dokter": {
-        "biaya_konsultasi": 160000,
-        "biaya_pelayanan": 60000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 160000, "biaya_pelayanan": 60000},
       "biaya_obat_resep": 80000,
       "biaya_obat_racikan": 55000,
       "total_jumlah_bayar": 355000
@@ -304,10 +292,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Saraf",
       "nama_dokter": "Dr. Anwar Hadi",
       "nama_administrasi": "Admin Poli Saraf",
-      "biaya_dokter": {
-        "biaya_konsultasi": 180000,
-        "biaya_pelayanan": 70000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 180000, "biaya_pelayanan": 70000},
       "biaya_obat_resep": 90000,
       "biaya_obat_racikan": 65000,
       "total_jumlah_bayar": 405000
@@ -324,10 +309,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Mata",
       "nama_dokter": "Dr. Dedi Wibowo",
       "nama_administrasi": "Admin Poli Mata",
-      "biaya_dokter": {
-        "biaya_konsultasi": 200000,
-        "biaya_pelayanan": 75000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 200000, "biaya_pelayanan": 75000},
       "biaya_obat_resep": 100000,
       "biaya_obat_racikan": 70000,
       "total_jumlah_bayar": 445000
@@ -344,10 +326,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Anak",
       "nama_dokter": "Dr. Agus Pratama",
       "nama_administrasi": "Admin Poli Anak",
-      "biaya_dokter": {
-        "biaya_konsultasi": 140000,
-        "biaya_pelayanan": 40000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 140000, "biaya_pelayanan": 40000},
       "biaya_obat_resep": 65000,
       "biaya_obat_racikan": 45000,
       "total_jumlah_bayar": 290000
@@ -364,10 +343,7 @@ List<Map<String, dynamic>> billingList = [
       "poli_tujuan": "Poli Kulit",
       "nama_dokter": "Dr. Rina Safitri",
       "nama_administrasi": "Admin Poli Kulit",
-      "biaya_dokter": {
-        "biaya_konsultasi": 120000,
-        "biaya_pelayanan": 30000
-      },
+      "biaya_dokter": {"biaya_konsultasi": 120000, "biaya_pelayanan": 30000},
       "biaya_obat_resep": 50000,
       "biaya_obat_racikan": 35000,
       "total_jumlah_bayar": 235000
@@ -376,3 +352,68 @@ List<Map<String, dynamic>> billingList = [
   // Add more records up to 40...
 ];
 
+List<Map<String, dynamic>> riwayat = [
+  {"nama": "Andi Wijaya", "tanggal": "11/02/25 08:30", "poli": "Poli Gigi"},
+  {"nama": "Budi Santoso", "tanggal": "11/02/25 09:15", "poli": "Poli Umum"},
+  {"nama": "Citra Lestari", "tanggal": "11/02/25 10:00", "poli": "Poli Anak"},
+  {"nama": "Dedi Pratama", "tanggal": "11/02/25 10:45", "poli": "Poli Mata"},
+  {"nama": "Eka Saputra", "tanggal": "11/02/25 11:30", "poli": "Poli Saraf"},
+  {"nama": "Fajar Ramadhan", "tanggal": "11/02/25 12:00", "poli": "Poli Gigi"},
+  {"nama": "Gina Aulia", "tanggal": "11/02/25 12:45", "poli": "Poli Kulit"},
+  {"nama": "Hadi Prasetyo", "tanggal": "11/02/25 13:15", "poli": "Poli Umum"},
+  {"nama": "Indra Kusuma", "tanggal": "11/02/25 14:00", "poli": "Poli Jantung"},
+  {"nama": "Joko Widodo", "tanggal": "11/02/25 14:45", "poli": "Poli Bedah"},
+  {"nama": "Kiki Rahman", "tanggal": "11/02/25 15:30", "poli": "Poli Gizi"},
+  {"nama": "Lina Sari", "tanggal": "11/02/25 16:00", "poli": "Poli THT"},
+  {"nama": "Mulyadi Haris", "tanggal": "11/02/25 16:45", "poli": "Poli Umum"},
+  {"nama": "Nadia Pramesti", "tanggal": "11/02/25 17:30", "poli": "Poli Gigi"},
+  {"nama": "Oka Pradana", "tanggal": "11/02/25 18:00", "poli": "Poli Saraf"},
+  {"nama": "Prita Dewi", "tanggal": "11/02/25 18:45", "poli": "Poli Mata"},
+  {"nama": "Qori Fauzan", "tanggal": "11/02/25 19:30", "poli": "Poli Bedah"},
+  {"nama": "Rendi Saputra", "tanggal": "11/02/25 20:00", "poli": "Poli Umum"},
+  {"nama": "Siti Aminah", "tanggal": "11/02/25 20:45", "poli": "Poli Anak"},
+  {"nama": "Teguh Wibowo", "tanggal": "11/02/25 21:30", "poli": "Poli Jantung"},
+  {"nama": "Umi Kartini", "tanggal": "11/02/25 22:00", "poli": "Poli Gizi"},
+  {"nama": "Vina Mardiana", "tanggal": "11/02/25 22:45", "poli": "Poli Kulit"},
+  {"nama": "Wahyu Setiawan", "tanggal": "12/02/25 08:00", "poli": "Poli Umum"},
+  {"nama": "Xena Prasetya", "tanggal": "12/02/25 08:45", "poli": "Poli Gigi"},
+  {
+    "nama": "Yusuf Al-Farisi",
+    "tanggal": "12/02/25 09:30",
+    "poli": "Poli Saraf"
+  },
+  {"nama": "Zaki Rahman", "tanggal": "12/02/25 10:15", "poli": "Poli Bedah"},
+  {
+    "nama": "Agus Kurniawan",
+    "tanggal": "12/02/25 11:00",
+    "poli": "Poli Jantung"
+  },
+  {"nama": "Bella Setyani", "tanggal": "12/02/25 11:45", "poli": "Poli Kulit"},
+  {"nama": "Cindy Oktaviani", "tanggal": "12/02/25 12:30", "poli": "Poli Umum"},
+  {"nama": "Denny Fadillah", "tanggal": "12/02/25 13:15", "poli": "Poli Mata"},
+  {"nama": "Erwin Susanto", "tanggal": "12/02/25 14:00", "poli": "Poli THT"},
+  {"nama": "Farah Amalia", "tanggal": "12/02/25 14:45", "poli": "Poli Gizi"},
+  {
+    "nama": "Guntur Wicaksono",
+    "tanggal": "12/02/25 15:30",
+    "poli": "Poli Anak"
+  },
+  {"nama": "Hana Putri", "tanggal": "12/02/25 16:15", "poli": "Poli Gigi"},
+  {
+    "nama": "Irfan Mahardika",
+    "tanggal": "12/02/25 17:00",
+    "poli": "Poli Saraf"
+  },
+  {
+    "nama": "Julianti Kusuma",
+    "tanggal": "12/02/25 17:45",
+    "poli": "Poli Kulit"
+  },
+  {"nama": "Kevin Aditya", "tanggal": "12/02/25 18:30", "poli": "Poli Umum"},
+  {"nama": "Laras Permata", "tanggal": "12/02/25 19:15", "poli": "Poli Bedah"},
+  {
+    "nama": "Miko Suhendra",
+    "tanggal": "12/02/25 20:00",
+    "poli": "Poli Jantung"
+  },
+];

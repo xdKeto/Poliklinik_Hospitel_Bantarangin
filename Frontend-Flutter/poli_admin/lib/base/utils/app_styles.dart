@@ -9,9 +9,10 @@ class AppStyles {
   static Color textColor = const Color(0xff171717);
   static Color redColor = const Color(0xffD31638);
   static Color greenColor = const Color(0xff59FC3C);
-  static Color greenColor2 =Color.fromARGB(255, 43, 229, 10);
+  static Color greenColor2 = Color.fromARGB(255, 43, 229, 10);
   static Color greyColor = const Color(0xffE3E3E3);
   static Color greyColor2 = const Color(0xffA9A9A9);
+  static Color greyBtnColor = const Color(0xff888888);
   static Color inputBox = const Color(0xffF6F6F6);
 
   static TextStyle normalText = TextStyle(
@@ -30,6 +31,7 @@ class AppStyles {
   static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
 
   static InputDecoration formBox = InputDecoration(
+    
     filled: true,
     fillColor: AppStyles.inputBox,
     enabledBorder: OutlineInputBorder(
@@ -40,12 +42,32 @@ class AppStyles {
       borderSide: BorderSide(color: Colors.black),
       borderRadius: BorderRadius.circular(10.0),
     ),
+    // isDense: true,
+    // contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 6)
   );
 
-  static BoxDecoration buttonBox(Color color) {
+  static BoxDecoration whiteBox = BoxDecoration(
+      borderRadius: BorderRadius.circular(6),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          spreadRadius: 1,
+          blurRadius: 1,
+        )
+      ]);
+
+  static BoxDecoration buttonBox(Color color, double borderRad) {
     return BoxDecoration(
       color: color,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(borderRad),
+    );
+  }
+
+  static BoxDecoration buttonBox2(Color color, double borderRad) {
+    return BoxDecoration(
+      border: Border.all(color: color, width: 2),
+      borderRadius: BorderRadius.circular(borderRad),
     );
   }
 }

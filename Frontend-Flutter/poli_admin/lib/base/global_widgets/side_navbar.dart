@@ -8,6 +8,8 @@ import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
 import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
+import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
+import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
   const SideNavbar({super.key});
@@ -20,7 +22,7 @@ class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
   int _selectedParent = 0;
   bool isExpanded = false;
-  final Map<int, int> _selectedChild = {0: 0, 1: 0};
+  final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
 
   late AnimationController _animationController;
 
@@ -64,7 +66,7 @@ class _SideNavbarState extends State<SideNavbar>
               isExpanded: isExpanded,
               // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
             );
-    } else {
+    } else if (_selectedParent == 1) {
       return _selectedChild[1] == 0
           ? BillingScreen(
               onMenuPressed: toggleSidebar,
@@ -75,6 +77,16 @@ class _SideNavbarState extends State<SideNavbar>
               onMenuPressed: toggleSidebar,
               isExpanded: isExpanded,
               // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            );
+    } else {
+      return _selectedChild[2] == 0
+          ? RiwayatScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(2, childIndex))
+          : DetailRiwayat(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
             );
     }
   }
@@ -88,7 +100,7 @@ class _SideNavbarState extends State<SideNavbar>
           AnimatedContainer(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            width: isExpanded ? 230 : 72,
+            width: isExpanded ? 270 : 72,
             child: NavigationRail(
               useIndicator: true,
               indicatorColor: Colors.white,
@@ -198,7 +210,7 @@ class _SideNavbarState extends State<SideNavbar>
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {
-                      double width = isExpanded ? 140 : 0;
+                      double width = isExpanded ? 200 : 0;
                       return SizedBox(
                         width: width,
                         child: Opacity(
@@ -228,7 +240,7 @@ class _SideNavbarState extends State<SideNavbar>
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {
-                      double width = isExpanded ? 140 : 0;
+                      double width = isExpanded ? 200 : 0;
                       return SizedBox(
                         width: width,
                         child: Opacity(
@@ -243,6 +255,36 @@ class _SideNavbarState extends State<SideNavbar>
                             ),
                             child: Text(
                               "Tagihan",
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(FluentIcons.history_16_regular),
+                  selectedIcon: Icon(FluentIcons.history_16_filled),
+                  label: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      double width = isExpanded ? 250 : 0;
+                      return SizedBox(
+                        width: width,
+                        child: Opacity(
+                          opacity: isExpanded ? 1.0 : 0.0,
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: _selectedParent == 2
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Text(
+                              "Riwayat Pembayaran",
                               overflow: TextOverflow.ellipsis,
                               softWrap: false,
                             ),

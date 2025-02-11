@@ -89,6 +89,25 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ),
               child: Row(
                 children: [
+                  TheButton(
+                    text: "Registrasi",
+                    color: AppStyles.accentColor,
+                    isIcon: true,
+                    icon: FluentIcons.clipboard_edit_20_regular,
+                    onTapFunc: () {
+                      widget.navigateToChild(1);
+                    },
+                    horiPadding: 16,
+                    vertPadding: 9,
+                    border: true,
+                    iconColor: AppStyles.accentColor,
+                    textColor: AppStyles.accentColor,
+                    borderRad: 10,
+                  ),
+
+                  SizedBox(
+                    width: screenWidth * 0.01,
+                  ),
                   SizedBox(
                     width: 400,
                     // flex: widget.isExpanded ? 3 : 4,
@@ -132,16 +151,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                   //     },
                   //   ),
                   // ),
-                  Spacer(),
-                  TheButton(
-                    text: "Registrasi",
-                    color: AppStyles.accentColor,
-                    isIcon: true,
-                    icon: FluentIcons.clipboard_edit_20_regular,
-                    onTapFunc: () {
-                      widget.navigateToChild(1);
-                    },
-                  )
+                  // Spacer(),
                 ],
               ),
             ),

@@ -417,3 +417,85 @@ List<Map<String, dynamic>> riwayat = [
     "poli": "Poli Jantung"
   },
 ];
+List<Map<String, dynamic>> listobat = [
+  {
+    "nama": "Paracetamol",
+    "keterangan": "Obat Resep",
+    "jumlah": 10,
+    "jenis": "Tablet",
+    "harga_satuan": 2000,
+    "total_harga": 20000
+  },
+  {
+    "nama": "Amoxicillin",
+    "keterangan": "Obat Resep",
+    "jumlah": 5,
+    "jenis": "Strip",
+    "harga_satuan": 15000,
+    "total_harga": 75000
+  },
+  {
+    "nama": "CTM",
+    "keterangan": "Obat Resep",
+    "jumlah": 20,
+    "jenis": "Tablet",
+    "harga_satuan": 500,
+    "total_harga": 10000
+  },
+  {
+    "nama": "Vitamin C",
+    "keterangan": "Obat Resep",
+    "jumlah": 3,
+    "jenis": "Strip",
+    "harga_satuan": 10000,
+    "total_harga": 30000
+  },
+  {
+    "nama": "Lansoprazole",
+    "keterangan": "Obat Resep",
+    "jumlah": 7,
+    "jenis": "Tablet",
+    "harga_satuan": 8000,
+    "total_harga": 56000
+  },
+  {
+    "nama": "Antalgin",
+    "keterangan": "Obat Racikan",
+    "jumlah": 10,
+    "jenis": "Pill",
+    "harga_satuan": 3000,
+    "total_harga": 30000
+  },
+  {
+    "nama": "Metformin",
+    "keterangan": "Obat Resep",
+    "jumlah": 14,
+    "jenis": "Tablet",
+    "harga_satuan": 4000,
+    "total_harga": 56000
+  },
+  {
+    "nama": "Ranitidine",
+    "keterangan": "Obat Resep",
+    "jumlah": 6,
+    "jenis": "Strip",
+    "harga_satuan": 12000,
+    "total_harga": 72000
+  },
+  {
+    "nama": "Dexamethasone",
+    "keterangan": "Obat Racikan",
+    "jumlah": 5,
+    "jenis": "Tablet",
+    "harga_satuan": 2500,
+    "total_harga": 12500
+  },
+  {
+    "nama": "Ibuprofen",
+    "keterangan": "Obat Resep",
+    "jumlah": 8,
+    "jenis": "Tablet",
+    "harga_satuan": 5000,
+    "total_harga": 40000
+  }
+];

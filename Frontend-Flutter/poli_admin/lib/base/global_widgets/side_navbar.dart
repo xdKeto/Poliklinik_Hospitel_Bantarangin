@@ -12,7 +12,8 @@ import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
-  const SideNavbar({super.key});
+  final String param;
+  const SideNavbar({super.key, required this.param});
 
   @override
   State<SideNavbar> createState() => _SideNavbarState();
@@ -20,7 +21,7 @@ class SideNavbar extends StatefulWidget {
 
 class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
-  int _selectedParent = 0;
+  late int _selectedParent;
   bool isExpanded = false;
   final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
 
@@ -29,6 +30,11 @@ class _SideNavbarState extends State<SideNavbar>
   @override
   void initState() {
     super.initState();
+    _selectedParent = widget.param == 'pasien'
+        ? 0
+        : widget.param == 'billing'
+            ? 1
+            : 2;
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
@@ -64,7 +70,6 @@ class _SideNavbarState extends State<SideNavbar>
           : RegistrasiScreen(
               onMenuPressed: toggleSidebar,
               isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
             );
     } else if (_selectedParent == 1) {
       return _selectedChild[1] == 0
@@ -76,24 +81,17 @@ class _SideNavbarState extends State<SideNavbar>
           : DetailBilling(
               onMenuPressed: toggleSidebar,
               isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
             );
     } else {
-      return _selectedChild[2] == 0
-          ? RiwayatScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(2, childIndex))
-          : DetailRiwayat(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-            );
+      return RiwayatScreen(
+          onMenuPressed: toggleSidebar,
+          isExpanded: isExpanded,
+          navigateToChild: (childIndex) => navigateToChild(2, childIndex));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Row(
         children: [
@@ -300,6 +298,13 @@ class _SideNavbarState extends State<SideNavbar>
                 setState(() {
                   _selectedParent = index;
                   _selectedChild[_selectedParent] = 0;
+                  Navigator.pushNamed(
+                      context,
+                      AppRoutes.homeScreen(_selectedParent == 0
+                          ? 'pasien'
+                          : _selectedParent == 1
+                              ? 'billing'
+                              : 'riwayat'));
                 });
               },
             ),

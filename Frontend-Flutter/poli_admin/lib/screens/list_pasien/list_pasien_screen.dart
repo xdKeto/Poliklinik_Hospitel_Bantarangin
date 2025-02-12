@@ -71,158 +71,160 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: AppStyles.backgroundColor,
-      appBar: GlobalTopBar(
-        onMenuPressed: widget.onMenuPressed,
-        title: 'List Pasien',
-        isExpanded: widget.isExpanded,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                left: 5,
-                right: 8.0,
-              ),
-              child: Row(
-                children: [
-                  TheButton(
-                    text: "Registrasi",
-                    color: AppStyles.accentColor,
-                    isIcon: true,
-                    icon: FluentIcons.clipboard_edit_20_regular,
-                    onTapFunc: () {
-                      widget.navigateToChild(1);
-                    },
-                    horiPadding: 16,
-                    vertPadding: 9,
-                    border: true,
-                    iconColor: AppStyles.accentColor,
-                    textColor: AppStyles.accentColor,
-                    borderRad: 10,
-                  ),
+    return SelectionArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.backgroundColor,
+        appBar: GlobalTopBar(
+          onMenuPressed: widget.onMenuPressed,
+          title: 'List Pasien',
+          isExpanded: widget.isExpanded,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 5,
+                  right: 8.0,
+                ),
+                child: Row(
+                  children: [
+                    TheButton(
+                      text: "Registrasi",
+                      color: AppStyles.accentColor,
+                      isIcon: true,
+                      icon: FluentIcons.clipboard_edit_20_regular,
+                      onTapFunc: () {
+                        widget.navigateToChild(1);
+                      },
+                      horiPadding: 16,
+                      vertPadding: 9,
+                      border: true,
+                      iconColor: AppStyles.accentColor,
+                      textColor: AppStyles.accentColor,
+                      borderRad: 10,
+                    ),
 
-                  SizedBox(
-                    width: screenWidth * 0.01,
-                  ),
-                  SizedBox(
-                    width: 400,
-                    // flex: widget.isExpanded ? 3 : 4,
-                    child: TextFormField(
-                      controller: controller,
-                      onChanged: onSearch,
-                      decoration: AppStyles.formBox.copyWith(
-                        hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+                    SizedBox(
+                      width: screenWidth * 0.01,
+                    ),
+                    SizedBox(
+                      width: 400,
+                      // flex: widget.isExpanded ? 3 : 4,
+                      child: TextFormField(
+                        controller: controller,
+                        onChanged: onSearch,
+                        decoration: AppStyles.formBox.copyWith(
+                          hintText: 'Search',
+                          prefixIcon: Icon(Icons.search),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: screenWidth * 0.01,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          controller.clear();
-                          filteredList = List.from(pasienList);
-                        });
-                      },
-                      icon: Icon(Icons.refresh)),
-                  // Text('Entries:  ',
-                  //     style: AppStyles.contentText.copyWith(
-                  //         color: AppStyles.primaryColor,
-                  //         fontWeight: FontWeight.bold)),
-                  // Expanded(
-                  //   child: DropdownButtonFormField<int>(
-                  //     decoration: AppStyles.formBox,
-                  //     value: rowsPerPage,
-                  //     items: [10, 25, 50, 100]
-                  //         .map((e) =>
-                  //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                  //         .toList(),
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         rowsPerPage = value!;
-                  //         print(rowsPerPage);
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
-                  // Spacer(),
-                ],
+                    SizedBox(
+                      width: screenWidth * 0.01,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            controller.clear();
+                            filteredList = List.from(pasienList);
+                          });
+                        },
+                        icon: Icon(Icons.refresh)),
+                    // Text('Entries:  ',
+                    //     style: AppStyles.contentText.copyWith(
+                    //         color: AppStyles.primaryColor,
+                    //         fontWeight: FontWeight.bold)),
+                    // Expanded(
+                    //   child: DropdownButtonFormField<int>(
+                    //     decoration: AppStyles.formBox,
+                    //     value: rowsPerPage,
+                    //     items: [10, 25, 50, 100]
+                    //         .map((e) =>
+                    //             DropdownMenuItem(value: e, child: Text('$e Rows')))
+                    //         .toList(),
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         rowsPerPage = value!;
+                    //         print(rowsPerPage);
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
+                    // Spacer(),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 12),
-            Expanded(
-              child: PaginatedDataTable2(
-                sortColumnIndex: sortColumnIndex,
-                sortAscending: sortAscending,
+              SizedBox(height: 12),
+              Expanded(
+                child: PaginatedDataTable2(
+                  sortColumnIndex: sortColumnIndex,
+                  sortAscending: sortAscending,
 
-                // style
-                headingTextStyle: AppStyles.sidebarText.copyWith(
-                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                headingRowColor: WidgetStateProperty.resolveWith(
-                    (states) => AppStyles.greyColor),
-                headingRowDecoration: BoxDecoration(
-                    // border: Border.all(),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12))),
-                dataTextStyle:
-                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
-                minWidth: 768,
-                dividerThickness: 0,
-                horizontalMargin: 12,
-                dataRowHeight: 56,
-                columnSpacing: 12,
+                  // style
+                  headingTextStyle: AppStyles.sidebarText.copyWith(
+                      fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                  headingRowColor: WidgetStateProperty.resolveWith(
+                      (states) => AppStyles.greyColor),
+                  headingRowDecoration: BoxDecoration(
+                      // border: Border.all(),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12))),
+                  dataTextStyle: AppStyles.contentText
+                      .copyWith(color: AppStyles.textColor),
+                  minWidth: 768,
+                  dividerThickness: 0,
+                  horizontalMargin: 12,
+                  dataRowHeight: 56,
+                  columnSpacing: 12,
 
-                // pagination
-                showFirstLastButtons: true,
-                renderEmptyRowsInTheEnd: false,
-                rowsPerPage: rowsPerPage,
-                availableRowsPerPage: [10, 25, 50, 100],
-                onRowsPerPageChanged: (value) {
-                  if (value != null && [10, 25, 50, 100].contains(value)) {
-                    setState(() {
-                      rowsPerPage = value;
-                    });
-                  }
-                },
+                  // pagination
+                  showFirstLastButtons: true,
+                  renderEmptyRowsInTheEnd: false,
+                  rowsPerPage: rowsPerPage,
+                  availableRowsPerPage: [10, 25, 50, 100],
+                  onRowsPerPageChanged: (value) {
+                    if (value != null && [10, 25, 50, 100].contains(value)) {
+                      setState(() {
+                        rowsPerPage = value;
+                      });
+                    }
+                  },
 
-                // sorting
-                sortArrowAlwaysVisible: true,
-                sortArrowBuilder: (bool ascending, bool sorted) {
-                  if (sorted) {
-                    return Icon(
-                      ascending
-                          ? FluentIcons.arrow_sort_up_16_regular
-                          : FluentIcons.arrow_sort_down_16_regular,
-                      size: 12,
-                    );
-                  } else {
-                    return Icon(
-                      FluentIcons.arrow_sort_16_regular,
-                      size: 12,
-                    );
-                  }
-                },
+                  // sorting
+                  sortArrowAlwaysVisible: true,
+                  sortArrowBuilder: (bool ascending, bool sorted) {
+                    if (sorted) {
+                      return Icon(
+                        ascending
+                            ? FluentIcons.arrow_sort_up_16_regular
+                            : FluentIcons.arrow_sort_down_16_regular,
+                        size: 12,
+                      );
+                    } else {
+                      return Icon(
+                        FluentIcons.arrow_sort_16_regular,
+                        size: 12,
+                      );
+                    }
+                  },
 
-                columns: [
-                  DataColumn(label: Text('No. Antrian'), onSort: onSort),
-                  DataColumn(label: Text('No. Rekam Medis')),
-                  DataColumn(label: Text('Nama Pasien'), onSort: onSort),
-                  DataColumn(label: Text('Poli Tujuan')),
-                  DataColumn(label: Center(child: Text('Status'))),
-                  DataColumn(label: Center(child: Text('Aksi'))),
-                ],
-                source:
-                    RowSource(myData: filteredList, count: filteredList.length),
+                  columns: [
+                    DataColumn(label: Text('No. Antrian'), onSort: onSort),
+                    DataColumn(label: Text('No. Rekam Medis')),
+                    DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                    DataColumn(label: Text('Poli Tujuan')),
+                    DataColumn(label: Center(child: Text('Status'))),
+                    DataColumn(label: Center(child: Text('Aksi'))),
+                  ],
+                  source: RowSource(
+                      myData: filteredList, count: filteredList.length),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -239,14 +241,20 @@ class RowSource extends DataTableSource {
   DataRow? getRow(int index) {
     if (index >= myData.length) return null;
     var data = myData[index];
-    return DataRow(cells: [
-      DataCell(Text(data['no_antrian'].toString())),
-      DataCell(Text(data['no_rekam_medis'])),
-      DataCell(Text(data['nama_pasien'])),
-      DataCell(Text(data['poli_tujuan'])),
-      DataCell(Center(child: StatusBox(status: data['status']))),
-      DataCell(Center(child: IconDropdown())),
-    ]);
+    return DataRow(
+        color: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            return Colors.white;
+          },
+        ),
+        cells: [
+          DataCell(Text(data['no_antrian'].toString())),
+          DataCell(Text(data['no_rekam_medis'])),
+          DataCell(Text(data['nama_pasien'])),
+          DataCell(Text(data['poli_tujuan'])),
+          DataCell(Center(child: StatusBox(status: data['status']))),
+          DataCell(Center(child: IconDropdown())),
+        ]);
   }
 
   @override

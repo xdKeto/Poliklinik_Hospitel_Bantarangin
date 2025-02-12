@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: AppStyles.accentColor,
                               onTapFunc: () {
                                 Navigator.pushReplacementNamed(
-                                    context, AppRoutes.homeScreen);
+                                    context, AppRoutes.homeScreen('pasien'));
                               },
                             )),
                           ],

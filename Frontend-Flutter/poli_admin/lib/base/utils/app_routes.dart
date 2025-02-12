@@ -1,4 +1,5 @@
 class AppRoutes {
-  static const homeScreen = "/home";
-  static const login = "/login";
+  static String homeScreen(String param) => "/home/$param";
+  static const String login = "/login";
+  static const String modalRiwayat = '/detail';
 }

@@ -2,9 +2,12 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
+import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
+import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class RiwayatScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
@@ -26,6 +29,40 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   int rowsPerPage = 10;
   List<Map<String, dynamic>> filteredList = [];
   final TextEditingController controller = TextEditingController();
+
+  void showCustomModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                    height: 4,
+                    width: 40,
+                    color: Colors.grey[300]), // Drag indicator
+                const SizedBox(height: 16),
+                // Add your content here
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -81,114 +118,120 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: AppStyles.backgroundColor,
-      appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
-          title: 'Riwayat Pembayaran',
-          isExpanded: widget.isExpanded),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 5, right: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 400,
-                    child: TextFormField(
-                      controller: controller,
-                      onChanged: onSearch,
-                      decoration: AppStyles.formBox.copyWith(
-                        hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+    return SelectionArea(
+      child: Scaffold(
+        backgroundColor: AppStyles.backgroundColor,
+        appBar: GlobalTopBar(
+            onMenuPressed: widget.onMenuPressed,
+            title: 'Riwayat Pembayaran',
+            isExpanded: widget.isExpanded),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 5, right: 8),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 400,
+                      child: TextFormField(
+                        controller: controller,
+                        onChanged: onSearch,
+                        decoration: AppStyles.formBox.copyWith(
+                          hintText: 'Search',
+                          prefixIcon: Icon(Icons.search),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: screenWidth * 0.01,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          controller.clear();
-                          filteredList = List.from(billingList);
-                        });
-                      },
-                      icon: Icon(Icons.refresh)),
-                  Spacer()
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Expanded(
-              child: PaginatedDataTable2(
-                  sortColumnIndex: sortColumnIndex,
-                  sortAscending: sortAscending,
-
-                  // style
-                  headingTextStyle: AppStyles.sidebarText.copyWith(
-                      fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                  // headingTextStyle: Theme.of(context).textTheme.titleMedium,
-                  headingRowColor: WidgetStateProperty.resolveWith(
-                      (states) => AppStyles.greyColor),
-                  headingRowDecoration: BoxDecoration(
-                      // border: Border.all(),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12))),
-                  dataTextStyle: AppStyles.contentText
-                      .copyWith(color: AppStyles.textColor),
-                  minWidth: 768,
-                  dividerThickness: 0,
-                  horizontalMargin: 12,
-                  dataRowHeight: 56,
-                  columnSpacing: 12,
-
-                  // pagination
-                  showFirstLastButtons: true,
-                  renderEmptyRowsInTheEnd: false,
-                  rowsPerPage: rowsPerPage,
-                  availableRowsPerPage: [10, 25, 50, 100],
-                  onRowsPerPageChanged: (value) {
-                    if (value != null && [10, 25, 50, 100].contains(value)) {
-                      setState(() {
-                        rowsPerPage = value;
-                      });
-                    }
-                  },
-
-                  // sorting
-                  sortArrowAlwaysVisible: true,
-                  sortArrowBuilder: (bool ascending, bool sorted) {
-                    if (sorted) {
-                      return Icon(
-                        ascending
-                            ? FluentIcons.arrow_sort_up_16_regular
-                            : FluentIcons.arrow_sort_down_16_regular,
-                        size: 12,
-                      );
-                    } else {
-                      return Icon(
-                        FluentIcons.arrow_sort_16_regular,
-                        size: 12,
-                      );
-                    }
-                  },
-                  columns: [
-                    DataColumn(label: Text('No.'), onSort: onSort),
-                    DataColumn(label: Text('Nama Pasien'), onSort: onSort),
-                    DataColumn(label: Text('Tanggal Pembayaran')),
-                    DataColumn(label: Text('Poli Tujuan')),
-                    DataColumn(label: Center(child: Text('Rincian'))),
+                    SizedBox(
+                      width: screenWidth * 0.01,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            controller.clear();
+                            filteredList = List.from(billingList);
+                          });
+                        },
+                        icon: Icon(Icons.refresh)),
+                    Spacer()
                   ],
-                  source: RowSource(widget.navigateToChild,
-                      myData: filteredList, count: filteredList.length)),
-            ),
-          ],
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Expanded(
+                child: PaginatedDataTable2(
+                    sortColumnIndex: sortColumnIndex,
+                    sortAscending: sortAscending,
+
+                    // style
+                    headingTextStyle: AppStyles.sidebarText.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppStyles.textColor),
+                    // headingTextStyle: Theme.of(context).textTheme.titleMedium,
+                    headingRowColor: WidgetStateProperty.resolveWith(
+                        (states) => AppStyles.greyColor),
+                    headingRowDecoration: BoxDecoration(
+                        // border: Border.all(),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12))),
+                    dataTextStyle: AppStyles.contentText
+                        .copyWith(color: AppStyles.textColor),
+                    minWidth: 768,
+                    dividerThickness: 0,
+                    horizontalMargin: 12,
+                    dataRowHeight: 56,
+                    columnSpacing: 12,
+
+                    // pagination
+                    showFirstLastButtons: true,
+                    renderEmptyRowsInTheEnd: false,
+                    rowsPerPage: rowsPerPage,
+                    availableRowsPerPage: [10, 25, 50, 100],
+                    onRowsPerPageChanged: (value) {
+                      if (value != null && [10, 25, 50, 100].contains(value)) {
+                        setState(() {
+                          rowsPerPage = value;
+                        });
+                      }
+                    },
+
+                    // sorting
+                    sortArrowAlwaysVisible: true,
+                    sortArrowBuilder: (bool ascending, bool sorted) {
+                      if (sorted) {
+                        return Icon(
+                          ascending
+                              ? FluentIcons.arrow_sort_up_16_regular
+                              : FluentIcons.arrow_sort_down_16_regular,
+                          size: 12,
+                        );
+                      } else {
+                        return Icon(
+                          FluentIcons.arrow_sort_16_regular,
+                          size: 12,
+                        );
+                      }
+                    },
+                    columns: [
+                      DataColumn(label: Text('No.')),
+                      DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                      DataColumn(label: Text('Tanggal Pembayaran')),
+                      DataColumn(label: Text('Poli Tujuan')),
+                      DataColumn(label: Center(child: Text('Rincian'))),
+                    ],
+                    source: RowSource(
+                        widget.navigateToChild,
+                        myData: filteredList,
+                        count: filteredList.length,
+                        context)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -199,32 +242,41 @@ class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
   final Function(int) navigateToChild;
+  final BuildContext context;
 
-  RowSource(this.navigateToChild, {required this.myData, required this.count});
+  RowSource(this.navigateToChild, this.context,
+      {required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
     if (index >= myData.length) return null;
     var data = myData[index];
-    return DataRow(cells: [
-      DataCell(Text((index + 1).toString())),
-      DataCell(Text(data['nama'])),
-      DataCell(Text(data['tanggal'])),
-      DataCell(Text(data['poli'])),
-      DataCell(Center(
-          child: TheButton(
-        text: "Lihat Rincian",
-        color: AppStyles.secondaryColor,
-        isIcon: true,
-        icon: Icons.menu_open_rounded,
-        onTapFunc: () {
-          navigateToChild(1);
-        },
-        border: true,
-        textColor: AppStyles.secondaryColor,
-        iconColor: AppStyles.secondaryColor,
-      ))),
-    ]);
+    return DataRow(
+        color: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            return Colors.white;
+          },
+        ),
+        cells: [
+          DataCell(Text((index + 1).toString())),
+          DataCell(Text(data['nama'])),
+          DataCell(Text(data['tanggal'])),
+          DataCell(Text(data['poli'])),
+          DataCell(Center(
+              child: TheButton(
+            text: "Lihat Rincian",
+            color: AppStyles.secondaryColor,
+            isIcon: true,
+            icon: Icons.menu_open_rounded,
+            onTapFunc: () {
+              showDialog(
+                  context: context, builder: (context) => DetailRiwayat());
+            },
+            border: true,
+            textColor: AppStyles.secondaryColor,
+            iconColor: AppStyles.secondaryColor,
+          ))),
+        ]);
   }
 
   @override

@@ -9,14 +9,8 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
 class BillingScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
-  final Function(int) navigateToChild;
   const BillingScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpanded,
-      required this.navigateToChild});
+      {super.key,});
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -74,9 +68,7 @@ class _BillingScreenState extends State<BillingScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-        onMenuPressed: widget.onMenuPressed,
         title: 'Billing',
-        isExpanded: widget.isExpanded,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -112,36 +104,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         });
                       },
                       icon: Icon(Icons.refresh)),
-                  // Text('Entries:  ',
-                  //     style: AppStyles.contentText.copyWith(
-                  //         color: AppStyles.primaryColor,
-                  //         fontWeight: FontWeight.bold)),
-                  // Expanded(
-                  //   child: DropdownButtonFormField<int>(
-                  //     decoration: AppStyles.formBox,
-                  //     value: rowsPerPage,
-                  //     items: [10, 25, 50, 100]
-                  //         .map((e) =>
-                  //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                  //         .toList(),
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         rowsPerPage = value!;
-                  //         print(rowsPerPage);
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
                   Spacer(),
-                  // TheButton(
-                  //   text: "Registrasi",
-                  //   color: AppStyles.accentColor,
-                  //   isIcon: true,
-                  //   icon: FluentIcons.clipboard_edit_20_regular,
-                  //   onTapFunc: () {
-                  //     widget.navigateToChild(1);
-                  //   },
-                  // )
                 ],
               ),
             ),
@@ -208,8 +171,7 @@ class _BillingScreenState extends State<BillingScreen> {
                     DataColumn(label: Center(child: Text('Status'))),
                     DataColumn(label: Center(child: Text('Rincian'))),
                   ],
-                  source: RowSource(widget.navigateToChild,
-                      myData: filteredList, count: filteredList.length)),
+                  source: RowSource(myData: filteredList, count: filteredList.length)),
             ),
           ],
         ),
@@ -221,9 +183,8 @@ class _BillingScreenState extends State<BillingScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
-  final Function(int) navigateToChild;
 
-  RowSource(this.navigateToChild, {required this.myData, required this.count});
+  RowSource({required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -242,7 +203,6 @@ class RowSource extends DataTableSource {
         isIcon: true,
         icon: Icons.menu_open_rounded,
         onTapFunc: () {
-          navigateToChild(1);
         },
         border: true,
         textColor: AppStyles.secondaryColor,

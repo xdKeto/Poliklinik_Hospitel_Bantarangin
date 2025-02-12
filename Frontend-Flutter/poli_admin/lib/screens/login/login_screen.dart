@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
@@ -140,8 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               text: 'Login',
                               color: AppStyles.accentColor,
                               onTapFunc: () {
-                                Navigator.pushReplacementNamed(
-                                    context, AppRoutes.homeScreen);
+                                GoRouter.of(context).go('/home/list-pasien');
                               },
                             )),
                           ],

@@ -7,14 +7,8 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
 class RiwayatScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
-  final Function(int) navigateToChild;
   const RiwayatScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpanded,
-      required this.navigateToChild});
+      {super.key,});
 
   @override
   State<RiwayatScreen> createState() => _RiwayatScreenState();
@@ -84,9 +78,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
-          title: 'Riwayat Pembayaran',
-          isExpanded: widget.isExpanded),
+          title: 'Riwayat Pembayaran',),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
@@ -185,7 +177,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     DataColumn(label: Text('Poli Tujuan')),
                     DataColumn(label: Center(child: Text('Rincian'))),
                   ],
-                  source: RowSource(widget.navigateToChild,
+                  source: RowSource(
                       myData: filteredList, count: filteredList.length)),
             ),
           ],
@@ -198,9 +190,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
-  final Function(int) navigateToChild;
 
-  RowSource(this.navigateToChild, {required this.myData, required this.count});
+  RowSource({required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -218,7 +209,6 @@ class RowSource extends DataTableSource {
         isIcon: true,
         icon: Icons.menu_open_rounded,
         onTapFunc: () {
-          navigateToChild(1);
         },
         border: true,
         textColor: AppStyles.secondaryColor,

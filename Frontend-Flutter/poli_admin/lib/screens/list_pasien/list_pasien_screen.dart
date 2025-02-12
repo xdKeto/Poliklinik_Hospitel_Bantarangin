@@ -9,14 +9,8 @@ import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
-  final Function(int) navigateToChild;
   const ListPasienScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpanded,
-      required this.navigateToChild});
+      {super.key});
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -74,9 +68,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-        onMenuPressed: widget.onMenuPressed,
         title: 'List Pasien',
-        isExpanded: widget.isExpanded,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -95,7 +87,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                     isIcon: true,
                     icon: FluentIcons.clipboard_edit_20_regular,
                     onTapFunc: () {
-                      widget.navigateToChild(1);
+                      
                     },
                     horiPadding: 16,
                     vertPadding: 9,
@@ -131,27 +123,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         });
                       },
                       icon: Icon(Icons.refresh)),
-                  // Text('Entries:  ',
-                  //     style: AppStyles.contentText.copyWith(
-                  //         color: AppStyles.primaryColor,
-                  //         fontWeight: FontWeight.bold)),
-                  // Expanded(
-                  //   child: DropdownButtonFormField<int>(
-                  //     decoration: AppStyles.formBox,
-                  //     value: rowsPerPage,
-                  //     items: [10, 25, 50, 100]
-                  //         .map((e) =>
-                  //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                  //         .toList(),
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         rowsPerPage = value!;
-                  //         print(rowsPerPage);
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
-                  // Spacer(),
                 ],
               ),
             ),

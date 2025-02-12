@@ -1,14 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
+import 'package:poli_admin/base/global_widgets/sidebar_item_box.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
-import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
-import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
-import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
@@ -20,11 +19,15 @@ class SideNavbar extends StatefulWidget {
 
 class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
-  int _selectedParent = 0;
   bool isExpanded = false;
-  final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
-
+  int _selectedIndex = 0;
   late AnimationController _animationController;
+
+  final List<String> routes = [
+    '/home/list-pasien',
+    '/home/billing',
+    '/home/riwayat-pembayaran',
+  ];
 
   @override
   void initState() {
@@ -33,6 +36,23 @@ class _SideNavbarState extends State<SideNavbar>
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
+  }
+
+  void _updateSelectedIndex() {
+    final currentPath = GoRouterState.of(context).uri.toString();
+    final index = routes.indexWhere((route) => currentPath.startsWith(route));
+    if (index != -1) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  void _onDestinationSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    GoRouter.of(context).go(routes[index]);
   }
 
   void toggleSidebar() {
@@ -46,54 +66,8 @@ class _SideNavbarState extends State<SideNavbar>
     });
   }
 
-  void navigateToChild(int parentIndex, int childIndex) {
-    setState(() {
-      _selectedParent = parentIndex;
-      _selectedChild[parentIndex] = childIndex;
-    });
-  }
-
-  Widget _getScreen() {
-    if (_selectedParent == 0) {
-      return _selectedChild[0] == 0
-          ? ListPasienScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(0, childIndex),
-            )
-          : RegistrasiScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
-            );
-    } else if (_selectedParent == 1) {
-      return _selectedChild[1] == 0
-          ? BillingScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(1, childIndex),
-            )
-          : DetailBilling(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
-            );
-    } else {
-      return _selectedChild[2] == 0
-          ? RiwayatScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(2, childIndex))
-          : DetailRiwayat(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-            );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Row(
         children: [
@@ -210,27 +184,8 @@ class _SideNavbarState extends State<SideNavbar>
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {
-                      double width = isExpanded ? 200 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 0
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "List Pasien",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
+                      return SidebarItemBox(
+                          isExpanded: isExpanded, label: 'List Pasien');
                     },
                   ),
                 ),
@@ -240,27 +195,8 @@ class _SideNavbarState extends State<SideNavbar>
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {
-                      double width = isExpanded ? 200 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 1
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "Tagihan",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
+                      return SidebarItemBox(
+                          isExpanded: isExpanded, label: 'Tagihan');
                     },
                   ),
                 ),
@@ -270,43 +206,30 @@ class _SideNavbarState extends State<SideNavbar>
                   label: AnimatedBuilder(
                     animation: _animationController,
                     builder: (context, child) {
-                      double width = isExpanded ? 250 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 2
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "Riwayat Pembayaran",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
+                      return SidebarItemBox(
+                          isExpanded: isExpanded, label: 'Riwayat Pembayaran');
                     },
                   ),
                 ),
               ],
-              selectedIndex: _selectedParent,
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _selectedParent = index;
-                  _selectedChild[_selectedParent] = 0;
-                });
-              },
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (int index) {},
             ),
           ),
-          Expanded(child: _getScreen()),
+          Expanded(child: _buildContent()),
         ],
       ),
     );
+  }
+
+  Widget _buildContent() {
+    final currentPath = GoRouterState.of(context).uri.toString();
+    if (currentPath.startsWith('/home/list-pasien')) {
+      return ListPasienScreen();
+    } else if (currentPath.startsWith('/home/billing')) {
+      return BillingScreen();
+    } else {
+      return RiwayatScreen();
+    }
   }
 }

@@ -7,10 +7,8 @@ import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class RegistrasiScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
   const RegistrasiScreen(
-      {super.key, required this.onMenuPressed, required this.isExpanded});
+      {super.key});
 
   @override
   State<RegistrasiScreen> createState() => _RegistrasiScreenState();
@@ -34,9 +32,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
-          title: 'Registrasi',
-          isExpanded: widget.isExpanded),
+          title: 'Registrasi',),
       body: Form(
         key: _formKey,
         child: Center(

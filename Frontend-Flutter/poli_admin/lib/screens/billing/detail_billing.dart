@@ -7,10 +7,8 @@ import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class DetailBilling extends StatefulWidget {
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
   const DetailBilling(
-      {super.key, required this.onMenuPressed, required this.isExpanded});
+      {super.key});
 
   @override
   State<DetailBilling> createState() => _DetailBillingState();
@@ -25,9 +23,7 @@ class _DetailBillingState extends State<DetailBilling> {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
-          title: 'Detail Billing',
-          isExpanded: widget.isExpanded),
+          title: 'Detail Billing',),
       body: Center(
         child: ListView(
           children: [

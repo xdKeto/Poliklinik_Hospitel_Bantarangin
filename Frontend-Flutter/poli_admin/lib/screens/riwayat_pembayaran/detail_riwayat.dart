@@ -16,9 +16,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
-          title: 'Rincian Pembayaran',
-          isExpanded: widget.isExpanded),
+        title: 'Rincian Pembayaran',
+      ),
       body: Center(
         child: Text('ini detail pembayaran'),
       ),

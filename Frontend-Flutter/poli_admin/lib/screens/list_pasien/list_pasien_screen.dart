@@ -105,7 +105,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                       textColor: AppStyles.accentColor,
                       borderRad: 10,
                     ),
-
                     SizedBox(
                       width: screenWidth * 0.01,
                     ),
@@ -132,32 +131,12 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                           });
                         },
                         icon: Icon(Icons.refresh)),
-                    // Text('Entries:  ',
-                    //     style: AppStyles.contentText.copyWith(
-                    //         color: AppStyles.primaryColor,
-                    //         fontWeight: FontWeight.bold)),
-                    // Expanded(
-                    //   child: DropdownButtonFormField<int>(
-                    //     decoration: AppStyles.formBox,
-                    //     value: rowsPerPage,
-                    //     items: [10, 25, 50, 100]
-                    //         .map((e) =>
-                    //             DropdownMenuItem(value: e, child: Text('$e Rows')))
-                    //         .toList(),
-                    //     onChanged: (value) {
-                    //       setState(() {
-                    //         rowsPerPage = value!;
-                    //         print(rowsPerPage);
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-                    // Spacer(),
                   ],
                 ),
               ),
               SizedBox(height: 12),
-              Expanded(
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 700),
                 child: PaginatedDataTable2(
                   sortColumnIndex: sortColumnIndex,
                   sortAscending: sortAscending,
@@ -175,6 +154,13 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                   dataTextStyle: AppStyles.contentText
                       .copyWith(color: AppStyles.textColor),
                   minWidth: 768,
+                  empty: Center(
+                    child: Text(
+                      'Tidak ada Data',
+                      style: AppStyles.subheadingText
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   dividerThickness: 0,
                   horizontalMargin: 12,
                   dataRowHeight: 56,

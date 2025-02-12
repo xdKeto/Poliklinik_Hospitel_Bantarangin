@@ -37,7 +37,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
-              // mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,60 +62,63 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 SizedBox(
                   height: 8,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            btrbText(
-                                topText: 'Nama Pasien', botText: 'John Doe'),
-                            SizedBox(
-                              width: 32,
-                            ),
-                            btrbText(
-                                topText: 'Tujuan Poliklinik',
-                                botText: 'Poli Umum'),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        btrbText(topText: 'Nomor RM', botText: 'RM2024001')
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        btrbText(
-                            topText: 'Nama Dokter', botText: '[nama dokter]'),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        btrbText(
-                            topText: 'Biaya Jasa Dokter',
-                            botText: 'Rp. 500.000'),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '01/01/2025 - 13:30',
-                          style: AppStyles.contentText,
-                        ),
-                        Text(
-                          'Admin: Lala',
-                          style: AppStyles.contentText,
-                        ),
-                      ],
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              btrbText(
+                                  topText: 'Nama Pasien', botText: 'John Doe'),
+                              SizedBox(
+                                width: 32,
+                              ),
+                              btrbText(
+                                  topText: 'Tujuan Poliklinik',
+                                  botText: 'Poli Umum'),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          btrbText(topText: 'Nomor RM', botText: 'RM2024001')
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          btrbText(
+                              topText: 'Nama Dokter', botText: '[nama dokter]'),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          btrbText(
+                              topText: 'Biaya Jasa Dokter',
+                              botText: 'Rp. 500.000'),
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '01/01/2025 - 13:30',
+                            style: AppStyles.contentText,
+                          ),
+                          Text(
+                            'Admin: Lala',
+                            style: AppStyles.contentText,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 8,

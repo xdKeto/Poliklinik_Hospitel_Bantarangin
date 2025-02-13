@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
@@ -22,6 +23,10 @@ class DetailBilling extends StatefulWidget {
 class _DetailBillingState extends State<DetailBilling> {
   final List<String> listBayar = ["Debit", "Cash", "Credit"];
   String? selectedValue;
+  var selectedDate = DateTime.now();
+  var parsedDate = DateTime.now();
+  var tanggalcontroller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -295,6 +300,7 @@ class _DetailBillingState extends State<DetailBilling> {
                               height: 12,
                             ),
                             TextFormField(
+                              controller: tanggalcontroller,
                               readOnly: true,
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(
@@ -311,6 +317,17 @@ class _DetailBillingState extends State<DetailBilling> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                 );
+
+                                if (pickedDate != null &&
+                                    pickedDate != selectedDate) {
+                                  setState(() {
+                                    selectedDate = pickedDate;
+
+                                    tanggalcontroller.text =
+                                        DateFormat('yyyy-MM-dd')
+                                            .format(selectedDate);
+                                  });
+                                }
                               },
                             ),
                           ],
@@ -328,7 +345,7 @@ class _DetailBillingState extends State<DetailBilling> {
                     InkWell(
                       onTap: () {
                         Navigator.pushReplacementNamed(
-                            context, AppRoutes.homeScreen('billing'));
+                            context, AppRoutes.homeBilling);
                       },
                       child: TheButton(
                         text: 'Kembali',

@@ -1,5 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
@@ -27,6 +30,9 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   final List<String> listGender = ["Laki-Laki", "Perempuan"];
 
   String? selectedValue;
+  var selectedDate = DateTime.now();
+  var parsedDate = DateTime.now();
+  var tanggalcontroller = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   @override
@@ -233,6 +239,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: tanggalcontroller,
                                         readOnly: true,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
@@ -250,6 +257,17 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             firstDate: DateTime(2000),
                                             lastDate: DateTime(2100),
                                           );
+
+                                          if (pickedDate != null &&
+                                              pickedDate != selectedDate) {
+                                            setState(() {
+                                              selectedDate = pickedDate;
+
+                                              tanggalcontroller.text =
+                                                  DateFormat('yyyy-MM-dd')
+                                                      .format(selectedDate);
+                                            });
+                                          }
                                         },
                                       ),
                                     ],
@@ -383,8 +401,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(context,
-                                        AppRoutes.homeScreen('pasien'));
+                                    Navigator.pushReplacementNamed(
+                                        context, AppRoutes.homePasien);
                                   },
                                   child: TheButton(
                                     text: 'Kembali',
@@ -400,7 +418,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                   width: 8,
                                 ),
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => ConfirmAlert(
+                                              icon: FluentIcons.print_16_filled,
+                                              boldText: 'Cetak Antrian?',
+                                              yesText: 'cetak',
+                                              yesFunc: () {},
+                                            ));
+                                  },
                                   child: TheButton(
                                     text: 'Cetak Antrian',
                                     color: AppStyles.accentColor,

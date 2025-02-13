@@ -200,30 +200,36 @@ class RowSource extends DataTableSource {
   DataRow? getRow(int index) {
     if (index >= myData.length) return null;
     var data = myData[index];
-    return DataRow(color: WidgetStateProperty.resolveWith<Color?>(
+    return DataRow(
+        color: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {
             return Colors.white;
           },
-        ), cells: [
-      DataCell(Text((index + 1).toString())),
-      DataCell(Text(data['no_rekam_medis'])),
-      DataCell(Text(data['nama_pasien'])),
-      DataCell(Text(data['poli_tujuan'])),
-      DataCell(Center(child: StatusBox(status: data['status']))),
-      DataCell(Center(
-          child: TheButton(
-        text: "Lihat Rincian",
-        color: AppStyles.secondaryColor,
-        isIcon: true,
-        icon: Icons.menu_open_rounded,
-        onTapFunc: () {
-          navigateToChild(1);
-        },
-        border: true,
-        textColor: AppStyles.secondaryColor,
-        iconColor: AppStyles.secondaryColor,
-      ))),
-    ]);
+        ),
+        cells: [
+          DataCell(Text((index + 1).toString())),
+          DataCell(Text(data['no_rekam_medis'])),
+          DataCell(Text(data['nama_pasien'])),
+          DataCell(Text(data['poli_tujuan'])),
+          DataCell(Center(child: StatusBox(status: data['status']))),
+          DataCell(Center(
+              child: InkWell(
+            onTap: () {
+              navigateToChild(1);
+            },
+            child: TheButton(
+              text: "Lihat Rincian",
+              color: AppStyles.secondaryColor,
+              isIcon: true,
+              icon: Icons.menu_open_rounded,
+              border: true,
+              textColor: AppStyles.secondaryColor,
+              iconColor: AppStyles.secondaryColor,
+              horiPadding: 8.5,
+              vertPadding: 4,
+            ),
+          ))),
+        ]);
   }
 
   @override

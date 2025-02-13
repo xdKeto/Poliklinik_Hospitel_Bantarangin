@@ -380,31 +380,37 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                TheButton(
-                                  text: 'Kembali',
-                                  color: AppStyles.greyBtnColor,
-                                  iconColor: AppStyles.greyBtnColor,
-                                  textColor: AppStyles.greyBtnColor,
-                                  border: true,
-                                  isIcon: true,
-                                  icon: Icons.arrow_back,
-                                  onTapFunc: () {
-                                    Navigator.pushReplacementNamed(
+                                InkWell(
+                                  onTap:  () {
+                                                                        Navigator.pushReplacementNamed(
                                         context, AppRoutes.homeScreen('pasien'));
                                   },
+                                  child: TheButton(
+                                    text: 'Kembali',
+                                    color: AppStyles.greyBtnColor,
+                                    iconColor: AppStyles.greyBtnColor,
+                                    textColor: AppStyles.greyBtnColor,
+                                    border: true,
+                                    isIcon: true,
+                                    icon: Icons.arrow_back,
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 8,
                                 ),
-                                TheButton(
-                                  text: 'Cetak Antrian',
-                                  color: AppStyles.accentColor,
-                                  iconColor: AppStyles.accentColor,
-                                  textColor: AppStyles.accentColor,
-                                  border: true,
-                                  isIcon: true,
-                                  icon: Icons.print,
-                                  onTapFunc: () {},
+                                InkWell(
+                                  onTap: () {
+                                    
+                                  },
+                                  child: TheButton(
+                                    text: 'Cetak Antrian',
+                                    color: AppStyles.accentColor,
+                                    iconColor: AppStyles.accentColor,
+                                    textColor: AppStyles.accentColor,
+                                    border: true,
+                                    isIcon: true,
+                                    icon: Icons.print,
+                                  ),
                                 ),
                               ],
                             ),

@@ -90,20 +90,22 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 ),
                 child: Row(
                   children: [
-                    TheButton(
-                      text: "Registrasi",
-                      color: AppStyles.accentColor,
-                      isIcon: true,
-                      icon: FluentIcons.clipboard_edit_20_regular,
-                      onTapFunc: () {
+                    InkWell(
+                      onTap: () {
                         widget.navigateToChild(1);
                       },
-                      horiPadding: 16,
-                      vertPadding: 9,
-                      border: true,
-                      iconColor: AppStyles.accentColor,
-                      textColor: AppStyles.accentColor,
-                      borderRad: 10,
+                      child: TheButton(
+                        text: "Registrasi",
+                        color: AppStyles.accentColor,
+                        isIcon: true,
+                        icon: FluentIcons.clipboard_edit_20_regular,
+                        horiPadding: 13,
+                        vertPadding: 7,
+                        border: true,
+                        iconColor: AppStyles.accentColor,
+                        textColor: AppStyles.accentColor,
+                        borderRad: 10,
+                      ),
                     ),
                     SizedBox(
                       width: screenWidth * 0.01,
@@ -135,8 +137,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 ),
               ),
               SizedBox(height: 12),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 700),
+              Expanded(
                 child: PaginatedDataTable2(
                   sortColumnIndex: sortColumnIndex,
                   sortAscending: sortAscending,
@@ -147,7 +148,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                   headingRowColor: WidgetStateProperty.resolveWith(
                       (states) => AppStyles.greyColor),
                   headingRowDecoration: BoxDecoration(
-                      // border: Border.all(),
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
                           topRight: Radius.circular(12))),

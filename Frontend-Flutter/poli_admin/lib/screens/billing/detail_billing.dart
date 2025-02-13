@@ -1,5 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
@@ -323,40 +325,67 @@ class _DetailBillingState extends State<DetailBilling> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TheButton(
-                      text: 'Kembali',
-                      color: AppStyles.greyBtnColor,
-                      iconColor: AppStyles.greyBtnColor,
-                      textColor: AppStyles.greyBtnColor,
-                      border: true,
-                      isIcon: true,
-                      icon: Icons.arrow_back,
-                      onTapFunc: () {
+                    InkWell(
+                      onTap: () {
                         Navigator.pushReplacementNamed(
                             context, AppRoutes.homeScreen('billing'));
                       },
+                      child: TheButton(
+                        text: 'Kembali',
+                        color: AppStyles.greyBtnColor,
+                        iconColor: AppStyles.greyBtnColor,
+                        textColor: AppStyles.greyBtnColor,
+                        border: true,
+                        isIcon: true,
+                        icon: Icons.arrow_back,
+                      ),
                     ),
                     SizedBox(
                       width: 8,
                     ),
-                    TheButton(
-                      text: 'Assign Pembayaran',
-                      color: AppStyles.primaryColor,
-                      textColor: AppStyles.primaryColor,
-                      border: true,
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => ConfirmAlert(
+                                  icon: FluentIcons.info_12_regular,
+                                  boldText: 'Assign Pembayaran?',
+                                  italicText:
+                                      'Tagihan akan dicatat lunas oleh sistem',
+                                  yesText: 'assign',
+                                  yesFunc: () {},
+                                ));
+                      },
+                      child: TheButton(
+                        text: 'Assign Pembayaran',
+                        color: AppStyles.primaryColor,
+                        textColor: AppStyles.primaryColor,
+                        border: true,
+                      ),
                     ),
                     SizedBox(
                       width: 8,
                     ),
-                    TheButton(
-                      text: 'Cetak Tagihan',
-                      color: AppStyles.accentColor,
-                      iconColor: AppStyles.accentColor,
-                      textColor: AppStyles.accentColor,
-                      border: true,
-                      isIcon: true,
-                      icon: Icons.print,
-                      onTapFunc: () {},
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => ConfirmAlert(
+                                  icon: FluentIcons.print_16_filled,
+                                  boldText: 'Cetak Tagihan?',
+                                  yesText: 'cetak',
+                                  yesFunc: () {},
+                                ));
+                      },
+                      child: TheButton(
+                        text: 'Cetak Tagihan',
+                        color: AppStyles.accentColor,
+                        iconColor: AppStyles.accentColor,
+                        textColor: AppStyles.accentColor,
+                        border: true,
+                        isIcon: true,
+                        icon: Icons.print,
+                      ),
                     ),
                   ],
                 ),

@@ -136,13 +136,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Expanded(
-                                child: TheButton(
-                              text: 'Login',
-                              color: AppStyles.accentColor,
-                              onTapFunc: () {
+                                child: InkWell(
+                              onTap: () {
                                 Navigator.pushReplacementNamed(
                                     context, AppRoutes.homeScreen('pasien'));
                               },
+                              child: TheButton(
+                                text: 'Login',
+                                color: AppStyles.accentColor,
+                              ),
                             )),
                           ],
                         )

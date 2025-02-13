@@ -2,12 +2,10 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
-import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 class RiwayatScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
@@ -263,18 +261,22 @@ class RowSource extends DataTableSource {
           DataCell(Text(data['tanggal'])),
           DataCell(Text(data['poli'])),
           DataCell(Center(
-              child: TheButton(
-            text: "Lihat Rincian",
-            color: AppStyles.secondaryColor,
-            isIcon: true,
-            icon: Icons.menu_open_rounded,
-            onTapFunc: () {
+              child: InkWell(
+            onTap: () {
               showDialog(
                   context: context, builder: (context) => DetailRiwayat());
             },
-            border: true,
-            textColor: AppStyles.secondaryColor,
-            iconColor: AppStyles.secondaryColor,
+            child: TheButton(
+              text: "Lihat Rincian",
+              color: AppStyles.secondaryColor,
+              isIcon: true,
+              icon: Icons.menu_open_rounded,
+              border: true,
+              textColor: AppStyles.secondaryColor,
+              iconColor: AppStyles.secondaryColor,
+              horiPadding: 8.5,
+              vertPadding: 4,
+            ),
           ))),
         ]);
   }

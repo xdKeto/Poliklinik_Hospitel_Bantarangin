@@ -8,12 +8,12 @@ import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
 import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
-import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
+  final bool isExpand;
   final String param;
-  const SideNavbar({super.key, required this.param});
+  const SideNavbar({super.key, required this.param, this.isExpand = false});
 
   @override
   State<SideNavbar> createState() => _SideNavbarState();
@@ -22,7 +22,7 @@ class SideNavbar extends StatefulWidget {
 class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
   late int _selectedParent;
-  bool isExpanded = false;
+  late bool isExpanded;
   final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
 
   late AnimationController _animationController;
@@ -30,6 +30,7 @@ class _SideNavbarState extends State<SideNavbar>
   @override
   void initState() {
     super.initState();
+    isExpanded = widget.isExpand;
     _selectedParent = widget.param == 'pasien'
         ? 0
         : widget.param == 'billing'
@@ -39,6 +40,19 @@ class _SideNavbarState extends State<SideNavbar>
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('isExpand')) {
+      setState(() {
+        isExpanded = args['isExpand'];
+      });
+    }
   }
 
   void toggleSidebar() {
@@ -299,12 +313,16 @@ class _SideNavbarState extends State<SideNavbar>
                   _selectedParent = index;
                   _selectedChild[_selectedParent] = 0;
                   Navigator.pushNamed(
-                      context,
-                      AppRoutes.homeScreen(_selectedParent == 0
+                    context,
+                    AppRoutes.homeScreen(
+                      _selectedParent == 0
                           ? 'pasien'
                           : _selectedParent == 1
                               ? 'billing'
-                              : 'riwayat'));
+                              : 'riwayat',
+                    ),
+                    arguments: {'isExpand': isExpanded},
+                  );
                 });
               },
             ),

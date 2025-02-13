@@ -11,12 +11,12 @@ import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
-  final bool isExpanded;
+  final bool isExpand;
   final Function(int) navigateToChild;
   const ListPasienScreen(
       {super.key,
       required this.onMenuPressed,
-      required this.isExpanded,
+      required this.isExpand,
       required this.navigateToChild});
 
   @override
@@ -98,7 +98,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
         appBar: GlobalTopBar(
           onMenuPressed: widget.onMenuPressed,
           title: 'List Pasien',
-          isExpanded: widget.isExpanded,
+          isExpanded: widget.isExpand,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),

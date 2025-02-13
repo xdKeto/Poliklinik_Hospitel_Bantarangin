@@ -78,7 +78,7 @@ class _SideNavbarState extends State<SideNavbar>
       return _selectedChild[0] == 0
           ? ListPasienScreen(
               onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
+              isExpand: isExpanded,
               navigateToChild: (childIndex) => navigateToChild(0, childIndex),
             )
           : RegistrasiScreen(
@@ -89,7 +89,7 @@ class _SideNavbarState extends State<SideNavbar>
       return _selectedChild[1] == 0
           ? BillingScreen(
               onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
+              isExpand: isExpanded,
               navigateToChild: (childIndex) => navigateToChild(1, childIndex),
             )
           : DetailBilling(
@@ -99,7 +99,7 @@ class _SideNavbarState extends State<SideNavbar>
     } else {
       return RiwayatScreen(
           onMenuPressed: toggleSidebar,
-          isExpanded: isExpanded,
+          isExpand: isExpanded,
           navigateToChild: (childIndex) => navigateToChild(2, childIndex));
     }
   }

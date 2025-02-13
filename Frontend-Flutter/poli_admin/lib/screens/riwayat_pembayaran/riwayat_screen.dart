@@ -10,12 +10,12 @@ import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 
 class RiwayatScreen extends StatefulWidget {
   final VoidCallback onMenuPressed;
-  final bool isExpanded;
+  final bool isExpand;
   final Function(int) navigateToChild;
   const RiwayatScreen(
       {super.key,
       required this.onMenuPressed,
-      required this.isExpanded,
+      required this.isExpand,
       required this.navigateToChild});
 
   @override
@@ -112,7 +112,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
         appBar: GlobalTopBar(
             onMenuPressed: widget.onMenuPressed,
             title: 'Riwayat Pembayaran',
-            isExpanded: widget.isExpanded),
+            isExpanded: widget.isExpand),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
           child: Column(

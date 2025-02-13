@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         final args = settings.arguments as Map<String, dynamic>?;
 
-        // Extract only the base route path (without query params)
         final uri = Uri.parse(settings.name!);
         final basePath = uri.path;
 
@@ -45,12 +44,11 @@ class MyApp extends StatelessWidget {
             return null;
         }
 
-        // Return a route with no animation
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (_, __, ___) => page,
-          transitionDuration: Duration.zero, // No animation duration
-          reverseTransitionDuration: Duration.zero, // No animation duration
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         );
       },
     );

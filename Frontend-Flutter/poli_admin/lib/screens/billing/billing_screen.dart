@@ -139,7 +139,7 @@ class _BillingScreenState extends State<BillingScreen> {
                     SizedBox(
                       width: 300,
                       child: DropdownButtonFormField2<String>(
-                        isExpanded: true,
+                        // isExpanded: true,
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Poliklinik --'),
                         items: listPoli

@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -23,6 +24,15 @@ class ListPasienScreen extends StatefulWidget {
 }
 
 class _ListPasienScreenState extends State<ListPasienScreen> {
+  final List<String> listStatus = [
+    '-- Semua Status --',
+    'Menunggu',
+    'Konsultasi',
+    'Selesai'
+  ];
+
+  String? selectedStatus;
+
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
@@ -33,6 +43,17 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   void initState() {
     super.initState();
     filteredList = List.from(pasienList);
+  }
+
+  void applyFilters() {
+    setState(() {
+      filteredList = pasienList.where((pasien) {
+        bool statusMatch = selectedStatus == "-- Semua Status --" ||
+            selectedStatus == null ||
+            pasien['status'] == selectedStatus;
+        return statusMatch;
+      }).toList();
+    });
   }
 
   void onSort(int columnIndex, bool ascending) {
@@ -120,6 +141,27 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                           hintText: 'Search',
                           prefixIcon: Icon(Icons.search),
                         ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: screenWidth * 0.01,
+                    ),
+                    SizedBox(
+                      width: 300,
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: AppStyles.formBox,
+                        hint: Text('-- Pilih Status --'),
+                        items: listStatus
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                          applyFilters();
+                        },
                       ),
                     ),
                     SizedBox(

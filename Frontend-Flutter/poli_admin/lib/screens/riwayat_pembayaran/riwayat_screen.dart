@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -22,45 +23,23 @@ class RiwayatScreen extends StatefulWidget {
 }
 
 class _RiwayatScreenState extends State<RiwayatScreen> {
+  final List<String> listPoli = [
+    "-- Semua Poli --",
+    "Poli Gigi",
+    "Poli Anak",
+    "Poli Umum",
+    "Poli Saraf",
+    "Poli Mata",
+    "Poli Kulit",
+  ];
+
+  String? selectedPoli;
+
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
   List<Map<String, dynamic>> filteredList = [];
   final TextEditingController controller = TextEditingController();
-
-  void showCustomModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                    height: 4,
-                    width: 40,
-                    color: Colors.grey[300]), // Drag indicator
-                const SizedBox(height: 16),
-                // Add your content here
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -99,6 +78,17 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 
         return ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
       });
+    });
+  }
+
+  void applyFilters() {
+    setState(() {
+      filteredList = riwayat.where((pasien) {
+        bool poliMatch = selectedPoli == "-- Semua Poli --" ||
+            selectedPoli == null ||
+            pasien['poli'] == selectedPoli;
+        return poliMatch;
+      }).toList();
     });
   }
 
@@ -145,14 +135,25 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     SizedBox(
                       width: screenWidth * 0.01,
                     ),
-                    IconButton(
-                        onPressed: () {
+                    // filter by poliklinik
+                    SizedBox(
+                      width: 300,
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: AppStyles.formBox,
+                        hint: Text('-- Pilih Poliklinik --'),
+                        items: listPoli
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
+                        onChanged: (value) {
                           setState(() {
-                            controller.clear();
-                            filteredList = List.from(billingList);
+                            selectedPoli = value;
                           });
+                          applyFilters();
                         },
-                        icon: Icon(Icons.refresh)),
+                      ),
+                    ),
                     Spacer()
                   ],
                 ),
@@ -169,11 +170,9 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     headingTextStyle: AppStyles.sidebarText.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppStyles.textColor),
-                    // headingTextStyle: Theme.of(context).textTheme.titleMedium,
                     headingRowColor: WidgetStateProperty.resolveWith(
                         (states) => AppStyles.greyColor),
                     headingRowDecoration: BoxDecoration(
-                        // border: Border.all(),
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12))),

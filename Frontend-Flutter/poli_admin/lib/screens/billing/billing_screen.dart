@@ -1,8 +1,8 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
-// import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/billing/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
@@ -23,6 +23,22 @@ class BillingScreen extends StatefulWidget {
 }
 
 class _BillingScreenState extends State<BillingScreen> {
+  final List<String> listPoli = [
+    "-- Semua Poli --",
+    "Poli Gigi",
+    "Poli Anak",
+    "Poli Umum",
+    "Poli Saraf",
+    "Poli Mata",
+    "Poli Kulit",
+  ];
+
+  final List<String> listStatus = ['-- Semua Status --', 'Belum', 'Sudah'];
+
+  String? selectedPoli;
+  String? selectedStatus;
+  String searchQuery = "";
+
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
@@ -33,6 +49,33 @@ class _BillingScreenState extends State<BillingScreen> {
   void initState() {
     super.initState();
     filteredList = List.from(billingList);
+  }
+
+  void onSearch(String query) {
+    setState(() {
+      filteredList = billingList.where((pasien) {
+        String namaPasien = pasien['nama_pasien'];
+        String noRekamMedis = pasien['no_rekam_medis'];
+        String searchQuery = query.toLowerCase();
+
+        return namaPasien.toLowerCase().contains(searchQuery) ||
+            noRekamMedis.toLowerCase().contains(searchQuery);
+      }).toList();
+    });
+  }
+
+  void applyFilters() {
+    setState(() {
+      filteredList = billingList.where((pasien) {
+        bool poliMatch = selectedPoli == "-- Semua Poli --" ||
+            selectedPoli == null ||
+            pasien['poli_tujuan'] == selectedPoli;
+        bool statusMatch = selectedStatus == "-- Semua Status --" ||
+            selectedStatus == null ||
+            pasien['status'] == selectedStatus;
+        return poliMatch && statusMatch;
+      }).toList();
+    });
   }
 
   void onSort(int columnIndex, bool ascending) {
@@ -52,19 +95,6 @@ class _BillingScreenState extends State<BillingScreen> {
                 : 'nama_pasien'];
         return ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
       });
-    });
-  }
-
-  void onSearch(String query) {
-    setState(() {
-      filteredList = billingList.where((pasien) {
-        String namaPasien = pasien['nama_pasien'];
-        String noRekamMedis = pasien['no_rekam_medis'];
-        String searchQuery = query.toLowerCase();
-
-        return namaPasien.toString().contains(searchQuery) ||
-            noRekamMedis.toString().contains(searchQuery);
-      }).toList();
     });
   }
 
@@ -90,6 +120,7 @@ class _BillingScreenState extends State<BillingScreen> {
                 ),
                 child: Row(
                   children: [
+                    // search
                     SizedBox(
                       width: 400,
                       child: TextFormField(
@@ -104,14 +135,47 @@ class _BillingScreenState extends State<BillingScreen> {
                     SizedBox(
                       width: screenWidth * 0.01,
                     ),
-                    IconButton(
-                        onPressed: () {
+                    // filter by poliklinik
+                    SizedBox(
+                      width: 300,
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: AppStyles.formBox,
+                        hint: Text('-- Pilih Poliklinik --'),
+                        items: listPoli
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
+                        onChanged: (value) {
                           setState(() {
-                            controller.clear();
-                            filteredList = List.from(billingList);
+                            selectedPoli = value;
                           });
+                          applyFilters();
                         },
-                        icon: Icon(Icons.refresh)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: screenWidth * 0.01,
+                    ),
+                    // filter by status
+                    SizedBox(
+                      width: 300,
+                      child: DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: AppStyles.formBox,
+                        hint: Text('-- Pilih Status --'),
+                        items: listStatus
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value;
+                          });
+                          applyFilters();
+                        },
+                      ),
+                    ),
                     Spacer(),
                   ],
                 ),

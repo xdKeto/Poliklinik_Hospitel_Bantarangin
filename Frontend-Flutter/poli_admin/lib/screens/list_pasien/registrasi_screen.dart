@@ -62,7 +62,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                           width: 650,
                           child: DropdownButtonFormField2<String>(
                             isExpanded: true,
-                            decoration: AppStyles.formBox,
+                            decoration: AppStyles.formBox
+                                .copyWith(contentPadding: EdgeInsets.zero),
                             hint: Text('-- Pilih Poliklinik --'),
                             items: listPoli
                                 .map((item) => DropdownMenuItem<String>(
@@ -381,9 +382,9 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 InkWell(
-                                  onTap:  () {
-                                                                        Navigator.pushReplacementNamed(
-                                        context, AppRoutes.homeScreen('pasien'));
+                                  onTap: () {
+                                    Navigator.pushReplacementNamed(context,
+                                        AppRoutes.homeScreen('pasien'));
                                   },
                                   child: TheButton(
                                     text: 'Kembali',
@@ -399,9 +400,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                   width: 8,
                                 ),
                                 InkWell(
-                                  onTap: () {
-                                    
-                                  },
+                                  onTap: () {},
                                   child: TheButton(
                                     text: 'Cetak Antrian',
                                     color: AppStyles.accentColor,

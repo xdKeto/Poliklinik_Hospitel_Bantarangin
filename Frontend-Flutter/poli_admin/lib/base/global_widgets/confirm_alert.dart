@@ -64,28 +64,32 @@ class ConfirmAlert extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TheButton(
-                  text: 'Tidak',
-                  color: AppStyles.greyBtnColor,
-                  textColor: AppStyles.greyBtnColor,
-                  border: true,
-                  onTapFunc: () {
+                InkWell(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  vertPadding: 8.5,
-                  horiPadding: 32.5,
+                  child: TheButton(
+                    text: 'Tidak',
+                    color: AppStyles.greyBtnColor,
+                    textColor: AppStyles.greyBtnColor,
+                    border: true,
+                    vertPadding: 8.5,
+                    horiPadding: 32.5,
+                  ),
                 ),
                 SizedBox(
                   width: 16,
                 ),
-                TheButton(
-                  text: 'Ya, $yesText',
-                  color: AppStyles.accentColor,
-                  textColor: AppStyles.accentColor,
-                  border: true,
-                  onTapFunc: yesFunc,
-                  vertPadding: 8.5,
-                  horiPadding: 32.5,
+                InkWell(
+                  onTap: () {},
+                  child: TheButton(
+                    text: 'Ya, $yesText',
+                    color: AppStyles.accentColor,
+                    textColor: AppStyles.accentColor,
+                    border: true,
+                    vertPadding: 8.5,
+                    horiPadding: 32.5,
+                  ),
                 ),
               ],
             ),

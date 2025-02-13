@@ -312,7 +312,8 @@ class _SideNavbarState extends State<SideNavbar>
                 setState(() {
                   _selectedParent = index;
                   _selectedChild[_selectedParent] = 0;
-                  Navigator.pushNamed(
+
+                  Navigator.pushReplacementNamed(
                     context,
                     AppRoutes.homeScreen(
                       _selectedParent == 0

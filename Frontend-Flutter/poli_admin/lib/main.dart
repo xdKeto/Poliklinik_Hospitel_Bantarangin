@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Poliklinik Hospitel Bantarangin',
       // home: SideNavbar(),
       home: LoginScreen(),
-      initialRoute: "/login",
+      initialRoute: AppRoutes.login,
       routes: {
         AppRoutes.homeScreen('pasien'): (context) {
           final args = ModalRoute.of(context)!.settings.arguments

@@ -9,14 +9,10 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
 class BillingScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
+    final VoidCallback? toggleSidebar;
   final bool isExpand;
-  final Function(int) navigateToChild;
   const BillingScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpand,
-      required this.navigateToChild});
+      {super.key, this.toggleSidebar, required this.isExpand,});
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -105,9 +101,9 @@ class _BillingScreenState extends State<BillingScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
+          isExpand: widget.isExpand,
           title: 'Billing',
-          isExpanded: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -242,7 +238,7 @@ class _BillingScreenState extends State<BillingScreen> {
                       DataColumn(label: Center(child: Text('Status'))),
                       DataColumn(label: Center(child: Text('Rincian'))),
                     ],
-                    source: RowSource(widget.navigateToChild,
+                    source: RowSource(
                         myData: filteredList, count: filteredList.length)),
               ),
             ],
@@ -256,9 +252,8 @@ class _BillingScreenState extends State<BillingScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
-  final Function(int) navigateToChild;
 
-  RowSource(this.navigateToChild, {required this.myData, required this.count});
+  RowSource({required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -279,7 +274,6 @@ class RowSource extends DataTableSource {
           DataCell(Center(
               child: InkWell(
             onTap: () {
-              navigateToChild(1);
             },
             child: TheButton(
               text: "Lihat Rincian",

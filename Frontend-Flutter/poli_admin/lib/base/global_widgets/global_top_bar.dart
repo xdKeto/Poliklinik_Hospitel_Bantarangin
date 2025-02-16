@@ -3,13 +3,15 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 
 class GlobalTopBar extends StatelessWidget implements PreferredSize {
   final String title;
-  final VoidCallback onMenuPressed;
-  final bool isExpanded;
-  const GlobalTopBar(
-      {super.key,
-      required this.onMenuPressed,
-      required this.title,
-      required this.isExpanded});
+  final VoidCallback? toggleSidebar;
+  final bool isExpand;
+
+  const GlobalTopBar({
+    super.key,
+    required this.title,
+    this.toggleSidebar,
+    required this.isExpand,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +31,12 @@ class GlobalTopBar extends StatelessWidget implements PreferredSize {
             child: ScaleTransition(scale: animation, child: child),
           ),
           child: Icon(
-            isExpanded ? Icons.close : Icons.menu,
-            key: ValueKey(isExpanded),
+            isExpand ? Icons.close : Icons.menu,
+            key: ValueKey(isExpand),
           ),
         ),
         color: Colors.white,
-        onPressed: onMenuPressed,
+        onPressed: toggleSidebar,
       ),
       actions: [
         Text(

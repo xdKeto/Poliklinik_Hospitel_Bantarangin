@@ -10,14 +10,13 @@ import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
+  final VoidCallback? toggleSidebar;
   final bool isExpand;
-  final Function(int) navigateToChild;
-  const ListPasienScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpand,
-      required this.navigateToChild});
+  const ListPasienScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+  });
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -96,9 +95,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
           title: 'List Pasien',
-          isExpanded: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
+          isExpand: widget.isExpand,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -112,9 +111,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 child: Row(
                   children: [
                     InkWell(
-                      onTap: () {
-                        widget.navigateToChild(1);
-                      },
+                      onTap: () {},
                       child: TheButton(
                         text: "Registrasi",
                         color: AppStyles.accentColor,

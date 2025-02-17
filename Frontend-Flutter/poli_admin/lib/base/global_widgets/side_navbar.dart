@@ -22,8 +22,8 @@ class SideNavbar extends StatefulWidget {
 
 class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
-  int _selectedParent = 0;
-  bool isExpanded = false;
+  late int _selectedParent;
+  late bool isExpanded;
   final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
 
   late AnimationController _animationController;
@@ -49,6 +49,19 @@ class _SideNavbarState extends State<SideNavbar>
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('isExpand')) {
+      setState(() {
+        isExpanded = args['isExpand'];
+      });
+    }
+  }
+
   void toggleSidebar() {
     setState(() {
       isExpanded = !isExpanded;
@@ -72,36 +85,29 @@ class _SideNavbarState extends State<SideNavbar>
       return _selectedChild[0] == 0
           ? ListPasienScreen(
               onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
+              isExpand: isExpanded,
               navigateToChild: (childIndex) => navigateToChild(0, childIndex),
             )
           : RegistrasiScreen(
               onMenuPressed: toggleSidebar,
               isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
             );
     } else if (_selectedParent == 1) {
       return _selectedChild[1] == 0
           ? BillingScreen(
               onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
+              isExpand: isExpanded,
               navigateToChild: (childIndex) => navigateToChild(1, childIndex),
             )
           : DetailBilling(
               onMenuPressed: toggleSidebar,
               isExpanded: isExpanded,
-              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
             );
     } else {
-      return _selectedChild[2] == 0
-          ? RiwayatScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(2, childIndex))
-          : DetailRiwayat(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-            );
+      return RiwayatScreen(
+          onMenuPressed: toggleSidebar,
+          isExpand: isExpanded,
+          navigateToChild: (childIndex) => navigateToChild(2, childIndex));
     }
   }
 
@@ -256,6 +262,18 @@ class _SideNavbarState extends State<SideNavbar>
                 setState(() {
                   _selectedParent = index;
                   _selectedChild[_selectedParent] = 0;
+
+                  Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.homeScreen(
+                      _selectedParent == 0
+                          ? 'pasien'
+                          : _selectedParent == 1
+                              ? 'billing'
+                              : 'riwayat',
+                    ),
+                    arguments: {'isExpand': isExpanded},
+                  );
                 });
               },
             ),

@@ -42,8 +42,13 @@ dependencies:
   dropdown_button2: ^2.3.9
   modal_bottom_sheet: ^3.0.0
   animated_icon: ^0.0.9
+<<<<<<< HEAD
   go_router: ^14.8.0
   provider: ^6.1.2
+=======
+  wolt_modal_sheet: ^0.11.0
+  intl: ^0.20.2
+>>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
 
 dev_dependencies:
   flutter_test:

@@ -8,10 +8,13 @@ import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
+import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
-  const SideNavbar({super.key});
+  final bool isExpand;
+  final String param;
+  const SideNavbar({super.key, required this.param, this.isExpand = false});
 
   @override
   State<SideNavbar> createState() => _SideNavbarState();
@@ -19,8 +22,10 @@ class SideNavbar extends StatefulWidget {
 
 class _SideNavbarState extends State<SideNavbar>
     with SingleTickerProviderStateMixin {
+  int _selectedParent = 0;
   bool isExpanded = false;
-  int _selectedIndex = 0;
+  final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
+
   late AnimationController _animationController;
 
   final List<String> routes = [
@@ -32,27 +37,16 @@ class _SideNavbarState extends State<SideNavbar>
   @override
   void initState() {
     super.initState();
+    isExpanded = widget.isExpand;
+    _selectedParent = widget.param == 'pasien'
+        ? 0
+        : widget.param == 'billing'
+            ? 1
+            : 2;
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
-  }
-
-  void _updateSelectedIndex() {
-    final currentPath = GoRouterState.of(context).uri.toString();
-    final index = routes.indexWhere((route) => currentPath.startsWith(route));
-    if (index != -1) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
-  }
-
-  void _onDestinationSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    GoRouter.of(context).go(routes[index]);
   }
 
   void toggleSidebar() {
@@ -64,6 +58,51 @@ class _SideNavbarState extends State<SideNavbar>
         _animationController.reverse();
       }
     });
+  }
+
+  void navigateToChild(int parentIndex, int childIndex) {
+    setState(() {
+      _selectedParent = parentIndex;
+      _selectedChild[parentIndex] = childIndex;
+    });
+  }
+
+  Widget _getScreen() {
+    if (_selectedParent == 0) {
+      return _selectedChild[0] == 0
+          ? ListPasienScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            )
+          : RegistrasiScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(0, childIndex),
+            );
+    } else if (_selectedParent == 1) {
+      return _selectedChild[1] == 0
+          ? BillingScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            )
+          : DetailBilling(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              // navigateToChild: (childIndex) => navigateToChild(1, childIndex),
+            );
+    } else {
+      return _selectedChild[2] == 0
+          ? RiwayatScreen(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+              navigateToChild: (childIndex) => navigateToChild(2, childIndex))
+          : DetailRiwayat(
+              onMenuPressed: toggleSidebar,
+              isExpanded: isExpanded,
+            );
+    }
   }
 
   @override
@@ -212,8 +251,13 @@ class _SideNavbarState extends State<SideNavbar>
                   ),
                 ),
               ],
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (int index) {},
+              selectedIndex: _selectedParent,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedParent = index;
+                  _selectedChild[_selectedParent] = 0;
+                });
+              },
             ),
           ),
           Expanded(child: _buildContent()),

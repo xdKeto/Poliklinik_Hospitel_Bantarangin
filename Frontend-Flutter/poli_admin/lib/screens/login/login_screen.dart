@@ -137,12 +137,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Expanded(
+<<<<<<< HEAD
                                 child: TheButton(
                               text: 'Login',
                               color: AppStyles.accentColor,
                               onTapFunc: () {
                                 GoRouter.of(context).go('/home/list-pasien');
+=======
+                                child: InkWell(
+                              onTap: () {
+                                Navigator.pushReplacementNamed(
+                                    context, AppRoutes.homeScreen('pasien'));
+>>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
                               },
+                              child: TheButton(
+                                text: 'Login',
+                                color: AppStyles.accentColor,
+                              ),
                             )),
                           ],
                         )

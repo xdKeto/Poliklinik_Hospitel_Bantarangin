@@ -11,8 +11,9 @@ import 'package:poli_admin/dummy/data.dart';
 class BillingScreen extends StatefulWidget {
     final VoidCallback? toggleSidebar;
   final bool isExpand;
+  final Function(int) navigateToPage;
   const BillingScreen(
-      {super.key, this.toggleSidebar, required this.isExpand,});
+      {super.key, this.toggleSidebar, required this.isExpand, required this.navigateToPage,});
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -238,7 +239,7 @@ class _BillingScreenState extends State<BillingScreen> {
                       DataColumn(label: Center(child: Text('Status'))),
                       DataColumn(label: Center(child: Text('Rincian'))),
                     ],
-                    source: RowSource(
+                    source: RowSource(widget.navigateToPage,
                         myData: filteredList, count: filteredList.length)),
               ),
             ],
@@ -252,8 +253,9 @@ class _BillingScreenState extends State<BillingScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
+  final Function(int) navigateToPage;
 
-  RowSource({required this.myData, required this.count});
+  RowSource(this.navigateToPage, {required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -274,6 +276,7 @@ class RowSource extends DataTableSource {
           DataCell(Center(
               child: InkWell(
             onTap: () {
+              navigateToPage(4);
             },
             child: TheButton(
               text: "Lihat Rincian",

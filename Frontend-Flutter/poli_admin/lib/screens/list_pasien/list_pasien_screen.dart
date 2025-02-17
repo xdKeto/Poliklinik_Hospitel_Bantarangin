@@ -12,10 +12,12 @@ import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 class ListPasienScreen extends StatefulWidget {
   final VoidCallback? toggleSidebar;
   final bool isExpand;
+  final Function(int) navigateToPage;
   const ListPasienScreen({
     super.key,
     this.toggleSidebar,
     required this.isExpand,
+    required this.navigateToPage,
   });
 
   @override
@@ -111,7 +113,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 child: Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        widget.navigateToPage(3);
+                      },
                       child: TheButton(
                         text: "Registrasi",
                         color: AppStyles.accentColor,

@@ -5,7 +5,9 @@ import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
+import 'package:poli_admin/screens/billing/detail_billing.dart';
 import 'package:poli_admin/screens/list_pasien/list_pasien_screen.dart';
+import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
@@ -23,8 +25,26 @@ class _SideNavbarState extends State<SideNavbar> {
   int _selectedIndex = 0;
   bool _isExpanded = false;
 
+  List<Widget> pages = [];
+
+  
+
+  void toggleSidebar() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
+  void navigateToPage(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    pageController.jumpToPage(index);
+  }
+
   @override
   void initState() {
+    super.initState();
     sideMenu.addListener((index) {
       setState(() {
         _selectedIndex = index;
@@ -32,13 +52,33 @@ class _SideNavbarState extends State<SideNavbar> {
       pageController.jumpToPage(index);
     });
 
-    super.initState();
-  }
+    pages = [
+      ListPasienScreen(
+        toggleSidebar: toggleSidebar,
+        isExpand: _isExpanded,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      BillingScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      RiwayatScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+      ),
+      RegistrasiScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      DetailBilling(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+    ];
 
-  void toggleSidebar() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-    });
   }
 
   @override
@@ -170,20 +210,7 @@ class _SideNavbarState extends State<SideNavbar> {
           Expanded(
               child: PageView(
             controller: pageController,
-            children: [
-              ListPasienScreen(
-                toggleSidebar: toggleSidebar,
-                isExpand: _isExpanded,
-              ),
-              BillingScreen(
-                toggleSidebar: toggleSidebar,
-                isExpand: _isExpanded,
-              ),
-              RiwayatScreen(
-                toggleSidebar: toggleSidebar,
-                isExpand: _isExpanded,
-              )
-            ],
+            children: pages,
           ))
         ],
       ),

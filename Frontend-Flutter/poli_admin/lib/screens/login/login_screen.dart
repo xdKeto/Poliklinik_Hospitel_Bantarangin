@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: InkWell(
                               onTap: () {
                                 Navigator.pushReplacementNamed(
-                                    context, AppRoutes.homeScreen('pasien'));
+                                    context, AppRoutes.dashboard);
                               },
                               child: TheButton(
                                 text: 'Login',

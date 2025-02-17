@@ -7,14 +7,18 @@ import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
-import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class DetailBilling extends StatefulWidget {
   final VoidCallback? toggleSidebar;
   final bool isExpand;
-  const DetailBilling(
-      {super.key, this.toggleSidebar, required this.isExpand,});
+  final Function(int) navigateToPage;
+  const DetailBilling({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+    required this.navigateToPage,
+  });
 
   @override
   State<DetailBilling> createState() => _DetailBillingState();
@@ -36,7 +40,8 @@ class _DetailBillingState extends State<DetailBilling> {
         appBar: GlobalTopBar(
           toggleSidebar: widget.toggleSidebar,
           isExpand: widget.isExpand,
-            title: 'Detail Billing',),
+          title: 'Detail Billing',
+        ),
         body: Center(
           child: ListView(
             children: [
@@ -344,8 +349,7 @@ class _DetailBillingState extends State<DetailBilling> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.pushReplacementNamed(
-                            context, AppRoutes.homeBilling);
+                        widget.navigateToPage(1);
                       },
                       child: TheButton(
                         text: 'Kembali',

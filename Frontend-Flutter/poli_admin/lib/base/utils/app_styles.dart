@@ -31,7 +31,6 @@ class AppStyles {
   static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
 
   static InputDecoration formBox = InputDecoration(
-    
     filled: true,
     fillColor: AppStyles.inputBox,
     enabledBorder: OutlineInputBorder(
@@ -61,6 +60,7 @@ class AppStyles {
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(borderRad),
+      border: Border.all(color: color, width: 2),
     );
   }
 

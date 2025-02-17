@@ -1,8 +1,10 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/billing/billing_screen.dart';
 import 'package:poli_admin/screens/billing/detail_billing.dart';
@@ -27,11 +29,36 @@ class _SideNavbarState extends State<SideNavbar> {
 
   List<Widget> pages = [];
 
-  
-
   void toggleSidebar() {
     setState(() {
       _isExpanded = !_isExpanded;
+
+      pages = [
+        ListPasienScreen(
+          toggleSidebar: toggleSidebar,
+          isExpand: _isExpanded,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        BillingScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        RiwayatScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+        ),
+        RegistrasiScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        DetailBilling(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+      ];
     });
   }
 
@@ -78,7 +105,6 @@ class _SideNavbarState extends State<SideNavbar> {
         navigateToPage: (index) => navigateToPage(index),
       ),
     ];
-
   }
 
   @override
@@ -155,7 +181,22 @@ class _SideNavbarState extends State<SideNavbar> {
             footer: Padding(
               padding: EdgeInsets.all(16),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => ConfirmAlert(
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText: 'Apakah anda yakin\ningin keluar?',
+                            yesText: 'keluar',
+                            yesFunc: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              );
+                            },
+                            color: AppStyles.redColor,
+                          ));
+                },
                 child: _isExpanded
                     ? SizedBox(
                         width: _isExpanded ? 2000 : 0,

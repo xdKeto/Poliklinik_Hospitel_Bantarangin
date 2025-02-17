@@ -9,10 +9,13 @@ import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 
 class RiwayatScreen extends StatefulWidget {
-    final VoidCallback? toggleSidebar;
+  final VoidCallback? toggleSidebar;
   final bool isExpand;
-  const RiwayatScreen(
-      {super.key, this.toggleSidebar, required this.isExpand,});
+  const RiwayatScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+  });
 
   @override
   State<RiwayatScreen> createState() => _RiwayatScreenState();
@@ -108,7 +111,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
         appBar: GlobalTopBar(
           isExpand: widget.isExpand,
           toggleSidebar: widget.toggleSidebar,
-            title: 'Riwayat Pembayaran',),
+          title: 'Riwayat Pembayaran',
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
           child: Column(
@@ -235,8 +239,7 @@ class RowSource extends DataTableSource {
   final int count;
   final BuildContext context;
 
-  RowSource(this.context,
-      {required this.myData, required this.count});
+  RowSource(this.context, {required this.myData, required this.count});
 
   @override
   DataRow? getRow(int index) {
@@ -257,7 +260,9 @@ class RowSource extends DataTableSource {
               child: InkWell(
             onTap: () {
               showDialog(
-                  context: context, builder: (context) => DetailRiwayat());
+                  barrierDismissible: true,
+                  context: context,
+                  builder: (context) => DetailRiwayat());
             },
             child: TheButton(
               text: "Lihat Rincian",

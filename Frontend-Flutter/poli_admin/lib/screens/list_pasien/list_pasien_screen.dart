@@ -127,6 +127,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         iconColor: AppStyles.accentColor,
                         textColor: AppStyles.accentColor,
                         borderRad: 10,
+                          hoverIcon: FluentIcons.clipboard_edit_20_filled,
                       ),
                     ),
                     SizedBox(

@@ -8,13 +8,15 @@ class ConfirmAlert extends StatelessWidget {
   final String italicText;
   final String yesText;
   final VoidCallback? yesFunc;
+  final Color? color;
   const ConfirmAlert(
       {super.key,
       required this.icon,
       required this.boldText,
       this.italicText = '',
       required this.yesText,
-      this.yesFunc});
+      this.yesFunc,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class ConfirmAlert extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppStyles.accentColor,
+              color: color ?? AppStyles.accentColor,
               size: 80,
             ),
             SizedBox(
@@ -41,6 +43,7 @@ class ConfirmAlert extends StatelessWidget {
               boldText,
               style:
                   AppStyles.headingText.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
             italicText == ''
                 ? SizedBox(
@@ -81,11 +84,11 @@ class ConfirmAlert extends StatelessWidget {
                   width: 16,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: yesFunc,
                   child: TheButton(
                     text: 'Ya, $yesText',
-                    color: AppStyles.accentColor,
-                    textColor: AppStyles.accentColor,
+                    color: color ?? AppStyles.accentColor,
+                    textColor: color ?? AppStyles.accentColor,
                     border: true,
                     vertPadding: 8.5,
                     horiPadding: 32.5,

@@ -26,16 +26,16 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   @override
   Widget build(BuildContext context) {
-    return SelectionArea(
-      child: Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            width: 1000,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
+    return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 1000,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SelectionArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -175,8 +175,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 )
               ],
             ),
-          )),
-    );
+          ),
+        ));
   }
 }
 

@@ -144,6 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: TheButton(
                                 text: 'Login',
                                 color: AppStyles.accentColor,
+                                textColor: Colors.black,
+                                hoverable: false,
                               ),
                             )),
                           ],

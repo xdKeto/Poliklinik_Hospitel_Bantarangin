@@ -250,6 +250,7 @@ class _SideNavbarState extends State<SideNavbar> {
           ),
           Expanded(
               child: PageView(
+            physics: NeverScrollableScrollPhysics(),
             controller: pageController,
             children: pages,
           ))

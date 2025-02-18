@@ -53,7 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           decoration:
                               AppStyles.buttonBox2(AppStyles.primaryColor, 12),
                           padding: EdgeInsets.all(8),
-                          child: Center(child: Icon(Icons.logout)),
+                          child: Center(
+                              child: Icon(
+                            Icons.logout,
+                            color: AppStyles.primaryColor,
+                          )),
                         ),
                       )
                     ],

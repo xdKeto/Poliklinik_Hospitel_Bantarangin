@@ -2,6 +2,8 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_suster/base/global_widgets/icon_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
+import 'package:poli_suster/screens/input/input_screening.dart';
+import 'package:poli_suster/screens/rincian/rincian_pasien.dart';
 import 'package:tab_container/tab_container.dart';
 
 class HomeTabs extends StatefulWidget {
@@ -34,7 +36,7 @@ class _HomeTabsState extends State<HomeTabs>
         borderRadius: BorderRadius.circular(6),
         tabBorderRadius: BorderRadius.circular(6),
         tabMaxLength: 250,
-        curve: Curves.easeIn,
+        curve: Curves.easeInOut,
         transitionBuilder: (child, animation) {
           animation = CurvedAnimation(curve: Curves.easeIn, parent: animation);
           return SlideTransition(
@@ -73,15 +75,11 @@ class _HomeTabsState extends State<HomeTabs>
                   color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
         ],
         children: [
-          Center(
-            child: Text('Rincian'),
-          ),
+          RincianPasien(),
           Center(
             child: Text('Riwayat'),
           ),
-          Center(
-            child: Text('Input'),
-          ),
+          InputScreening()
         ],
       ),
     );

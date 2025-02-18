@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppStyles.backgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
+        child: ListView(
           children: [
             SizedBox(
               height: 16,

@@ -31,19 +31,18 @@ class AppStyles {
   static TextStyle titleText = TextStyle(fontFamily: 'Inter', fontSize: 30);
 
   static InputDecoration formBox = InputDecoration(
-    filled: true,
-    fillColor: AppStyles.inputBox,
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: AppStyles.greyColor2),
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black),
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    // isDense: true,
-    // contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 6)
-  );
+      filled: true,
+      fillColor: AppStyles.inputBox,
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: AppStyles.greyColor2),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      // isDense: true,
+      contentPadding: EdgeInsets.all(8));
 
   static BoxDecoration whiteBox = BoxDecoration(
       borderRadius: BorderRadius.circular(6),

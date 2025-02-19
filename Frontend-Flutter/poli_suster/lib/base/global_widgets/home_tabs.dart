@@ -4,6 +4,7 @@ import 'package:poli_suster/base/global_widgets/icon_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/screens/input/input_screening.dart';
 import 'package:poli_suster/screens/rincian/rincian_pasien.dart';
+import 'package:poli_suster/screens/riwayat/riwayat_screening.dart';
 import 'package:tab_container/tab_container.dart';
 
 class HomeTabs extends StatefulWidget {
@@ -31,57 +32,49 @@ class _HomeTabsState extends State<HomeTabs>
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: TabContainer(
-        borderRadius: BorderRadius.circular(6),
-        tabBorderRadius: BorderRadius.circular(6),
-        tabMaxLength: 250,
-        curve: Curves.easeInOut,
-        transitionBuilder: (child, animation) {
-          animation = CurvedAnimation(curve: Curves.easeIn, parent: animation);
-          return SlideTransition(
-            position: Tween(
-              begin: const Offset(0.2, 0.0),
-              end: const Offset(0.0, 0.0),
-            ).animate(animation),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-          );
-        },
-        color: Colors.white,
-        tabs: [
-          IconText(
-              icon: FluentIcons.clipboard_bullet_list_16_regular,
-              isIcon: true,
-              iconColor: AppStyles.primaryColor,
-              text: 'Rincian Pasien',
-              style: AppStyles.subheadingText.copyWith(
-                  color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
-          IconText(
-              icon: Icons.history,
-              isIcon: true,
-              iconColor: AppStyles.primaryColor,
-              text: 'Riwayat Screening',
-              style: AppStyles.subheadingText.copyWith(
-                  color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
-          IconText(
-              icon: FluentIcons.clipboard_arrow_right_16_regular,
-              isIcon: true,
-              iconColor: AppStyles.primaryColor,
-              text: 'Input Screening',
-              style: AppStyles.subheadingText.copyWith(
-                  color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
-        ],
-        children: [
-          RincianPasien(),
-          Center(
-            child: Text('Riwayat'),
+    return TabContainer(
+      borderRadius: BorderRadius.circular(6),
+      tabBorderRadius: BorderRadius.circular(6),
+      tabMaxLength: 250,
+      curve: Curves.easeInOut,
+      transitionBuilder: (child, animation) {
+        animation = CurvedAnimation(curve: Curves.easeIn, parent: animation);
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(0.2, 0.0),
+            end: const Offset(0.0, 0.0),
+          ).animate(animation),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
           ),
-          InputScreening()
-        ],
-      ),
+        );
+      },
+      color: Colors.white,
+      tabs: [
+        IconText(
+            icon: FluentIcons.clipboard_bullet_list_16_regular,
+            isIcon: true,
+            iconColor: AppStyles.primaryColor,
+            text: 'Rincian Pasien',
+            style: AppStyles.subheadingText.copyWith(
+                color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
+        IconText(
+            icon: Icons.history,
+            isIcon: true,
+            iconColor: AppStyles.primaryColor,
+            text: 'Riwayat Screening',
+            style: AppStyles.subheadingText.copyWith(
+                color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
+        IconText(
+            icon: FluentIcons.clipboard_arrow_right_16_regular,
+            isIcon: true,
+            iconColor: AppStyles.primaryColor,
+            text: 'Input Screening',
+            style: AppStyles.subheadingText.copyWith(
+                color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
+      ],
+      children: [RincianPasien(), RiwayatScreening(), InputScreening()],
     );
   }
 }

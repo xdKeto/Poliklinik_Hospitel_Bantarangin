@@ -1,4 +1,6 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/screens/input/data_pasien.dart';
@@ -369,7 +371,15 @@ class _InputScreeningState extends State<InputScreening> {
                 width: 16,
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => ConfirmAlert(
+                          icon: FluentIcons.error_circle_12_regular,
+                          boldText:
+                              'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                          yesText: 'simpan'));
+                },
                 child: TheButton(
                   text: 'Simpan',
                   color: AppStyles.accentColor,

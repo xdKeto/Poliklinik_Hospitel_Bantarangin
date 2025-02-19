@@ -9,44 +9,48 @@ class DataPasien extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(vertical: 16),
       decoration: AppStyles.whiteBox,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                btrbText(topText: 'Nama Pasien', botText: 'John Doe'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Tempat Lahir', botText: 'Surabaya'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Tanggal Lahir', botText: '2/18/2025'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Nomor KTP/NIK', botText: '3201021405980001'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Nomor HP', botText: '081243567891'),
-                SizedBox(
-                  width: 32,
-                ),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  btrbText(topText: 'Nama Pasien', botText: 'John Doe'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Tempat Lahir', botText: 'Surabaya'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Tanggal Lahir', botText: '2/18/2025'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(
+                      topText: 'Nomor KTP/NIK', botText: '3201021405980001'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Nomor HP', botText: '081243567891'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -54,27 +58,30 @@ class DataPasien extends StatelessWidget {
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 400,
-                  child: btrbText(
-                      topText: 'Alamat Rumah',
-                      botText:
-                          'Jl. Contoh Raya No. 99, Sukamaju, Damai Sejahtera, Kota Bahagia, 12345, Indonesia'),
-                ),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
-                SizedBox(
-                  width: 32,
-                ),
-                btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
-                SizedBox(
-                  width: 32,
-                ),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 400,
+                    child: btrbText(
+                        topText: 'Alamat Rumah',
+                        botText:
+                            'Jl. Contoh Raya No. 99, Sukamaju, Damai Sejahtera, Kota Bahagia, 12345, Indonesia'),
+                  ),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
+                  SizedBox(
+                    width: 32,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

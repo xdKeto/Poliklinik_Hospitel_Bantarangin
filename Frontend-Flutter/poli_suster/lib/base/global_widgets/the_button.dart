@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_suster/base/utils/app_styles.dart';
 
 class TheButton extends StatefulWidget {
   final String text;
@@ -27,7 +27,8 @@ class TheButton extends StatefulWidget {
     this.textColor = Colors.black,
     this.iconColor = Colors.black,
     this.border = false,
-    this.hoverIcon, this.hoverable = true,
+    this.hoverIcon,
+    this.hoverable = true,
   });
 
   @override
@@ -46,8 +47,7 @@ class _TheButtonState extends State<TheButton> {
         padding: EdgeInsets.symmetric(
             horizontal: widget.horiPadding, vertical: widget.vertPadding),
         decoration: isHovered
-            ? AppStyles.buttonBox(
-                widget.color, widget.borderRad)
+            ? AppStyles.buttonBox(widget.color, widget.borderRad)
             : widget.border
                 ? AppStyles.buttonBox2(widget.color, widget.borderRad)
                 : AppStyles.buttonBox(widget.color, widget.borderRad),
@@ -61,7 +61,7 @@ class _TheButtonState extends State<TheButton> {
                         : widget.icon,
                     color: isHovered ? Colors.white : widget.iconColor,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Text(
                     widget.text,
                     style: AppStyles.contentText.copyWith(
@@ -76,7 +76,11 @@ class _TheButtonState extends State<TheButton> {
                   widget.text,
                   style: AppStyles.contentText.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: widget.hoverable ? isHovered ? Colors.white : widget.textColor :  widget.textColor,
+                    color: widget.hoverable
+                        ? isHovered
+                            ? Colors.white
+                            : widget.textColor
+                        : widget.textColor,
                   ),
                 ),
               ),

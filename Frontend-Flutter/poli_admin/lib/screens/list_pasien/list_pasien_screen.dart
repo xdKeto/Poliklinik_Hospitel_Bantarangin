@@ -10,14 +10,15 @@ import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
-  final VoidCallback onMenuPressed;
+  final VoidCallback? toggleSidebar;
   final bool isExpand;
-  final Function(int) navigateToChild;
-  const ListPasienScreen(
-      {super.key,
-      required this.onMenuPressed,
-      required this.isExpand,
-      required this.navigateToChild});
+  final Function(int) navigateToPage;
+  const ListPasienScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+    required this.navigateToPage,
+  });
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -96,9 +97,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
           title: 'List Pasien',
-          isExpanded: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
+          isExpand: widget.isExpand,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -113,7 +114,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        widget.navigateToChild(1);
+                        widget.navigateToPage(3);
                       },
                       child: TheButton(
                         text: "Registrasi",
@@ -126,6 +127,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         iconColor: AppStyles.accentColor,
                         textColor: AppStyles.accentColor,
                         borderRad: 10,
+                          hoverIcon: FluentIcons.clipboard_edit_20_filled,
                       ),
                     ),
                     SizedBox(

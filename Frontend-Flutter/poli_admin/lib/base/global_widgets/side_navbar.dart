@@ -1,5 +1,7 @@
+import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
@@ -11,324 +13,247 @@ import 'package:poli_admin/screens/list_pasien/registrasi_screen.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/riwayat_screen.dart';
 
 class SideNavbar extends StatefulWidget {
-  final bool isExpand;
-  final String param;
-  const SideNavbar({super.key, required this.param, this.isExpand = false});
+  const SideNavbar({
+    super.key,
+  });
 
   @override
   State<SideNavbar> createState() => _SideNavbarState();
 }
 
-class _SideNavbarState extends State<SideNavbar>
-    with SingleTickerProviderStateMixin {
-  late int _selectedParent;
-  late bool isExpanded;
-  final Map<int, int> _selectedChild = {0: 0, 1: 0, 2: 0};
+class _SideNavbarState extends State<SideNavbar> {
+  PageController pageController = PageController();
+  SideMenuController sideMenu = SideMenuController();
+  int _selectedIndex = 0;
+  bool _isExpanded = false;
 
-  late AnimationController _animationController;
+  List<Widget> pages = [];
+
+  void toggleSidebar() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+
+      pages = [
+        ListPasienScreen(
+          toggleSidebar: toggleSidebar,
+          isExpand: _isExpanded,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        BillingScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        RiwayatScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+        ),
+        RegistrasiScreen(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+        DetailBilling(
+          isExpand: _isExpanded,
+          toggleSidebar: toggleSidebar,
+          navigateToPage: (index) => navigateToPage(index),
+        ),
+      ];
+    });
+  }
+
+  void navigateToPage(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    pageController.jumpToPage(index);
+  }
 
   @override
   void initState() {
     super.initState();
-    isExpanded = widget.isExpand;
-    _selectedParent = widget.param == 'pasien'
-        ? 0
-        : widget.param == 'billing'
-            ? 1
-            : 2;
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args != null && args.containsKey('isExpand')) {
+    sideMenu.addListener((index) {
       setState(() {
-        isExpanded = args['isExpand'];
+        _selectedIndex = index;
       });
-    }
-  }
-
-  void toggleSidebar() {
-    setState(() {
-      isExpanded = !isExpanded;
-      if (isExpanded) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
+      pageController.jumpToPage(index);
     });
-  }
 
-  void navigateToChild(int parentIndex, int childIndex) {
-    setState(() {
-      _selectedParent = parentIndex;
-      _selectedChild[parentIndex] = childIndex;
-    });
-  }
-
-  Widget _getScreen() {
-    if (_selectedParent == 0) {
-      return _selectedChild[0] == 0
-          ? ListPasienScreen(
-              onMenuPressed: toggleSidebar,
-              isExpand: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(0, childIndex),
-            )
-          : RegistrasiScreen(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-            );
-    } else if (_selectedParent == 1) {
-      return _selectedChild[1] == 0
-          ? BillingScreen(
-              onMenuPressed: toggleSidebar,
-              isExpand: isExpanded,
-              navigateToChild: (childIndex) => navigateToChild(1, childIndex),
-            )
-          : DetailBilling(
-              onMenuPressed: toggleSidebar,
-              isExpanded: isExpanded,
-            );
-    } else {
-      return RiwayatScreen(
-          onMenuPressed: toggleSidebar,
-          isExpand: isExpanded,
-          navigateToChild: (childIndex) => navigateToChild(2, childIndex));
-    }
+    pages = [
+      ListPasienScreen(
+        toggleSidebar: toggleSidebar,
+        isExpand: _isExpanded,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      BillingScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      RiwayatScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+      ),
+      RegistrasiScreen(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+      DetailBilling(
+        isExpand: _isExpanded,
+        toggleSidebar: toggleSidebar,
+        navigateToPage: (index) => navigateToPage(index),
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            width: isExpanded ? 270 : 72,
-            child: NavigationRail(
-              useIndicator: true,
-              indicatorColor: Colors.white,
-              indicatorShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              extended: isExpanded,
+          SideMenu(
+            controller: sideMenu,
+            alwaysShowFooter: true,
+            style: SideMenuStyle(
               backgroundColor: AppStyles.primaryColor,
-              unselectedIconTheme:
-                  IconThemeData(color: Colors.white, opacity: 1),
-              unselectedLabelTextStyle:
-                  AppStyles.sidebarText.copyWith(color: Colors.white),
-              selectedIconTheme: IconThemeData(color: AppStyles.primaryColor),
-              selectedLabelTextStyle: AppStyles.sidebarText.copyWith(
+              openSideMenuWidth: 270,
+              compactSideMenuWidth: 72,
+              displayMode: _isExpanded
+                  ? SideMenuDisplayMode.open
+                  : SideMenuDisplayMode.compact,
+              selectedColor: Colors.white,
+              selectedTitleTextStyle: AppStyles.sidebarText.copyWith(
                   color: AppStyles.primaryColor, fontWeight: FontWeight.w600),
-              minExtendedWidth: 150,
-              leading: Column(
-                children: [
-                  isExpanded
-                      ? Padding(
-                          padding: EdgeInsets.only(bottom: 16.0, top: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                AppMedia.logoRS,
-                                width: 45,
-                                height: 45,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(width: 8),
-                              Opacity(
-                                opacity: isExpanded ? 1.0 : 0.0,
-                                child: Text(
-                                  'Hospitel\nBantarangin',
-                                  style: AppStyles.tambahanText.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Padding(
-                          padding: EdgeInsets.only(bottom: 16, top: 8),
-                          child: Image.asset(
-                            AppMedia.logoRS,
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.contain,
-                          )),
-                  Divider(
-                    thickness: 2,
-                    color: Colors.white,
-                    // height: 16,
-                  )
-                ],
-              ),
-              trailing: Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, AppRoutes.login);
-                        },
-                        child: isExpanded
-                            ? AnimatedBuilder(
-                                animation: _animationController,
-                                builder: (context, child) {
-                                  double width = isExpanded ? 2000 : 0;
-                                  return SizedBox(
-                                    width: width,
-                                    child: Opacity(
-                                      opacity: isExpanded ? 1.0 : 0.0,
-                                      child: IconText(
-                                          icon: Icons.logout,
-                                          text: 'Logout',
-                                          isIcon: true,
-                                          style: AppStyles.sidebarText.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600),
-                                          iconColor: Colors.white),
-                                    ),
-                                  );
-                                },
-                              )
-                            : IconText(
-                                icon: Icons.logout,
-                                isIcon: false,
-                                iconColor: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              destinations: [
-                NavigationRailDestination(
-                  icon: Icon(FluentIcons.contact_card_16_regular),
-                  selectedIcon: Icon(FluentIcons.contact_card_16_filled),
-                  label: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      double width = isExpanded ? 200 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 0
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "List Pasien",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(FluentIcons.receipt_16_regular),
-                  selectedIcon: Icon(FluentIcons.receipt_16_filled),
-                  label: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      double width = isExpanded ? 200 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 1
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "Tagihan",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(FluentIcons.history_16_regular),
-                  selectedIcon: Icon(FluentIcons.history_16_filled),
-                  label: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      double width = isExpanded ? 250 : 0;
-                      return SizedBox(
-                        width: width,
-                        child: Opacity(
-                          opacity: isExpanded ? 1.0 : 0.0,
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: _selectedParent == 2
-                                  ? Colors.white
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              "Riwayat Pembayaran",
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: false,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-              selectedIndex: _selectedParent,
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _selectedParent = index;
-                  _selectedChild[_selectedParent] = 0;
-
-                  Navigator.pushReplacementNamed(
-                    context,
-                    AppRoutes.homeScreen(
-                      _selectedParent == 0
-                          ? 'pasien'
-                          : _selectedParent == 1
-                              ? 'billing'
-                              : 'riwayat',
-                    ),
-                    arguments: {'isExpand': isExpanded},
-                  );
-                });
-              },
+              selectedIconColor: AppStyles.primaryColor,
+              unselectedIconColor: Colors.white,
+              unselectedTitleTextStyle: AppStyles.sidebarText
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+              itemOuterPadding:
+                  EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+              itemInnerSpacing: 12,
+              itemBorderRadius: BorderRadius.circular(0),
             ),
+            title: Column(
+              children: [
+                _isExpanded
+                    ? Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AppMedia.logoRS,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.contain,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Hospitel\nBantarangin',
+                              style: AppStyles.tambahanText.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
+                              softWrap: false,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                        child: Image.asset(
+                          AppMedia.logoRS,
+                          width: 45,
+                          height: 45,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                Divider(
+                  thickness: 2,
+                  color: Colors.white,
+                )
+              ],
+            ),
+            footer: Padding(
+              padding: EdgeInsets.all(16),
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => ConfirmAlert(
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText: 'Apakah anda yakin\ningin keluar?',
+                            yesText: 'keluar',
+                            yesFunc: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              );
+                            },
+                            color: AppStyles.redColor,
+                          ));
+                },
+                child: _isExpanded
+                    ? SizedBox(
+                        width: _isExpanded ? 2000 : 0,
+                        child: Opacity(
+                          opacity: _isExpanded ? 1.0 : 0.0,
+                          child: IconText(
+                              icon: Icons.logout,
+                              text: 'Logout',
+                              isIcon: true,
+                              style: AppStyles.sidebarText.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
+                              iconColor: Colors.white),
+                        ),
+                      )
+                    : IconText(
+                        icon: Icons.logout,
+                        isIcon: false,
+                        iconColor: Colors.white),
+              ),
+            ),
+            items: [
+              SideMenuItem(
+                  title: 'List Pasien',
+                  onTap: (index, _) {
+                    sideMenu.changePage(index);
+                  },
+                  icon: Icon(_selectedIndex == 0
+                      ? FluentIcons.contact_card_16_filled
+                      : FluentIcons.contact_card_16_regular)),
+              SideMenuItem(
+                  title: 'List Billing',
+                  onTap: (index, _) {
+                    sideMenu.changePage(index);
+                  },
+                  icon: Icon(_selectedIndex == 1
+                      ? FluentIcons.receipt_16_filled
+                      : FluentIcons.receipt_16_regular)),
+              SideMenuItem(
+                  title: 'Riwayat Pembayaran',
+                  onTap: (index, _) {
+                    sideMenu.changePage(index);
+                  },
+                  icon: Icon(_selectedIndex == 2
+                      ? FluentIcons.history_16_filled
+                      : FluentIcons.history_16_regular)),
+            ],
           ),
-          Expanded(child: _getScreen()),
+          VerticalDivider(
+            width: 0,
+          ),
+          Expanded(
+              child: PageView(
+            physics: NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children: pages,
+          ))
         ],
       ),
     );

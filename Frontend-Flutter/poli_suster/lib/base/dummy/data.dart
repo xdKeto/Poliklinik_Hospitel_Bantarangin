@@ -2,7 +2,7 @@ List<Map<String, dynamic>> listRiwayat = [
   {
     "tanggal": "2025-02-01",
     "tensi_darah": "120/80",
-    "berat_badan": 70,
+    "berat_badan": 70.0,
     "tinggi_badan": 175,
     "suhu_tubuh": 36.5,
     "gula_darah": 90,
@@ -13,7 +13,7 @@ List<Map<String, dynamic>> listRiwayat = [
   {
     "tanggal": "2025-02-02",
     "tensi_darah": "118/76",
-    "berat_badan": 71,
+    "berat_badan": 71.0,
     "tinggi_badan": 175,
     "suhu_tubuh": 36.6,
     "gula_darah": 95,
@@ -35,7 +35,7 @@ List<Map<String, dynamic>> listRiwayat = [
   {
     "tanggal": "2025-02-04",
     "tensi_darah": "130/88",
-    "berat_badan": 72,
+    "berat_badan": 72.0,
     "tinggi_badan": 175,
     "suhu_tubuh": 37.0,
     "gula_darah": 110,
@@ -57,7 +57,7 @@ List<Map<String, dynamic>> listRiwayat = [
   {
     "tanggal": "2025-02-06",
     "tensi_darah": "140/90",
-    "berat_badan": 73,
+    "berat_badan": 73.0,
     "tinggi_badan": 175,
     "suhu_tubuh": 37.2,
     "gula_darah": 120,
@@ -68,7 +68,7 @@ List<Map<String, dynamic>> listRiwayat = [
   {
     "tanggal": "2025-02-07",
     "tensi_darah": "110/70",
-    "berat_badan": 70,
+    "berat_badan": 70.0,
     "tinggi_badan": 175,
     "suhu_tubuh": 36.5,
     "gula_darah": 88,

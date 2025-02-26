@@ -70,144 +70,152 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     width: screenWidth * 0.3,
                     height: screenHeight * 0.87,
-                    padding: EdgeInsets.all(24),
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(12)),
                     child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AppMedia.loginLogo,
-                            width: 130,
-                            height: 130,
-                            fit: BoxFit.contain,
-                            filterQuality: FilterQuality.high,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            'HOSPITEL BANTARANGIN',
-                            style: AppStyles.loginHeadText.copyWith(
-                                color: AppStyles.textColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'GENERAL HOSPITAL',
-                            style: AppStyles.loginHeadText.copyWith(
-                                color: AppStyles.textColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.05,
-                          ),
-                          LabelRequired(
-                              text: 'Username',
-                              style: AppStyles.normalText.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppStyles.textColor)),
-                          SizedBox(
-                            height: screenHeight * 0.01,
-                          ),
-                          TextFormField(
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox,
-                            onChanged: (value) {},
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.02,
-                          ),
-                          LabelRequired(
-                              text: 'Password',
-                              style: AppStyles.normalText.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppStyles.textColor)),
-                          SizedBox(
-                            height: screenHeight * 0.01,
-                          ),
-                          TextFormField(
-                            cursorColor: Colors.black,
-                            obscureText: isHidden,
-                            decoration: AppStyles.formBox.copyWith(
-                                suffixIcon: IconButton(
-                                    onPressed: () => togglePassword(),
-                                    icon: Icon(isHidden
-                                        ? Icons.visibility_off
-                                        : Icons.visibility))),
-                            onChanged: (value) {},
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.02,
-                          ),
-                          LabelRequired(
-                              text: 'Poliklinik',
-                              style: AppStyles.normalText.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppStyles.textColor)),
-                          SizedBox(
-                            height: screenHeight * 0.01,
-                          ),
-                          DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            decoration: AppStyles.formBox
-                                .copyWith(contentPadding: EdgeInsets.zero),
-                            hint: Text('-- Pilih Poliklinik --'),
-                            items: listPoli
-                                .map((item) => DropdownMenuItem<String>(
-                                    value: item, child: Text(item)))
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Pilih Poliklinik';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {},
-                            onSaved: (newValue) {
-                              selectedValue = newValue.toString();
-                            },
-                            buttonStyleData: ButtonStyleData(
-                                padding: EdgeInsets.only(right: 8)),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AppMedia.loginLogo,
+                              width: 130,
+                              height: 130,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
                             ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                            SizedBox(
+                              height: 5,
                             ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight * 0.04,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(context, AppRoutes.home);
-                                },
-                                child: TheButton(
-                                  text: 'Login',
-                                  color: AppStyles.accentColor,
-                                  textColor: Colors.black,
-                                  hoverable: false,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'HOSPITEL BANTARANGIN',
+                                  style: AppStyles.loginHeadText.copyWith(
+                                      color: AppStyles.textColor,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              )),
-                            ],
-                          )
-                        ],
+                                Text(
+                                  'GENERAL HOSPITAL',
+                                  style: AppStyles.loginHeadText.copyWith(
+                                      color: AppStyles.textColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.05,
+                            ),
+                            LabelRequired(
+                                text: 'Username',
+                                style: AppStyles.normalText.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppStyles.textColor)),
+                            SizedBox(
+                              height: screenHeight * 0.01,
+                            ),
+                            TextFormField(
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox,
+                              onChanged: (value) {},
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.02,
+                            ),
+                            LabelRequired(
+                                text: 'Password',
+                                style: AppStyles.normalText.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppStyles.textColor)),
+                            SizedBox(
+                              height: screenHeight * 0.01,
+                            ),
+                            TextFormField(
+                              cursorColor: Colors.black,
+                              obscureText: isHidden,
+                              decoration: AppStyles.formBox.copyWith(
+                                  suffixIcon: IconButton(
+                                      onPressed: () => togglePassword(),
+                                      icon: Icon(isHidden
+                                          ? Icons.visibility_off
+                                          : Icons.visibility))),
+                              onChanged: (value) {},
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.02,
+                            ),
+                            LabelRequired(
+                                text: 'Poliklinik',
+                                style: AppStyles.normalText.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppStyles.textColor)),
+                            SizedBox(
+                              height: screenHeight * 0.01,
+                            ),
+                            DropdownButtonFormField2<String>(
+                              isExpanded: true,
+                              decoration: AppStyles.formBox
+                                  .copyWith(contentPadding: EdgeInsets.zero),
+                              hint: Text('-- Pilih Poliklinik --'),
+                              items: listPoli
+                                  .map((item) => DropdownMenuItem<String>(
+                                      value: item, child: Text(item)))
+                                  .toList(),
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Pilih Poliklinik';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {},
+                              onSaved: (newValue) {
+                                selectedValue = newValue.toString();
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                  padding: EdgeInsets.only(right: 8)),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 24,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              height: screenHeight * 0.04,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.home);
+                                  },
+                                  child: TheButton(
+                                    text: 'Login',
+                                    color: AppStyles.accentColor,
+                                    textColor: Colors.black,
+                                    hoverable: false,
+                                  ),
+                                )),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

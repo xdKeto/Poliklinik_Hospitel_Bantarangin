@@ -28,8 +28,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   final List<String> listStatus = [
     '-- Semua Status --',
     'Menunggu',
+    'Ditunda',
     'Konsultasi',
-    'Selesai'
+    'Selesai',
   ];
 
   String? selectedStatus;
@@ -127,7 +128,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         iconColor: AppStyles.accentColor,
                         textColor: AppStyles.accentColor,
                         borderRad: 10,
-                          hoverIcon: FluentIcons.clipboard_edit_20_filled,
+                        hoverIcon: FluentIcons.clipboard_edit_20_filled,
                       ),
                     ),
                     SizedBox(
@@ -283,7 +284,7 @@ class RowSource extends DataTableSource {
           DataCell(Text(data['nama_pasien'])),
           DataCell(Text(data['poli_tujuan'])),
           DataCell(Center(child: StatusBox(status: data['status']))),
-          DataCell(Center(child: IconDropdown())),
+          DataCell(Center(child: IconDropdown(status: data['status'],))),
         ]);
   }
 

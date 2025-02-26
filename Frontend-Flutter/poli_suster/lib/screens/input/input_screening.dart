@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
@@ -86,6 +87,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -125,6 +130,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -164,6 +173,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -214,6 +227,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -253,6 +270,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -292,6 +313,10 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},

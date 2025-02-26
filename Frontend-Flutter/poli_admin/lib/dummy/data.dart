@@ -32,7 +32,7 @@ List<Map<String, dynamic>> pasienList = [
     "no_rekam_medis": "RM2024005",
     "poli_tujuan": "Poli Saraf",
     "no_antrian": 5,
-    "status": "Konsultasi"
+    "status": "Ditunda"
   },
   {
     "nama_pasien": "Fajar Prasetyo",
@@ -74,7 +74,7 @@ List<Map<String, dynamic>> pasienList = [
     "no_rekam_medis": "RM2024011",
     "poli_tujuan": "Poli Saraf",
     "no_antrian": 11,
-    "status": "Konsultasi"
+    "status": "Ditunda"
   },
   {
     "nama_pasien": "Lina Hartati",

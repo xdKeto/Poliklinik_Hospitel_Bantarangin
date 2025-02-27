@@ -77,43 +77,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Poliklinik Hospitel Bantarangin',
 <<<<<<< HEAD
+<<<<<<< HEAD
       routerConfig: _router,
 =======
       home: LoginScreen(),
+=======
+      // home: LoginScreen(),
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
       initialRoute: AppRoutes.login,
-      onGenerateRoute: (settings) {
-        final args = settings.arguments as Map<String, dynamic>?;
-
-        final uri = Uri.parse(settings.name!);
-        final basePath = uri.path;
-
-        Widget page;
-        switch (basePath) {
-          case AppRoutes.homePasien:
-            page = SideNavbar(
-                param: 'pasien', isExpand: args?['isExpand'] ?? false);
-            break;
-          case AppRoutes.homeBilling:
-            page = SideNavbar(
-                param: 'billing', isExpand: args?['isExpand'] ?? false);
-            break;
-          case AppRoutes.homeRiwayat:
-            page = SideNavbar(
-                param: 'riwayat', isExpand: args?['isExpand'] ?? false);
-            break;
-          case AppRoutes.login:
-            page = LoginScreen();
-            break;
-          default:
-            return null;
-        }
-
-        return PageRouteBuilder(
-          settings: settings,
-          pageBuilder: (_, __, ___) => page,
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-        );
+      routes: {
+        AppRoutes.login: (context) => LoginScreen(),
+        AppRoutes.dashboard: (context) => SideNavbar()
       },
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
     );

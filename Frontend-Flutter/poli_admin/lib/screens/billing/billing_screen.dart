@@ -10,18 +10,26 @@ import 'package:poli_admin/dummy/data.dart';
 
 class BillingScreen extends StatefulWidget {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const BillingScreen(
       {super.key,});
 =======
   final VoidCallback onMenuPressed;
+=======
+    final VoidCallback? toggleSidebar;
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
   final bool isExpand;
-  final Function(int) navigateToChild;
+  final Function(int) navigateToPage;
   const BillingScreen(
+<<<<<<< HEAD
       {super.key,
       required this.onMenuPressed,
       required this.isExpand,
       required this.navigateToChild});
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
+=======
+      {super.key, this.toggleSidebar, required this.isExpand, required this.navigateToPage,});
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -221,9 +229,9 @@ class _BillingScreenState extends State<BillingScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
+          isExpand: widget.isExpand,
           title: 'Billing',
-          isExpanded: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -358,7 +366,7 @@ class _BillingScreenState extends State<BillingScreen> {
                       DataColumn(label: Center(child: Text('Status'))),
                       DataColumn(label: Center(child: Text('Rincian'))),
                     ],
-                    source: RowSource(widget.navigateToChild,
+                    source: RowSource(widget.navigateToPage,
                         myData: filteredList, count: filteredList.length)),
               ),
             ],
@@ -373,8 +381,14 @@ class _BillingScreenState extends State<BillingScreen> {
 class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
+<<<<<<< HEAD
 
   RowSource({required this.myData, required this.count});
+=======
+  final Function(int) navigateToPage;
+
+  RowSource(this.navigateToPage, {required this.myData, required this.count});
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   DataRow? getRow(int index) {
@@ -416,7 +430,7 @@ class RowSource extends DataTableSource {
           DataCell(Center(
               child: InkWell(
             onTap: () {
-              navigateToChild(1);
+              navigateToPage(4);
             },
             child: TheButton(
               text: "Lihat Rincian",

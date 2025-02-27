@@ -27,6 +27,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   @override
   Widget build(BuildContext context) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return Scaffold(
       appBar: GlobalTopBar(
         title: 'Rincian Pembayaran',
@@ -45,6 +46,18 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
+=======
+    return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 1000,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SelectionArea(
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -184,9 +197,14 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 )
               ],
             ),
+<<<<<<< HEAD
           )),
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
     );
+=======
+          ),
+        ));
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
   }
 }
 

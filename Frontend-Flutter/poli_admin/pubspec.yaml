@@ -48,7 +48,12 @@ dependencies:
 =======
   wolt_modal_sheet: ^0.11.0
   intl: ^0.20.2
+<<<<<<< HEAD
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
+=======
+  easy_sidemenu: ^0.6.1
+  iconify_flutter_plus: ^1.0.4
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
 dev_dependencies:
   flutter_test:

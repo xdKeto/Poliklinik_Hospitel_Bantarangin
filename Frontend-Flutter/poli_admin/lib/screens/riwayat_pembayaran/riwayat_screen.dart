@@ -10,6 +10,7 @@ import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 
 class RiwayatScreen extends StatefulWidget {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const RiwayatScreen(
       {super.key,});
 =======
@@ -22,6 +23,15 @@ class RiwayatScreen extends StatefulWidget {
       required this.isExpand,
       required this.navigateToChild});
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
+=======
+  final VoidCallback? toggleSidebar;
+  final bool isExpand;
+  const RiwayatScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+  });
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   State<RiwayatScreen> createState() => _RiwayatScreenState();
@@ -137,9 +147,10 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-            onMenuPressed: widget.onMenuPressed,
-            title: 'Riwayat Pembayaran',
-            isExpanded: widget.isExpand),
+          isExpand: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
+          title: 'Riwayat Pembayaran',
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
           child: Column(
@@ -256,7 +267,6 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                       DataColumn(label: Center(child: Text('Rincian'))),
                     ],
                     source: RowSource(
-                        widget.navigateToChild,
                         myData: filteredList,
                         count: filteredList.length,
                         context)),
@@ -274,6 +284,7 @@ class RowSource extends DataTableSource {
   final List<Map<String, dynamic>> myData;
   final int count;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   RowSource({required this.myData, required this.count});
 =======
@@ -283,6 +294,11 @@ class RowSource extends DataTableSource {
   RowSource(this.navigateToChild, this.context,
       {required this.myData, required this.count});
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
+=======
+  final BuildContext context;
+
+  RowSource(this.context, {required this.myData, required this.count});
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   DataRow? getRow(int index) {
@@ -323,7 +339,9 @@ class RowSource extends DataTableSource {
               child: InkWell(
             onTap: () {
               showDialog(
-                  context: context, builder: (context) => DetailRiwayat());
+                  barrierDismissible: true,
+                  context: context,
+                  builder: (context) => DetailRiwayat());
             },
             child: TheButton(
               text: "Lihat Rincian",

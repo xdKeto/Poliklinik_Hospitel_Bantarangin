@@ -9,12 +9,14 @@ class StatusBox extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color = AppStyles.accentColor;
 
-    if (status.toLowerCase() == 'konsultasi') {
+    if (status.toLowerCase() == 'ditunda') {
       color = AppStyles.accentColor2;
     } else if (status.toLowerCase() == 'menunggu') {
       color = AppStyles.redColor;
     } else if (status.toLowerCase() == 'selesai') {
       color = AppStyles.greenColor2;
+    }else if (status.toLowerCase() == 'konsultasi'){
+      color = AppStyles.secondaryColor;
     }
 
     return Container(

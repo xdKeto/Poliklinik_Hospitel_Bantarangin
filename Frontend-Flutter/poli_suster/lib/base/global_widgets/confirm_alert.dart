@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poli_admin/base/global_widgets/the_button.dart';
-import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_suster/base/global_widgets/the_button.dart';
+import 'package:poli_suster/base/utils/app_styles.dart';
 
 class ConfirmAlert extends StatelessWidget {
   final IconData icon;

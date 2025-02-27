@@ -11,6 +11,7 @@ import 'package:poli_admin/screens/list_pasien/widgets/icon_dropdown.dart';
 
 class ListPasienScreen extends StatefulWidget {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const ListPasienScreen(
       {super.key});
 =======
@@ -23,6 +24,17 @@ class ListPasienScreen extends StatefulWidget {
       required this.isExpand,
       required this.navigateToChild});
 >>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
+=======
+  final VoidCallback? toggleSidebar;
+  final bool isExpand;
+  final Function(int) navigateToPage;
+  const ListPasienScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+    required this.navigateToPage,
+  });
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   State<ListPasienScreen> createState() => _ListPasienScreenState();
@@ -32,8 +44,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   final List<String> listStatus = [
     '-- Semua Status --',
     'Menunggu',
+    'Ditunda',
     'Konsultasi',
-    'Selesai'
+    'Selesai',
   ];
 
   String? selectedStatus;
@@ -162,9 +175,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-          onMenuPressed: widget.onMenuPressed,
           title: 'List Pasien',
-          isExpanded: widget.isExpand,
+          toggleSidebar: widget.toggleSidebar,
+          isExpand: widget.isExpand,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -179,7 +192,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        widget.navigateToChild(1);
+                        widget.navigateToPage(3);
                       },
                       child: TheButton(
                         text: "Registrasi",
@@ -192,6 +205,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         iconColor: AppStyles.accentColor,
                         textColor: AppStyles.accentColor,
                         borderRad: 10,
+                        hoverIcon: FluentIcons.clipboard_edit_20_filled,
                       ),
                     ),
                     SizedBox(
@@ -348,7 +362,7 @@ class RowSource extends DataTableSource {
           DataCell(Text(data['nama_pasien'])),
           DataCell(Text(data['poli_tujuan'])),
           DataCell(Center(child: StatusBox(status: data['status']))),
-          DataCell(Center(child: IconDropdown())),
+          DataCell(Center(child: IconDropdown(status: data['status'],))),
         ]);
   }
 

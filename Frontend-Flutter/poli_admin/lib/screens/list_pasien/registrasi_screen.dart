@@ -6,12 +6,23 @@ import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
-import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class RegistrasiScreen extends StatefulWidget {
+<<<<<<< HEAD
   const RegistrasiScreen(
       {super.key});
+=======
+  final VoidCallback? toggleSidebar;
+  final bool isExpand;
+  final Function(int) navigateToPage;
+  const RegistrasiScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+    required this.navigateToPage,
+  });
+>>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
 
   @override
   State<RegistrasiScreen> createState() => _RegistrasiScreenState();
@@ -55,9 +66,10 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
         appBar: GlobalTopBar(
-            onMenuPressed: widget.onMenuPressed,
-            title: 'Registrasi',
-            isExpanded: widget.isExpanded),
+          toggleSidebar: widget.toggleSidebar,
+          isExpand: widget.isExpand,
+          title: 'Registrasi',
+        ),
         body: Form(
           key: _formKey,
           child: Center(
@@ -416,8 +428,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, AppRoutes.homePasien);
+                                    widget.navigateToPage(0);
                                   },
                                   child: TheButton(
                                     text: 'Kembali',

@@ -1,10 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:poli_admin/base/global_widgets/label_required.dart';
-import 'package:poli_admin/base/global_widgets/the_button.dart';
-import 'package:poli_admin/base/utils/app_media.dart';
-import 'package:poli_admin/base/utils/app_routes.dart';
-import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_suster/base/global_widgets/label_required.dart';
+import 'package:poli_suster/base/global_widgets/the_button.dart';
+import 'package:poli_suster/base/utils/app_media.dart';
+import 'package:poli_suster/base/utils/app_routes.dart';
+import 'package:poli_suster/base/utils/app_styles.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +15,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isHidden = true;
+  String? selectedValue;
+  final List<String> listPoli = [
+    "Poli Gigi",
+    "Poli Anak",
+    "Poli Umum",
+    "Poli Obgyn "
+  ];
 
   void togglePassword() {
     setState(() {
@@ -67,31 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         BoxDecoration(borderRadius: BorderRadius.circular(12)),
                     child: SingleChildScrollView(
                       child: Padding(
-                        padding: EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.all(24.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-<<<<<<< HEAD
-                            Expanded(
-<<<<<<< HEAD
-                                child: TheButton(
-                              text: 'Login',
-                              color: AppStyles.accentColor,
-                              onTapFunc: () {
-                                GoRouter.of(context).go('/home/list-pasien');
-=======
-                                child: InkWell(
-                              onTap: () {
-                                Navigator.pushReplacementNamed(
-                                    context, AppRoutes.homeScreen('pasien'));
->>>>>>> f56544f7a71d942398a3e7b997fc6a4d2ea549d5
-                              },
-                              child: TheButton(
-                                text: 'Login',
-                                color: AppStyles.accentColor,
-                              ),
-                            )),
-=======
                             Image.asset(
                               AppMedia.loginLogo,
                               width: 130,
@@ -102,17 +88,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: 5,
                             ),
-                            Text(
-                              'HOSPITEL BANTARANGIN',
-                              style: AppStyles.loginHeadText.copyWith(
-                                  color: AppStyles.textColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              'GENERAL HOSPITAL',
-                              style: AppStyles.loginHeadText.copyWith(
-                                  color: AppStyles.textColor,
-                                  fontWeight: FontWeight.bold),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'HOSPITEL BANTARANGIN',
+                                  style: AppStyles.loginHeadText.copyWith(
+                                      color: AppStyles.textColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'GENERAL HOSPITAL',
+                                  style: AppStyles.loginHeadText.copyWith(
+                                      color: AppStyles.textColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                             SizedBox(
                               height: screenHeight * 0.05,
@@ -155,6 +146,55 @@ class _LoginScreenState extends State<LoginScreen> {
                               onChanged: (value) {},
                             ),
                             SizedBox(
+                              height: screenHeight * 0.02,
+                            ),
+                            LabelRequired(
+                                text: 'Poliklinik',
+                                style: AppStyles.normalText.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppStyles.textColor)),
+                            SizedBox(
+                              height: screenHeight * 0.01,
+                            ),
+                            DropdownButtonFormField2<String>(
+                              isExpanded: true,
+                              decoration: AppStyles.formBox
+                                  .copyWith(contentPadding: EdgeInsets.zero),
+                              hint: Text('-- Pilih Poliklinik --'),
+                              items: listPoli
+                                  .map((item) => DropdownMenuItem<String>(
+                                      value: item, child: Text(item)))
+                                  .toList(),
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Pilih Poliklinik';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {},
+                              onSaved: (newValue) {
+                                selectedValue = newValue.toString();
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                  padding: EdgeInsets.only(right: 8)),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 24,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                              ),
+                            ),
+                            SizedBox(
                               height: screenHeight * 0.04,
                             ),
                             Row(
@@ -162,8 +202,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                     child: InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, AppRoutes.dashboard);
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.home);
                                   },
                                   child: TheButton(
                                     text: 'Login',
@@ -174,7 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )),
                               ],
                             )
->>>>>>> a3db70518278aadc69b9fab306d1ffca0e6d4826
                           ],
                         ),
                       ),

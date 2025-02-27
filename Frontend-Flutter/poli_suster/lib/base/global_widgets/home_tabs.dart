@@ -74,7 +74,11 @@ class _HomeTabsState extends State<HomeTabs>
             style: AppStyles.subheadingText.copyWith(
                 color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
       ],
-      children: [RincianPasien(), RiwayatScreening(), InputScreening()],
+      children: [
+        SingleChildScrollView(child: RincianPasien()),
+        SingleChildScrollView(child: RiwayatScreening()),
+        SingleChildScrollView(child: InputScreening())
+      ],
     );
   }
 }

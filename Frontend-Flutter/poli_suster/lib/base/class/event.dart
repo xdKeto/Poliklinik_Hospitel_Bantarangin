@@ -49,7 +49,7 @@ class HealthRecord {
     };
   }
 
-  static List<HealthRecord> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => HealthRecord.fromJson(json)).toList();
-  }
+  // static List<HealthRecord> fromJsonList(String temp) {
+  //   return  HealthRecord.fromJson(json.decode(temp));
+  // }
 }

@@ -87,10 +87,11 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly
+                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -130,10 +131,11 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly
+                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -173,10 +175,11 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly
+                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},

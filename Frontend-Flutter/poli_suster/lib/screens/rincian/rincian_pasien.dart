@@ -38,7 +38,8 @@ class _RincianPasienState extends State<RincianPasien> {
           SizedBox(
             height: 8,
           ),
-          DataKesehatan()
+          DataKesehatan(),
+
         ],
       ),
     );

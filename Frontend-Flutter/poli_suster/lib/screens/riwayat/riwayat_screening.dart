@@ -60,7 +60,7 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
 
     _selectedRiwayat = ValueNotifier(_getRiwayat(_selectedDate));
 
-    print(listScreening);
+    // print(listScreening);
   }
 
   @override

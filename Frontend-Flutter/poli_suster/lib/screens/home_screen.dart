@@ -13,14 +13,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<void> refreshAntrian() async {
+    print('antrian refreshed');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.backgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: RefreshIndicator(
+            onRefresh: refreshAntrian,
+            color: AppStyles.primaryColor,
+            backgroundColor: Colors.white,
             child: Column(
               children: [
                 SizedBox(
@@ -128,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 24,
                 ),
-                HomeTabs(),
+                Expanded(child: HomeTabs()),
               ],
             ),
           ),

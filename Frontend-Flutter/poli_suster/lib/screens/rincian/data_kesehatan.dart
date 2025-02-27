@@ -9,7 +9,7 @@ class DataKesehatan extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       height: 300,
-      decoration: AppStyles.whiteBox.copyWith(color: AppStyles.secondaryColor),
+      decoration: AppStyles.whiteBox,
       child: Column(
         children: [Row(children: [
                   ]

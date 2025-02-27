@@ -21,6 +21,8 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
     for (var i = 0; i < listRiwayat.length; i++) {
       listScreening.add(HealthRecord.fromJson(listRiwayat[i]));
     }
+
+    listScreening = listScreening.reversed.toList();
   }
 
   @override
@@ -45,7 +47,7 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 5 / 6),
+                        childAspectRatio: 8 / 6),
                     itemCount: listRiwayat.length,
                     itemBuilder: (context, index) {
                       return InkWell(

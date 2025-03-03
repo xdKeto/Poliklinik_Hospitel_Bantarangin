@@ -80,7 +80,7 @@ class DetailRiwayat extends StatelessWidget {
                           data: data.tinggiBadan.toString(),
                           type: "cm"),
                       SizedBox(
-                        width: 48,
+                        width: 54,
                       ),
                       DataField(
                           title: "Suhu Tubuh",
@@ -125,11 +125,13 @@ class DetailRiwayat extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      DataField(
-                        title: "Catatan Tambahan",
-                        data: data.catatan,
-                        type: "",
-                        isLong: true,
+                      Expanded(
+                        child: DataField(
+                          title: "Catatan Tambahan",
+                          data: data.catatan,
+                          type: "",
+                          isLong: true,
+                        ),
                       )
                     ],
                   )

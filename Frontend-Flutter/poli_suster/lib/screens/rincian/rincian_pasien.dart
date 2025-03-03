@@ -14,7 +14,7 @@ class _RincianPasienState extends State<RincianPasien> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,7 +39,6 @@ class _RincianPasienState extends State<RincianPasien> {
             height: 8,
           ),
           DataKesehatan(),
-
         ],
       ),
     );

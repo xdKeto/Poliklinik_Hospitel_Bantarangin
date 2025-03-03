@@ -12,15 +12,26 @@ class BoldNRegText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          '$label: ',
           style: AppStyles.contentText.copyWith(
               color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
         ),
-        Text(
-          ' : $data $type',
-          style: AppStyles.contentText.copyWith(color: AppStyles.primaryColor),
+        SizedBox(
+          height: 2,
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              Text(
+                '$data $type',
+                style: AppStyles.contentText
+                    .copyWith(color: AppStyles.primaryColor),
+              ),
+            ],
+          ),
         )
       ],
     );

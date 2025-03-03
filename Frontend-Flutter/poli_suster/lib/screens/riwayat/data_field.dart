@@ -56,8 +56,7 @@ class _DataFieldState extends State<DataField> {
         Row(
           children: widget.isLong == true
               ? [
-                  SizedBox(
-                    width: 400,
+                  Expanded(
                     child: TextFormField(
                       readOnly: true,
                       controller: _controller,

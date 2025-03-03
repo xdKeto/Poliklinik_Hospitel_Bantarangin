@@ -33,53 +33,13 @@ class ContainerData extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: 16,
           ),
-          // BoldNRegText(
-          //     label: "Tensi Darah", data: data.tensiDarah, type: "mmHg"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Tinggi Badan",
-          //     data: data.tinggiBadan.toString(),
-          //     type: "cm"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Gula Darah",
-          //     data: data.gulaDarah.toString(),
-          //     type: "mg/dL"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Berat Badan",
-          //     data: data.beratBadan.toString(),
-          //     type: "kg"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Suhu Tubuh", data: data.suhuTubuh.toString(), type: "°C"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Detak/Nadi",
-          //     data: data.detakNadi.toString(),
-          //     type: "bpm"),
-          // SizedBox(
-          //   height: 8,
-          // ),
-          // BoldNRegText(
-          //     label: "Resp. Rate",
-          //     data: data.respRate.toString(),
-          //     type: "/menit"),
-          // SizedBox(
-          //   height: 8,
-          // ),
+          BoldNRegText(
+              label: "Catatan",
+              data:
+                  "${data.catatan} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur lacus quam, viverra eget lorem nec, facilisis. ",
+              type: ""),
         ],
       ),
     );

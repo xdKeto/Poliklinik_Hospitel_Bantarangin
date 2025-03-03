@@ -360,7 +360,7 @@ class _InputScreeningState extends State<InputScreening> {
                       height: 8,
                     ),
                     TextFormField(
-                      maxLines: 3,
+                      maxLines: 4,
                       cursorColor: Colors.black,
                       decoration: AppStyles.formBox.copyWith(),
                       onChanged: (value) {},

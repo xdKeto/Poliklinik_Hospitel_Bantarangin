@@ -44,65 +44,71 @@ class _SucfailAlertState extends State<SucfailAlert>
     return SelectionArea(
         child: Dialog(
       backgroundColor: Colors.transparent,
-      child: Container(
-        width: 500,
-        padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(8)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
+      child: ScaleTransition(
+        scale: scaleAnimate,
+        child: Container(
+          width: 500,
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.isSuccess
+                    ? FluentIcons.checkmark_circle_12_filled
+                    : FluentIcons.error_circle_12_filled,
+                color: widget.isSuccess
+                    ? AppStyles.greenColor
+                    : AppStyles.redColor,
+                size: 80,
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                widget.boldText,
+                style:
+                    AppStyles.headingText.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 6,
+              ),
+              Text(
+                widget.italicText,
+                style:
+                    AppStyles.contentText.copyWith(fontStyle: FontStyle.italic),
+              ),
+              SizedBox(
+                height: 12,
+              ),
               widget.isSuccess
-                  ? FluentIcons.checkmark_circle_12_filled
-                  : FluentIcons.error_circle_12_filled,
-              color:
-                  widget.isSuccess ? AppStyles.greenColor : AppStyles.redColor,
-              size: 80,
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Text(
-              widget.boldText,
-              style:
-                  AppStyles.headingText.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Text(
-              widget.italicText,
-              style:
-                  AppStyles.contentText.copyWith(fontStyle: FontStyle.italic),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: TheButton(
-                    text: 'Tutup',
-                    color: widget.isSuccess
-                        ? AppStyles.greenColor
-                        : AppStyles.redColor,
-                    textColor: widget.isSuccess
-                        ? AppStyles.greenColor
-                        : AppStyles.redColor,
-                    border: true,
-                    vertPadding: 8.5,
-                    horiPadding: 32.5,
-                  ),
-                )
-              ],
-            )
-          ],
+                  ? SizedBox(height: 0)
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: TheButton(
+                            text: 'Tutup',
+                            color: widget.isSuccess
+                                ? AppStyles.greenColor
+                                : AppStyles.redColor,
+                            textColor: widget.isSuccess
+                                ? AppStyles.greenColor
+                                : AppStyles.redColor,
+                            border: true,
+                            vertPadding: 8.5,
+                            horiPadding: 32.5,
+                          ),
+                        )
+                      ],
+                    )
+            ],
+          ),
         ),
       ),
     ));

@@ -36,6 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
       print(email);
       print(password);
 
+      final context2 = context;
+
       showDialog(
           context: context,
           builder: (context) => LoadingAlert(),
@@ -48,20 +50,31 @@ class _LoginScreenState extends State<LoginScreen> {
           {"username": email, "password": password});
 
       // print(response.message);
-      Navigator.pop(context);
+      if (!context.mounted) return;
+      Navigator.pop(context2);
+
       if (response.status == 200) {
         if (!context.mounted) return;
 
         showDialog(
-            context: context,
-            builder: (context) => SucfailAlert(
-                isSuccess: true,
-                boldText: "Login Successful",
-                italicText: "your credentials are correct")).then((_) =>
-            Navigator.pushReplacementNamed(context, AppRoutes.dashboard));
+            context: context2,
+            builder: (context) {
+              Future.delayed(Duration(seconds: 1), () {
+                if (context.mounted) Navigator.pop(context);
+              });
+
+              return SucfailAlert(
+                  isSuccess: true,
+                  boldText: "Login Successful",
+                  italicText: "your credentials are correct");
+            }).then((_) {
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
+          }
+        });
       } else {
         showDialog(
-            context: context,
+            context: context2,
             builder: (context) => SucfailAlert(
                 isSuccess: false,
                 boldText: "Login Failed",

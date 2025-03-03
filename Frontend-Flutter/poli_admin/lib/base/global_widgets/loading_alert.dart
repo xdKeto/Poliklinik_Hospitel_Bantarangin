@@ -35,31 +35,33 @@ class _LoadingAlertState extends State<LoadingAlert>
   void dispose() {
     controller.dispose();
     super.dispose();
-
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: Container(
-        width: 500,
-        padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(8)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LoadingAnimationWidget.inkDrop(color: Colors.black, size: 80),
-            SizedBox(height: 12),
-            Text(
-              "Loading..",
-              style:
-                  AppStyles.headingText.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      child: ScaleTransition(
+        scale: scaleAnimate,
+        child: Container(
+          width: 500,
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LoadingAnimationWidget.fourRotatingDots(
+                  color: Colors.black, size: 80),
+              SizedBox(height: 12),
+              Text(
+                "Loading..",
+                style:
+                    AppStyles.headingText.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

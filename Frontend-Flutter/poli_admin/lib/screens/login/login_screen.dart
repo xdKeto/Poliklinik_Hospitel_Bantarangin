@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/base/utils/config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,12 +17,57 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // late TextEditingController controller;
+  String? email;
+  String? password;
   bool isHidden = true;
 
   void togglePassword() {
     setState(() {
       isHidden = !isHidden;
     });
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  void doLogin() async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      print(email);
+      print(password);
+
+      showDialog(
+          context: context,
+          builder: (context) => LoadingAlert(),
+          barrierDismissible: false);
+
+      DataController dataController = DataController();
+      ResponseRequestAPI response = await dataController.apiConnector(
+          Config.apiEndpoints['login']!(),
+          "post",
+          {"username": email, "password": password});
+
+      // print(response.message);
+      Navigator.pop(context);
+      if (response.status == 200) {
+        if (!context.mounted) return;
+
+        showDialog(
+            context: context,
+            builder: (context) => SucfailAlert(
+                isSuccess: true,
+                boldText: "Login Successful",
+                italicText: "your credentials are correct")).then((_) =>
+            Navigator.pushReplacementNamed(context, AppRoutes.dashboard));
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Login Failed",
+                italicText: "please check your credentials"));
+      }
+    }
   }
 
   @override
@@ -95,42 +144,69 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: screenHeight * 0.05,
                             ),
-                            LabelRequired(
-                                text: 'Username',
-                                style: AppStyles.normalText.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppStyles.textColor)),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
-                            TextFormField(
-                              cursorColor: Colors.black,
-                              decoration: AppStyles.formBox,
-                              onChanged: (value) {},
-                            ),
-                            SizedBox(
-                              height: screenHeight * 0.02,
-                            ),
-                            LabelRequired(
-                                text: 'Password',
-                                style: AppStyles.normalText.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppStyles.textColor)),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
-                            TextFormField(
-                              cursorColor: Colors.black,
-                              obscureText: isHidden,
-                              decoration: AppStyles.formBox.copyWith(
-                                  suffixIcon: IconButton(
-                                      onPressed: () => togglePassword(),
-                                      icon: Icon(isHidden
-                                          ? Icons.visibility_off
-                                          : Icons.visibility))),
-                              onChanged: (value) {},
+                            Form(
+                              key: formKey,
+                              child: Column(
+                                children: [
+                                  LabelRequired(
+                                      text: 'Username',
+                                      style: AppStyles.normalText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyles.textColor)),
+                                  SizedBox(
+                                    height: screenHeight * 0.01,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter your username';
+                                      }
+
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      email = value;
+                                    },
+                                    cursorColor: Colors.black,
+                                    decoration: AppStyles.formBox,
+                                    onSaved: (value) {},
+                                  ),
+                                  SizedBox(
+                                    height: screenHeight * 0.02,
+                                  ),
+                                  LabelRequired(
+                                      text: 'Password',
+                                      style: AppStyles.normalText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyles.textColor)),
+                                  SizedBox(
+                                    height: screenHeight * 0.01,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter your password';
+                                      }
+
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                    cursorColor: Colors.black,
+                                    obscureText: isHidden,
+                                    decoration: AppStyles.formBox.copyWith(
+                                        suffixIcon: IconButton(
+                                            onPressed: () => togglePassword(),
+                                            icon: Icon(isHidden
+                                                ? Icons.visibility_off
+                                                : Icons.visibility))),
+                                    onSaved: (value) {},
+                                  ),
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: screenHeight * 0.04,
@@ -140,8 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                     child: InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, AppRoutes.dashboard);
+                                    doLogin();
                                   },
                                   child: TheButton(
                                     text: 'Login',

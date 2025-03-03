@@ -1,7 +1,10 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/btrb_text.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
+import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
@@ -124,7 +127,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                   height: 8,
                 ),
                 ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 400),
+                    constraints: BoxConstraints(maxHeight: 300),
                     child: PaginatedDataTable2(
                         // style
                         headingTextStyle: AppStyles.sidebarText.copyWith(
@@ -162,17 +165,57 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 64.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  child: Column(
                     children: [
-                      Text(
-                        'TOTAL JUMLAH BAYAR: \tRp524.000,00',
-                        style: AppStyles.contentText
-                            .copyWith(fontWeight: FontWeight.bold),
-                      )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'TOTAL JUMLAH BAYAR: \tRp524.000,00',
+                            style: AppStyles.contentText
+                                .copyWith(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                )
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => ConfirmAlert(
+                                        icon: FluentIcons.print_16_filled,
+                                        boldText: 'Cetak Tagihan?',
+                                        yesText: 'cetak',
+                                        yesFunc: () {},
+                                      ));
+                            },
+                            child: TheButton(
+                              text: 'Cetak Tagihan',
+                              color: AppStyles.accentColor,
+                              iconColor: AppStyles.accentColor,
+                              textColor: AppStyles.accentColor,
+                              border: true,
+                              isIcon: true,
+                              icon: Icons.print,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

@@ -339,7 +339,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
-                                        maxLines: 2,
+                                        // maxLines: 2,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Alamat Rumah',
@@ -402,6 +402,58 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                               height: 16,
                             ),
                             Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      LabelRequired(
+                                          text: 'Kota Tempat Tinggal',
+                                          style: AppStyles.contentText.copyWith(
+                                              fontWeight: FontWeight.bold)),
+                                      TextFormField(
+                                        // maxLines: 2,
+                                        cursorColor: Colors.black,
+                                        decoration: AppStyles.formBox.copyWith(
+                                            hintText: 'Kota Tempat Tinggal',
+                                            hintStyle: TextStyle(
+                                                color: AppStyles.greyColor2)),
+                                        onChanged: (value) {},
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      LabelRequired(
+                                          text: 'Keluhan Utama',
+                                          style: AppStyles.contentText.copyWith(
+                                              fontWeight: FontWeight.bold)),
+                                      TextFormField(
+                                        // maxLines: 2,
+                                        cursorColor: Colors.black,
+                                        decoration: AppStyles.formBox.copyWith(
+                                            hintText: 'Keluhan Utama',
+                                            hintStyle: TextStyle(
+                                                color: AppStyles.greyColor2)),
+                                        onChanged: (value) {},
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 InkWell(
@@ -423,6 +475,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
+                                    
                                     showDialog(
                                         context: context,
                                         builder: (context) => ConfirmAlert(

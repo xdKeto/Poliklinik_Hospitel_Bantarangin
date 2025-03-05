@@ -8,6 +8,7 @@ import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/base/utils/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,7 +21,21 @@ class _LoginScreenState extends State<LoginScreen> {
   // late TextEditingController controller;
   String? email;
   String? password;
+  String? token;
   bool isHidden = true;
+
+  @override
+  void initState() {
+    super.initState();
+    cekSession();
+  }
+
+  void cekSession() async {
+    bool session = await DataController().cekToken();
+    if (session) {
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+    }
+  }
 
   void togglePassword() {
     setState(() {
@@ -49,13 +64,16 @@ class _LoginScreenState extends State<LoginScreen> {
           "post",
           {"username": email, "password": password});
 
-      // print(response.message);
       if (!context.mounted) return;
       Navigator.pop(context2);
 
       if (response.status == 200) {
-        if (!context.mounted) return;
+        // print(response.data["token"]);
+        token = response.data['token'];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token!);
 
+        if (!context.mounted) return;
         showDialog(
             context: context2,
             builder: (context) {
@@ -72,13 +90,20 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
           }
         });
-      } else {
+      } else if (response.status == 401) {
         showDialog(
             context: context2,
             builder: (context) => SucfailAlert(
                 isSuccess: false,
                 boldText: "Login Failed",
                 italicText: "please check your credentials"));
+      } else {
+        showDialog(
+            context: context2,
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Login Failed",
+                italicText: response.message));
       }
     }
   }

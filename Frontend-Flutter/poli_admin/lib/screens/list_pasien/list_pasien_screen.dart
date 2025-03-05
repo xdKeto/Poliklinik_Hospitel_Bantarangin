@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/screens/list_pasien/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
@@ -25,6 +26,7 @@ class ListPasienScreen extends StatefulWidget {
 }
 
 class _ListPasienScreenState extends State<ListPasienScreen> {
+  late bool priv = false;
   final List<String> listStatus = [
     '-- Semua Status --',
     'Menunggu',
@@ -45,6 +47,14 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   void initState() {
     super.initState();
     filteredList = List.from(pasienList);
+    listPriv();
+  }
+
+  void listPriv() async {
+    var temp = await DataController().cekPriv(1);
+    setState(() {
+      priv = temp;
+    });
   }
 
   void applyFilters() {
@@ -113,27 +123,34 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                 ),
                 child: Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        widget.navigateToPage(3);
-                      },
-                      child: TheButton(
-                        text: "Registrasi",
-                        color: AppStyles.accentColor,
-                        isIcon: true,
-                        icon: FluentIcons.clipboard_edit_20_regular,
-                        horiPadding: 13,
-                        vertPadding: 7,
-                        border: true,
-                        iconColor: AppStyles.accentColor,
-                        textColor: AppStyles.accentColor,
-                        borderRad: 10,
-                        hoverIcon: FluentIcons.clipboard_edit_20_filled,
-                      ),
-                    ),
-                    SizedBox(
-                      width: screenWidth * 0.01,
-                    ),
+                    priv
+                        ? Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  widget.navigateToPage(3);
+                                },
+                                child: TheButton(
+                                  text: "Registrasi",
+                                  color: AppStyles.accentColor,
+                                  isIcon: true,
+                                  icon: FluentIcons.clipboard_edit_20_regular,
+                                  horiPadding: 13,
+                                  vertPadding: 7,
+                                  border: true,
+                                  iconColor: AppStyles.accentColor,
+                                  textColor: AppStyles.accentColor,
+                                  borderRad: 10,
+                                  hoverIcon:
+                                      FluentIcons.clipboard_edit_20_filled,
+                                ),
+                              ),
+                              SizedBox(
+                                width: screenWidth * 0.01,
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink(),
                     SizedBox(
                       width: 400,
                       // flex: widget.isExpanded ? 3 : 4,
@@ -284,7 +301,10 @@ class RowSource extends DataTableSource {
           DataCell(Text(data['nama_pasien'])),
           DataCell(Text(data['poli_tujuan'])),
           DataCell(Center(child: StatusBox(status: data['status']))),
-          DataCell(Center(child: IconDropdown(status: data['status'],))),
+          DataCell(Center(
+              child: IconDropdown(
+            status: data['status'],
+          ))),
         ]);
   }
 

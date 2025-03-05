@@ -147,6 +147,13 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         dataRowHeight: 40,
                         columnSpacing: 12,
                         hidePaginator: true,
+                        empty: Center(
+                          child: Text(
+                            'Tidak ada Data',
+                            style: AppStyles.subheadingText
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         columns: [
                           DataColumn(
                             label: Text('No.'),

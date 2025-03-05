@@ -9,11 +9,15 @@ import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/dummy/data.dart';
 
 class BillingScreen extends StatefulWidget {
-    final VoidCallback? toggleSidebar;
+  final VoidCallback? toggleSidebar;
   final bool isExpand;
   final Function(int) navigateToPage;
-  const BillingScreen(
-      {super.key, this.toggleSidebar, required this.isExpand, required this.navigateToPage,});
+  const BillingScreen({
+    super.key,
+    this.toggleSidebar,
+    required this.isExpand,
+    required this.navigateToPage,
+  });
 
   @override
   State<BillingScreen> createState() => _BillingScreenState();
@@ -231,6 +235,13 @@ class _BillingScreenState extends State<BillingScreen> {
                         );
                       }
                     },
+                    empty: Center(
+                      child: Text(
+                        'Tidak ada Data',
+                        style: AppStyles.subheadingText
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     columns: [
                       DataColumn(label: Text('No.')),
                       DataColumn(label: Text('No. Rekam Medis')),

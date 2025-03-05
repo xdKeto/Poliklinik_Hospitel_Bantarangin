@@ -1,6 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 
 class IconDropdown extends StatefulWidget {
@@ -12,31 +14,79 @@ class IconDropdown extends StatefulWidget {
 }
 
 class _IconDropdownState extends State<IconDropdown> {
+  bool privData = false;
+  bool privLabel = false;
+  bool privGelang = false;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    listPriv();
+  }
+
+  void listPriv() async {
+    var temp1 = await DataController().cekPriv(3);
+    var temp2 = await DataController().cekPriv(4);
+    var temp3 = await DataController().cekPriv(5);
+
+    setState(() {
+      privData = temp1;
+      privLabel = temp2;
+      privGelang = temp3;
+      loading = false;
+    });
+  }
+
+  List<MenuItem> privItems() {
+    List<MenuItem> items = [];
+
+    if (privData) {
+      items.add(MenuItems.dataPasien);
+    }
+
+    if (privLabel) {
+      items.add(MenuItems.labelPasien);
+    }
+
+    if (privGelang) {
+      items.add(MenuItems.gelangPasien);
+    }
+
+    return items;
+  }
+
+  List<MenuItem> dropdownItems() {
+    List<MenuItem> items = privItems();
+    if (widget.status.toLowerCase() == 'selesai' ||
+        widget.status.toLowerCase() == 'konsultasi') {
+      return items;
+    } else if (widget.status.toLowerCase() == 'menunggu') {
+      return [...items, MenuItems.tundaPasien, MenuItems.batalAntrian];
+    } else {
+      return [MenuItems.masukAntrian, MenuItems.batalAntrian];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return LoadingAnimationWidget.horizontalRotatingDots(
+          color: Colors.black, size: 20);
+    }
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: Icon(Icons.more_horiz),
-        items: (widget.status.toLowerCase() == 'selesai' ||
-                widget.status.toLowerCase() == 'konsultasi')
-            ? MenuItems.items
-                .map((item) => DropdownMenuItem<MenuItem>(
-                    value: item, child: MenuItems.buildItem(item)))
-                .toList()
-            : (widget.status.toLowerCase() == 'menunggu')
-                ? MenuItems.items2
-                    .map((item) => DropdownMenuItem<MenuItem>(
-                        value: item, child: MenuItems.buildItem(item)))
-                    .toList()
-                : MenuItems.items3
-                    .map((item) => DropdownMenuItem<MenuItem>(
-                        value: item, child: MenuItems.buildItem(item)))
-                    .toList(),
+        items: dropdownItems()
+            .map((item) =>
+                DropdownMenuItem(value: item, child: MenuItems.buildItem(item)))
+            .toList(),
         onChanged: (value) {
           MenuItems.onChanged(context, value as MenuItem);
         },
         dropdownStyleData: DropdownStyleData(
-            width: 160,
+            width: 180,
             padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -67,20 +117,8 @@ class MenuItems {
       MenuItem(text: 'Tunda Antrian', icon: FluentIcons.previous_16_regular);
   static const masukAntrian = MenuItem(
       text: 'Masuk Antrian', icon: FluentIcons.people_queue_20_regular);
-
-  // kalo selesai || konsultasi
-  static const List<MenuItem> items = [dataPasien, gelangPasien, labelPasien];
-
-  // kalo menunggu
-  static const List<MenuItem> items2 = [
-    dataPasien,
-    gelangPasien,
-    labelPasien,
-    tundaPasien
-  ];
-
-  // kalo ditunda
-  static const List<MenuItem> items3 = [masukAntrian];
+  static const batalAntrian =
+      MenuItem(text: "Batalkan Antrian", icon: Icons.close);
 
   static Widget buildItem(MenuItem item) {
     return Row(
@@ -102,7 +140,7 @@ class MenuItems {
     );
   }
 
-  static void onChanged(BuildContext context, MenuItem item) {
+  static void onChanged(BuildContext context, MenuItem item) async {
     switch (item) {
       case MenuItems.dataPasien:
         print('print data');
@@ -118,6 +156,9 @@ class MenuItems {
         break;
       case MenuItems.masukAntrian:
         print('masuk antrian');
+        break;
+      case MenuItems.batalAntrian:
+        print('antrian batal');
         break;
     }
   }

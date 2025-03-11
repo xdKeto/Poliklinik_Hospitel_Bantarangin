@@ -5,6 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DataController {
+  static final DataController _instance = DataController._internal();
+
+  factory DataController() {
+    return _instance;
+  }
+
+  DataController._internal();
+
   //
   /* 
     LISTS
@@ -15,8 +23,7 @@ class DataController {
   List statusAntrian = [];
   List poliAktif = [];
   List allPasien = [];
-
-  
+  String? nama;
 
   //
   /* 
@@ -48,7 +55,7 @@ class DataController {
             headers: {"Content-Type": "application/json"});
       }
       // print(response.statusCode);
-      // print(response.body);
+      print(response.body);
 
       if (response.body.isEmpty) {
         return ResponseRequestAPI(
@@ -62,7 +69,7 @@ class DataController {
         message: jsonResponse.containsKey('message')
             ? jsonResponse['message']
             : "No message",
-        data: jsonResponse.containsKey('data') ? jsonResponse['data'] : [],
+        data: jsonResponse.containsKey('data') ? jsonResponse['data'] : "",
       );
     } catch (e) {
       print(e);
@@ -130,20 +137,28 @@ class DataController {
   }
 
   // get nama (temporary)
-  Future<String> namaAdming() async {
+  Future<void> namaAdming() async {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
 
-    return decodedToken["username"];
+    nama = decodedToken["nama"];
+    print(nama);
   }
 
-  late String nama;
+  // late String nama;
   // ===== USER =====
-
 
   //
   /* 
     GETTERS, FETCHERS
    */
   //
+
+  Future<void> fetchAllAntrian() async {}
+  Future<void> fetchAllBilling() async {}
+
+  Future<void> fetchAllData() async {
+    print("nama fetched");
+    namaAdming();
+  }
 }

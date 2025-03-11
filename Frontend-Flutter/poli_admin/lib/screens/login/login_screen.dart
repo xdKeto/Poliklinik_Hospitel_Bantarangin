@@ -66,10 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!context.mounted) return;
       Navigator.pop(context2);
-
       if (response.status == 200) {
-        // print(response.data["token"]);
-        token = response.data['token'];
+        token = response.data;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token!);
 
@@ -85,8 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   isSuccess: true,
                   boldText: "Login Successful",
                   italicText: "your credentials are correct");
-            }).then((_) {
+            }).then((_) async {
           if (context.mounted) {
+            await DataController().fetchAllData();
             Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
           }
         });

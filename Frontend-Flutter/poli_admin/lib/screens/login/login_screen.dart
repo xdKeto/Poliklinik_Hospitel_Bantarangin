@@ -48,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      print(email);
-      print(password);
+      // print(email);
+      // print(password);
 
       final context2 = context;
 

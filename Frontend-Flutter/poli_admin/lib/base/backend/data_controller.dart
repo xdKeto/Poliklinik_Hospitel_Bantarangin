@@ -324,24 +324,14 @@ class DataController {
     }
   }
 
-  Future<void> registerPasien() async {
-    try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints["registerPasien"]!(), "post", "");
-      print(response.status);
-      if (response.status == 200) {
-        print(response.data);
-      } else if (response.status == 401) {
-        print(response.message);
-      } else {
-        print(response.message);
-      }
-    } catch (e) {
-      throw Exception("failed to fetch all pasien");
-    }
-  }
+  // ===== BILLING =====
+  Future<void> fetchBillingByPoli(String id) async {}
 
+  Future<void> fetchBillingByStatus(String id) async {}
 
+  Future<void> fetchBillingByBoth(String idPoli, String status) async {}
+
+  Future<void> fetchBilling() async {}
 
   Future<void> fetchAllAntrian() async {
     print('list status antrian fetched');
@@ -358,10 +348,12 @@ class DataController {
     fetchStatusSelesai();
   }
 
-  Future<void> fetchAllBilling() async {}
-
   Future<void> fetchAllData() async {
-    print("nama fetched");
     namaAdming();
+    print("nama fetched");
+    fetchAllAntrian();
+    print("antrians fetched");
+    fetchBilling();
+    print("billings fetched");
   }
 }

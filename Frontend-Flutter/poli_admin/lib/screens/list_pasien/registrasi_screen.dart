@@ -2,11 +2,16 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/base/utils/config.dart';
 
 class RegistrasiScreen extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -24,6 +29,20 @@ class RegistrasiScreen extends StatefulWidget {
 }
 
 class _RegistrasiScreenState extends State<RegistrasiScreen> {
+  String? nama;
+  String? jenisKelamin;
+  String? tempatLahir;
+  String? tanggalLahir;
+  String? nik;
+  String? noTelp;
+  String? alamat;
+  String? kelurahan;
+  String? kecamatan;
+  String? tempatTinggal;
+  int? idPoli;
+  String? keluhanUtama;
+  bool isPost = true;
+
   final List<String> listPoli = [
     "Poli Gigi",
     "Poli Anak",
@@ -39,6 +58,90 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   var tanggalcontroller = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  void doRegistrasi() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final context2 = context;
+
+      showDialog(
+          context: context,
+          builder: (context) => LoadingAlert(),
+          barrierDismissible: false);
+
+      DataController dataController = DataController();
+      ResponseRequestAPI response;
+      if (isPost) {
+        response = await dataController
+            .apiConnector(Config.apiEndpoints['registrasiPasien']!(), "post", {
+          "nama": nama,
+          "jenis_kelamin": jenisKelamin,
+          "tempat_lahir": tempatLahir,
+          "tanggal_lahir": tanggalLahir,
+          "nik": nik,
+          "no_telp": noTelp,
+          "alamat": alamat,
+          "kelurahan": kelurahan,
+          "kecamatan": kecamatan,
+          "kota_tempat_tinggal": tempatTinggal,
+          "id_poli": idPoli,
+          "keluhan_utama": keluhanUtama
+        });
+      } else {
+        response = await dataController
+            .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
+          "id_poli": idPoli,
+          "nama": nama,
+          "jenis_kelamin": jenisKelamin,
+          "tempat_lahir": tempatLahir,
+          "tanggal_lahir": tanggalLahir,
+          "nik": nik,
+          "no_telp": noTelp,
+          "alamat": alamat,
+          "kelurahan": kelurahan,
+          "kecamatan": kecamatan,
+        });
+      }
+
+      if (!context.mounted) return;
+      Navigator.pop(context2);
+      if (response.data == 200) {
+        if (!context.mounted) return;
+        showDialog(
+            context: context2,
+            builder: (context) {
+              Future.delayed(Duration(seconds: 1), () {
+                if (context.mounted) Navigator.pop(context);
+              });
+
+              return SucfailAlert(
+                  isSuccess: true,
+                  boldText: "Registrasi Sukses",
+                  italicText: "pasien berhasil registrasi");
+            }).then((_) async {
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
+          }
+        });
+      } else if (response.status == 401) {
+        showDialog(
+            context: context2,
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Registrasi Gagal",
+                italicText: "ada kesalahan dalam menambahkan pasien"));
+      } else {
+        showDialog(
+            context: context2,
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Login Failed",
+                italicText: response.message));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SelectionArea(
@@ -475,7 +578,6 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    
                                     showDialog(
                                         context: context,
                                         builder: (context) => ConfirmAlert(

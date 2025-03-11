@@ -144,8 +144,6 @@ class DataController {
     nama = decodedToken["nama"];
     print(nama);
   }
-
-  // late String nama;
   // ===== USER =====
 
   //
@@ -154,7 +152,212 @@ class DataController {
    */
   //
 
-  Future<void> fetchAllAntrian() async {}
+  // ===== ANTRIAN =====
+  Future<void> fetchListStatus() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints['listStatus']!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception('failed to fecth list status: $e');
+    }
+  }
+
+  Future<void> fetchAntrianToday() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["antrianToday"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch antrian today: $e");
+    }
+  }
+
+  Future<void> fetchStatusTunggu() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["tungguStatus"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch status tunda: $e");
+    }
+  }
+
+  Future<void> fetchStatusTunda() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["tundaStatus"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch status tunda: $e");
+    }
+  }
+
+  Future<void> fetchStatusKonsul() async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["konsultasiStatus"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch status konsul: $e");
+    }
+  }
+
+  Future<void> fetchStatusSelesai() async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["selesaiStatus"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch status selesai: $e");
+    }
+  }
+
+  Future<void> putTundaAntrian(String id) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["tundaAntrian"]!(id), "put", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to tunda antrian: $e");
+    }
+  }
+
+  Future<void> putAntrian(String idAntrian, String idPoli) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["putAntrian"]!(idAntrian, idPoli), "put", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to masukin antrian: $e");
+    }
+  }
+
+  // ===== REGISTRASI =====
+  Future<void> fetchPoliAktif() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["poliAktif"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch poli aktif");
+    }
+  }
+
+  Future<void> fetchAllPasien() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["allPasien"]!(), "get", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch all pasien");
+    }
+  }
+
+  Future<void> registerPasien() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["registerPasien"]!(), "post", "");
+      print(response.status);
+      if (response.status == 200) {
+        print(response.data);
+      } else if (response.status == 401) {
+        print(response.message);
+      } else {
+        print(response.message);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch all pasien");
+    }
+  }
+
+
+
+  Future<void> fetchAllAntrian() async {
+    print('list status antrian fetched');
+    fetchListStatus();
+    print('antrian today fetched');
+    fetchAntrianToday();
+    print('status tunggu fetched');
+    fetchStatusTunggu();
+    print('status tunda fetched');
+    fetchStatusTunda();
+    print('status konsul fetched');
+    fetchStatusKonsul();
+    print('status selesai fetched');
+    fetchStatusSelesai();
+  }
+
   Future<void> fetchAllBilling() async {}
 
   Future<void> fetchAllData() async {

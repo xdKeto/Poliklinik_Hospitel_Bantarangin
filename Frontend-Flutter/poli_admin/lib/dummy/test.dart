@@ -17,11 +17,10 @@ class DataController {
 
   DataController._internal();
 
-  //
   /* 
     LISTS
    */
-  //
+
   List user = [];
   List<AntrianPasien> antrianToday = [];
   List<AntrianPasien> antrianTunggu = [];
@@ -33,11 +32,9 @@ class DataController {
   List<Pasien> allPasien = [];
   String? nama;
 
-  //
   /* 
     MAIN API CALLERRRR 💪
    */
-  //
 
   Future<ResponseRequestAPI> apiConnector(
       String url, String method, dynamic body) async {
@@ -59,7 +56,6 @@ class DataController {
           body: json.encode(body),
           headers: {"Content-Type": "application/json"},
         );
-        // print(jsonEncode(body));
       } else if (method == "get") {
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
@@ -71,8 +67,6 @@ class DataController {
             body: json.encode(body),
             headers: {"Content-Type": "application/json"});
       }
-      // print(response.statusCode);
-      // print(response.body);
 
       if (response.body.isEmpty) {
         return ResponseRequestAPI(
@@ -95,28 +89,22 @@ class DataController {
     }
   }
 
-  //
   /* 
     FUNCTIONS
    */
-  //
 
-  // ===== USER =====
-  // logout
   Future<void> userLogout() async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove('auth_token');
   }
 
-  // get jwt token
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
 
     return prefs.getString('auth_token');
   }
 
-  // cek token masih ada? or expired
   Future<bool> cekToken() async {
     String? token = await getToken();
     print('token checked: $token');
@@ -135,7 +123,6 @@ class DataController {
     return true;
   }
 
-  // decode jwt buat cek list privilege
   Future<bool> cekPriv(int priv) async {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
@@ -153,50 +140,43 @@ class DataController {
     return true;
   }
 
-  // get nama (temporary)
   Future<void> namaAdming() async {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
 
     nama = decodedToken["nama"];
-    // print(nama);
   }
-  // ===== USER =====
 
-  //
   /* 
-    FETCHERS
+    GETTERS, FETCHERS
    */
-  //
 
-  // ===== ANTRIAN =====
   Future<List<StatusAntrian>> fetchListStatus() async {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints['listStatus']!(), "get", "");
       print('list status: ${response.status}');
       if (response.data != null) {
+        // Convert the raw data to StatusAntrian objects
         statusAntrian = (response.data as List)
             .map((item) => StatusAntrian.fromJson(item))
             .toList();
         print(statusAntrian);
       }
     } catch (e) {
-      throw Exception('failed to fecth list status: $e');
+      throw Exception('failed to fetch list status: $e');
     }
 
     return statusAntrian;
   }
 
-  Future<List<AntrianPasien>> fetchAntrianToday() async {
+  Future<List> fetchAntrianToday() async {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["antrianToday"]!(), "get", "");
       print('antrian today: ${response.status}');
       if (response.data != null) {
-        antrianToday = (response.data as List)
-            .map((item) => AntrianPasien.fromJson(item))
-            .toList();
+        antrianToday = response.data;
         print(antrianToday);
       }
     } catch (e) {
@@ -206,15 +186,13 @@ class DataController {
     return antrianToday;
   }
 
-  Future<List<AntrianPasien>> fetchStatusTunggu() async {
+  Future<List> fetchStatusTunggu() async {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["tungguStatus"]!(), "get", "");
       print('status tunggu: ${response.status}');
       if (response.data != null) {
-        antrianTunggu = (response.data as List)
-            .map((item) => AntrianPasien.fromJson(item))
-            .toList();
+        antrianTunggu = response.data;
         print(antrianTunggu);
       }
     } catch (e) {
@@ -224,58 +202,46 @@ class DataController {
     return antrianTunggu;
   }
 
-  Future<List<AntrianPasien>> fetchStatusTunda() async {
+  Future<void> fetchStatusTunda() async {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["tundaStatus"]!(), "get", "");
       print('status tunda: ${response.status}');
       if (response.data != null) {
-        antrianTunda = (response.data as List)
-            .map((item) => AntrianPasien.fromJson(item))
-            .toList();
+        antrianTunda = response.data;
         print(antrianTunda);
       }
     } catch (e) {
       throw Exception("failed to fetch status tunda: $e");
     }
-
-    return antrianTunda;
   }
 
-  Future<List<AntrianPasien>> fetchStatusKonsul() async {
+  Future<void> fetchStatusKonsul() async {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["konsultasiStatus"]!(), "get", "");
       print('status konsul: ${response.status}');
       if (response.data != null) {
-        antrianKonsul = (response.data as List)
-            .map((item) => AntrianPasien.fromJson(item))
-            .toList();
+        antrianKonsul = response.data;
         print(antrianKonsul);
       }
     } catch (e) {
       throw Exception("failed to fetch status konsul: $e");
     }
-
-    return antrianKonsul;
   }
 
-  Future<List<AntrianPasien>> fetchStatusSelesai() async {
+  Future<void> fetchStatusSelesai() async {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["selesaiStatus"]!(), "get", "");
       print('status selesai: ${response.status}');
       if (response.data != null) {
-        antrianSelesai = (response.data as List)
-            .map((item) => AntrianPasien.fromJson(item))
-            .toList();
+        antrianSelesai = response.data;
         print(antrianSelesai);
       }
     } catch (e) {
       throw Exception("failed to fetch status selesai: $e");
     }
-
-    return antrianSelesai;
   }
 
   Future<void> fetchAllAntrian() async {

@@ -17,6 +17,8 @@ class StatusBox extends StatelessWidget {
       color = AppStyles.greenColor2;
     }else if (status.toLowerCase() == 'konsultasi'){
       color = AppStyles.secondaryColor;
+    }else {
+      color = AppStyles.primaryColor;
     }
 
     return Container(

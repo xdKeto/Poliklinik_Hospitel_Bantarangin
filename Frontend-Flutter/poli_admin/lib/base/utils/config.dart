@@ -13,7 +13,7 @@ class Config {
     'tungguStatus': () => '$apiURL/antrian/today?status=Menunggu',
     'tundaStatus': () => '$apiURL/antrian/today?status=Ditunda',
     'konsultasiStatus': () => '$apiURL/antrian/today?status=Konsultasi',
-    'selesaiStatus': () => '$apiURL/antiran/today?status=Selesai',
+    'selesaiStatus': () => '$apiURL/antrian/today?status=Selesai',
     'tundaAntrian': (String id) => '$apiURL/kunjungan/tunda?id_antrian=$id', // PUT
     'putAntrian': (String idAntrian, String idPoli) =>
         '$apiURL/kunjungan/reschedule?id_antrian=$idAntrian&id_poli=$idPoli', // PUT

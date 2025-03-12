@@ -48,9 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      // print(email);
-      // print(password);
-
       final context2 = context;
 
       showDialog(
@@ -73,36 +70,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (!context.mounted) return;
         showDialog(
-            context: context2,
-            builder: (context) {
-              Future.delayed(Duration(seconds: 1), () {
-                if (context.mounted) Navigator.pop(context);
-              });
+          context: context2,
+          builder: (context) => SucfailAlert(
+            isSuccess: true,
+            boldText: "Login Successful",
+            italicText: "your credentials are correct",
+          ),
+        );
 
-              return SucfailAlert(
-                  isSuccess: true,
-                  boldText: "Login Successful",
-                  italicText: "your credentials are correct");
-            }).then((_) async {
-          if (context.mounted) {
-            await DataController().fetchAllData();
-            Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
-          }
-        });
-      } else if (response.status == 401) {
-        showDialog(
+        await Future.delayed(Duration(seconds: 1));
+
+        if (context.mounted) Navigator.pop(context2);
+
+        if (context.mounted) {
+          showDialog(
             context: context2,
-            builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Login Failed",
-                italicText: "please check your credentials"));
+            builder: (context) => LoadingAlert(),
+            barrierDismissible: false,
+          );
+        }
+
+        await DataController().fetchAllData();
+
+        if (context.mounted) {
+          Navigator.pop(context2);
+          Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
+        }
       } else {
         showDialog(
-            context: context2,
-            builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Login Failed",
-                italicText: response.message));
+          context: context2,
+          builder: (context) => SucfailAlert(
+            isSuccess: false,
+            boldText: "Login Failed",
+            italicText: response.status == 401
+                ? "please check your credentials"
+                : response.message,
+          ),
+        );
       }
     }
   }

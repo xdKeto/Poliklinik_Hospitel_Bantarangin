@@ -56,9 +56,19 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   var tanggalcontroller = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  List<Poliklinik> poliAktif = [];
-  List<Pasien> allPasien = [];
+  // List<Pasien> allPasien = [];
   DataController dataController = DataController();
+
+  var namaController = TextEditingController();
+  var jenisKelaminController = TextEditingController();
+  var tempatLahirController = TextEditingController();
+  var tanggalLahirController = TextEditingController();
+  var nikController = TextEditingController();
+  var noTelpController = TextEditingController();
+  var alamatController = TextEditingController();
+  var kelurahanController = TextEditingController();
+  var kecamatanController = TextEditingController();
+  var tempatTinggalController = TextEditingController();
 
   @override
   void initState() {
@@ -84,24 +94,30 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    namaController.dispose();
+    jenisKelaminController.dispose();
+    tempatLahirController.dispose();
+    tanggalLahirController.dispose();
+    nikController.dispose();
+    noTelpController.dispose();
+    alamatController.dispose();
+    kelurahanController.dispose();
+    kecamatanController.dispose();
+    tempatTinggalController.dispose();
+    super.dispose();
+  }
+
+  void autoFillDataPasien(Pasien pasien){
+    
+  }
+
   void doRegistrasi() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       final context2 = context;
-
-      print(nama);
-      print(jenisKelamin);
-      print(tempatLahir);
-      print(tanggalLahir);
-      print(nik);
-      print(noTelp);
-      print(alamat);
-      print(kelurahan);
-      print(kecamatan);
-      print(tempatTinggal);
-      print(idPoli);
-      print(keluhanUtama);
 
       Navigator.pop(context);
       showDialog(

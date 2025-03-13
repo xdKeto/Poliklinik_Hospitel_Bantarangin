@@ -59,7 +59,8 @@ class _IconDropdownState extends State<IconDropdown> {
   List<MenuItem> dropdownItems() {
     List<MenuItem> items = privItems();
     if (widget.status.toLowerCase() == 'selesai' ||
-        widget.status.toLowerCase() == 'konsultasi') {
+        widget.status.toLowerCase() == 'konsultasi' ||
+        widget.status.toLowerCase() == 'screening') {
       return items;
     } else if (widget.status.toLowerCase() == 'menunggu') {
       return [...items, MenuItems.tundaPasien, MenuItems.batalAntrian];

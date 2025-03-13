@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
 
-        await DataController().fetchAllData();
+        await DataController().fetchFirstData();
 
         if (context.mounted) {
           Navigator.pop(context2);

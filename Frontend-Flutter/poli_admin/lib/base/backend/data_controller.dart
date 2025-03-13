@@ -57,19 +57,17 @@ class DataController {
         response = await http.post(
           Uri.parse(url),
           body: json.encode(body),
-          headers: {"Content-Type": "application/json"},
+          headers: headers,
         );
-        // print(jsonEncode(body));
+        print(jsonEncode(body));
       } else if (method == "get") {
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
         response = await http.put(Uri.parse(url),
-            body: json.encode(body),
-            headers: {"Content-Type": "application/json"});
+            body: json.encode(body), headers: headers);
       } else {
         response = await http.delete(Uri.parse(url),
-            body: json.encode(body),
-            headers: {"Content-Type": "application/json"});
+            body: json.encode(body), headers: headers);
       }
       // print(response.statusCode);
       // print(response.body);
@@ -278,8 +276,44 @@ class DataController {
     return antrianSelesai;
   }
 
+  Future<List<Poliklinik>> fetchPoliAktif() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["poliAktif"]!(), "get", "");
+      print('poli aktif: ${response.status}');
+      if (response.data != null) {
+        poliAktif = (response.data as List)
+            .map((item) => Poliklinik.fromJson(item))
+            .toList();
+        print(poliAktif);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch poli aktif: $e");
+    }
+
+    return poliAktif;
+  }
+
+  Future<List<Pasien>> fetchAllPasien() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["allPasien"]!(), "get", "");
+      print("all pasien: ${response.status}");
+      if (response.data != null) {
+        allPasien = (response.data as List)
+            .map((item) => Pasien.fromJson(item))
+            .toList();
+
+        print(allPasien);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch all pasien: $e");
+    }
+
+    return allPasien;
+  }
+
   Future<void> fetchAllAntrian() async {
-    fetchListStatus();
     fetchAntrianToday();
     fetchStatusTunggu();
     fetchStatusTunda();
@@ -287,7 +321,8 @@ class DataController {
     fetchStatusSelesai();
   }
 
-  Future<void> fetchAllData() async {
+  Future<void> fetchFirstData() async {
     namaAdming();
+    fetchAllPasien();
   }
 }

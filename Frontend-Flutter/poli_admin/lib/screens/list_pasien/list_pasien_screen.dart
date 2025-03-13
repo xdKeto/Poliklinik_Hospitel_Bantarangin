@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:poli_admin/base/backend/class/antrian_pasien.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -31,8 +34,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
+  Timer? refreshData;
 
-  late List<String> listStatus = ['-- Semua Status --'];
+  late List<String> listStatus = [];
   List<AntrianPasien> filteredList = [];
   final TextEditingController controller = TextEditingController();
   final DataController dataController = DataController();
@@ -41,8 +45,19 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   @override
   void initState() {
     super.initState();
+    print("INIT STATE TRIGGERED!!!!!");
     listPriv();
     fetchData();
+
+    refreshData = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchData();
+    });
+  }
+
+  @override
+  void dispose() {
+    refreshData?.cancel();
+    super.dispose();
   }
 
   Future<void> fetchData() async {
@@ -51,12 +66,10 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     });
 
     try {
-      await dataController.fetchListStatus();
-      await dataController.fetchAntrianToday();
-      await dataController.fetchStatusTunggu();
-      await dataController.fetchStatusTunda();
-      await dataController.fetchStatusKonsul();
-      await dataController.fetchStatusSelesai();
+      if (dataController.statusAntrian.isEmpty) {
+        await dataController.fetchListStatus();
+      }
+      await dataController.fetchAllAntrian();
 
       setState(() {
         listStatus = ['-- Semua Status --'];
@@ -237,7 +250,10 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               SizedBox(height: 12),
               Expanded(
                 child: isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: AppStyles.primaryColor,
+                      ))
                     : PaginatedDataTable2(
                         sortColumnIndex: sortColumnIndex,
                         sortAscending: sortAscending,

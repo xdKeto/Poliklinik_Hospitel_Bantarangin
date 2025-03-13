@@ -60,4 +60,6 @@ class Pasien {
       'Tempat_Lahir': tempatLahir,
     };
   }
+
+  // static List<Pasien> getSuggestions()
 }

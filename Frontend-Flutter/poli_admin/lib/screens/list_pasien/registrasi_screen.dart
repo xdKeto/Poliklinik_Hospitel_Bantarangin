@@ -1,7 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:poli_admin/base/backend/class/pasien.dart';
+import 'package:poli_admin/base/backend/class/poliklinik.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -29,26 +32,21 @@ class RegistrasiScreen extends StatefulWidget {
 }
 
 class _RegistrasiScreenState extends State<RegistrasiScreen> {
-  String? nama;
-  String? jenisKelamin;
-  String? tempatLahir;
-  String? tanggalLahir;
-  String? nik;
-  String? noTelp;
-  String? alamat;
-  String? kelurahan;
-  String? kecamatan;
-  String? tempatTinggal;
-  int? idPoli;
-  String? keluhanUtama;
+  String? nama = "";
+  String? jenisKelamin = "";
+  String? tempatLahir = "";
+  String? tanggalLahir = "";
+  String? nik = "";
+  String? noTelp = "";
+  String? alamat = "";
+  String? kelurahan = "";
+  String? kecamatan = "";
+  String? tempatTinggal = "";
+  int? idPoli = 0;
+  String? keluhanUtama = "";
   bool isPost = true;
 
-  final List<String> listPoli = [
-    "Poli Gigi",
-    "Poli Anak",
-    "Poli Umum",
-    "Poli Obgyn "
-  ];
+  final List<String> listPoli = [];
 
   final List<String> listGender = ["Laki-Laki", "Perempuan"];
 
@@ -58,6 +56,33 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   var tanggalcontroller = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  List<Poliklinik> poliAktif = [];
+  List<Pasien> allPasien = [];
+  DataController dataController = DataController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      await dataController.fetchPoliAktif();
+      await dataController.fetchAllPasien();
+
+      setState(() {
+        if (dataController.poliAktif.isNotEmpty) {
+          listPoli.clear();
+          for (var poli in dataController.poliAktif) {
+            listPoli.add(poli.namaPoli);
+          }
+        }
+      });
+    } catch (e) {
+      print("error fetching data: $e");
+    }
+  }
 
   void doRegistrasi() async {
     if (_formKey.currentState!.validate()) {
@@ -65,6 +90,20 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
 
       final context2 = context;
 
+      print(nama);
+      print(jenisKelamin);
+      print(tempatLahir);
+      print(tanggalLahir);
+      print(nik);
+      print(noTelp);
+      print(alamat);
+      print(kelurahan);
+      print(kecamatan);
+      print(tempatTinggal);
+      print(idPoli);
+      print(keluhanUtama);
+
+      Navigator.pop(context);
       showDialog(
           context: context,
           builder: (context) => LoadingAlert(),
@@ -72,41 +111,46 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
 
       DataController dataController = DataController();
       ResponseRequestAPI response;
-      if (isPost) {
-        response = await dataController
-            .apiConnector(Config.apiEndpoints['registrasiPasien']!(), "post", {
-          "nama": nama,
-          "jenis_kelamin": jenisKelamin,
-          "tempat_lahir": tempatLahir,
-          "tanggal_lahir": tanggalLahir,
-          "nik": nik,
-          "no_telp": noTelp,
-          "alamat": alamat,
-          "kelurahan": kelurahan,
-          "kecamatan": kecamatan,
-          "kota_tempat_tinggal": tempatTinggal,
-          "id_poli": idPoli,
-          "keluhan_utama": keluhanUtama
-        });
-      } else {
-        response = await dataController
-            .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
-          "id_poli": idPoli,
-          "nama": nama,
-          "jenis_kelamin": jenisKelamin,
-          "tempat_lahir": tempatLahir,
-          "tanggal_lahir": tanggalLahir,
-          "nik": nik,
-          "no_telp": noTelp,
-          "alamat": alamat,
-          "kelurahan": kelurahan,
-          "kecamatan": kecamatan,
-        });
+
+      try {
+        if (isPost) {
+          response = await dataController
+              .apiConnector(Config.apiEndpoints['registerPasien']!(), "post", {
+            "nama": nama,
+            "jenis_kelamin": jenisKelamin,
+            "tempat_lahir": tempatLahir,
+            "tanggal_lahir": tanggalLahir,
+            "nik": nik,
+            "no_telp": noTelp,
+            "alamat": alamat,
+            "kelurahan": kelurahan,
+            "kecamatan": kecamatan,
+            "kota_tempat_tinggal": tempatTinggal,
+            "id_poli": idPoli,
+            "keluhan_utama": keluhanUtama
+          });
+        } else {
+          response = await dataController
+              .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
+            "id_poli": idPoli,
+            "nama": nama,
+            "jenis_kelamin": jenisKelamin,
+            "tempat_lahir": tempatLahir,
+            "tanggal_lahir": tanggalLahir,
+            "nik": nik,
+            "no_telp": noTelp,
+            "alamat": alamat,
+            "kelurahan": kelurahan,
+            "kecamatan": kecamatan,
+          });
+        }
+      } on Exception catch (e) {
+        throw Exception("failed to register pasien: $e");
       }
 
       if (!context.mounted) return;
       Navigator.pop(context2);
-      if (response.data == 200) {
+      if (response.status == 200) {
         if (!context.mounted) return;
         showDialog(
             context: context2,
@@ -124,21 +168,20 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
           }
         });
-      } else if (response.status == 401) {
-        showDialog(
-            context: context2,
-            builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Registrasi Gagal",
-                italicText: "ada kesalahan dalam menambahkan pasien"));
       } else {
         showDialog(
-            context: context2,
-            builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Login Failed",
-                italicText: response.message));
+          context: context2,
+          builder: (context) => SucfailAlert(
+            isSuccess: false,
+            boldText: "Registrasi Gagal",
+            italicText: response.message,
+          ),
+        );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Pastikan semua field telah terisi')),
+      );
     }
   }
 
@@ -189,7 +232,20 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                               }
                               return null;
                             },
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              // idPoli = 1;
+                              try {
+                                final poli =
+                                    dataController.poliAktif.firstWhere(
+                                  (poli) => poli.namaPoli == value,
+                                );
+                                setState(() {
+                                  idPoli = poli.idPoli;
+                                });
+                              } catch (e) {
+                                print("Error setting idPoli: $e");
+                              }
+                            },
                             onSaved: (newValue) {
                               selectedValue = newValue.toString();
                             },
@@ -251,7 +307,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Nama Lengkap',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field nama pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          nama = value;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -283,7 +348,9 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           }
                                           return null;
                                         },
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          jenisKelamin = value;
+                                        },
                                         onSaved: (newValue) {
                                           selectedValue = newValue.toString();
                                         },
@@ -331,7 +398,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'e.g: Surabaya',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field tempat lahir pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          tempatLahir = value;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -356,10 +432,42 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                               color: AppStyles.greyColor2),
                                           suffixIcon: Icon(Icons.date_range),
                                         ),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field tanggal lahir pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          tanggalLahir = value;
+                                        },
                                         onTap: () async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
+                                            builder: (context, child) {
+                                              return Theme(
+                                                data:
+                                                    Theme.of(context).copyWith(
+                                                  colorScheme:
+                                                      ColorScheme.light(
+                                                          primary: AppStyles
+                                                              .primaryColor,
+                                                          onPrimary:
+                                                              Colors.white,
+                                                          onSurface: AppStyles
+                                                              .primaryColor),
+                                                  textButtonTheme:
+                                                      TextButtonThemeData(
+                                                    style: TextButton.styleFrom(
+                                                        foregroundColor:
+                                                            AppStyles
+                                                                .primaryColor),
+                                                  ),
+                                                ),
+                                                child: child!,
+                                              );
+                                            },
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
@@ -374,6 +482,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                               tanggalcontroller.text =
                                                   DateFormat('yyyy-MM-dd')
                                                       .format(selectedDate);
+                                              tanggalLahir =
+                                                  tanggalcontroller.text;
                                             });
                                           }
                                         },
@@ -401,7 +511,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Nomor NIK / KTP',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field NIK pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          nik = value;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -422,7 +541,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Nomor HP',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field no. HP pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          noTelp = value;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -448,7 +576,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Alamat Rumah',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field alamat pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          alamat = value;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -473,7 +610,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Keluarahan',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          kelurahan = value;
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field kelurahan pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -494,7 +640,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Kecamatan',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          kecamatan = value;
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field kecamatan pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -520,7 +675,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Kota Tempat Tinggal',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          tempatTinggal = value;
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field tempat tinggal pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -546,7 +710,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             hintText: 'Keluhan Utama',
                                             hintStyle: TextStyle(
                                                 color: AppStyles.greyColor2)),
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          keluhanUtama = value;
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Field keluhan utama pasien harus terisi";
+                                          }
+
+                                          return null;
+                                        },
                                       ),
                                     ],
                                   ),
@@ -584,7 +757,9 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                               icon: FluentIcons.print_16_filled,
                                               boldText: 'Cetak Antrian?',
                                               yesText: 'cetak',
-                                              yesFunc: () {},
+                                              yesFunc: () {
+                                                doRegistrasi();
+                                              },
                                             ));
                                   },
                                   child: TheButton(

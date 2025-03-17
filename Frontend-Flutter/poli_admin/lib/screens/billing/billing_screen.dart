@@ -50,12 +50,13 @@ class _BillingScreenState extends State<BillingScreen> {
     fetchData();
 
     refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-    print(filteredList);
+    print("billing list: $filteredList");
   }
 
   Future<void> fetchData() async {
     try {
       await dataController.fetchPoliAktif();
+      await dataController.fetchBilling();
 
       if (mounted) {
         setState(() {
@@ -174,17 +175,28 @@ class _BillingScreenState extends State<BillingScreen> {
                     SizedBox(
                       width: screenWidth * 0.01,
                     ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            controller.clear();
-                            selectedStatus = '-- Semua Status --';
-                            selectedPoli = '-- Semua Poliklinik --';
-                            fetchData();
-                          });
-                        },
-                        icon: Icon(Icons.refresh)),
                     Spacer(),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          controller.clear();
+                          selectedStatus = '-- Semua Status --';
+                          selectedPoli = '-- Semua Poliklinik --';
+                          fetchData();
+                        });
+                      },
+                      child: TheButton(
+                        text: 'Refresh',
+                        color: AppStyles.greyBtnColor,
+                        iconColor: AppStyles.greyBtnColor,
+                        textColor: AppStyles.greyBtnColor,
+                        border: true,
+                        isIcon: true,
+                        horiPadding: 13,
+                        vertPadding: 7,
+                        icon: Icons.refresh,
+                      ),
+                    ),
                   ],
                 ),
               ),

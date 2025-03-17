@@ -142,7 +142,7 @@ class DataController {
   Future<bool> cekPriv(int priv) async {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-    print(decodedToken);
+    // print(decodedToken);
 
     if (decodedToken["privileges"] == null) {
       return false;
@@ -300,6 +300,7 @@ class DataController {
   }
 
   Future<List<Pasien>> fetchAllPasien(String nama, String page) async {
+    print("seraching for: $nama");
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["allPasien"]!(nama, page), "get", "");
@@ -309,7 +310,9 @@ class DataController {
             .map((item) => Pasien.fromJson(item))
             .toList();
 
-        print(allPasien);
+        // print(allPasien);
+      }else {
+        return [];
       }
     } catch (e) {
       throw Exception("failed to fetch all pasien: $e");
@@ -327,8 +330,9 @@ class DataController {
         billing = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
-        print(billing);
+        // print("billing: $billing");
       }
+      print("null billing??");
     } catch (e) {
       throw Exception(e);
     }

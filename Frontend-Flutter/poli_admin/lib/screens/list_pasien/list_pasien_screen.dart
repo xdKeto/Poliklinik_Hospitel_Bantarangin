@@ -234,15 +234,27 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                     SizedBox(
                       width: screenWidth * 0.01,
                     ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            controller.clear();
-                            selectedStatus = '-- Semua Status --';
-                            fetchData();
-                          });
-                        },
-                        icon: Icon(Icons.refresh)),
+                    Spacer(),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          controller.clear();
+                          selectedStatus = '-- Semua Status --';
+                          fetchData();
+                        });
+                      },
+                      child: TheButton(
+                        text: 'Refresh',
+                        color: AppStyles.greyBtnColor,
+                        iconColor: AppStyles.greyBtnColor,
+                        textColor: AppStyles.greyBtnColor,
+                        border: true,
+                        isIcon: true,
+                        horiPadding: 13,
+                        vertPadding: 7,
+                        icon: Icons.refresh,
+                      ),
+                    ),
                   ],
                 ),
               ),

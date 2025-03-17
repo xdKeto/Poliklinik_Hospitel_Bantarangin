@@ -390,6 +390,12 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           try {
                                             return await dataController
                                                 .fetchAllPasien(search, "1");
+
+                                            // if (response.isNotEmpty) {
+                                            //   return response;
+                                            // }
+
+                                            // return [];
                                           } catch (e) {
                                             print('error fetching query: $e');
                                             return [];

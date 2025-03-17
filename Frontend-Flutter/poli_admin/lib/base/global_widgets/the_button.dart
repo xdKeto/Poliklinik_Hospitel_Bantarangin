@@ -69,6 +69,7 @@ class _TheButtonState extends State<TheButton> {
                       color: isHovered ? Colors.white : widget.textColor,
                     ),
                   ),
+                  
                 ],
               )
             : Center(

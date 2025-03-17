@@ -177,7 +177,7 @@ class DataController {
         statusAntrian = (response.data as List)
             .map((item) => StatusAntrian.fromJson(item))
             .toList();
-        print(statusAntrian);
+        // print(statusAntrian);
       }
     } catch (e) {
       throw Exception('failed to fecth list status: $e');
@@ -285,7 +285,7 @@ class DataController {
         poliAktif = (response.data as List)
             .map((item) => Poliklinik.fromJson(item))
             .toList();
-        print(poliAktif);
+        // print(poliAktif);
       }
     } catch (e) {
       throw Exception("failed to fetch poli aktif: $e");
@@ -294,10 +294,11 @@ class DataController {
     return poliAktif;
   }
 
-  Future<List<Pasien>> fetchAllPasien() async {
+  Future<List<Pasien>> fetchAllPasien(String nama, String page) async {
+    print("fetching pasien..");
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints["allPasien"]!(), "get", "");
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["allPasien"]!(nama, page), "get", "");
       print("all pasien: ${response.status}");
       if (response.data != null) {
         allPasien = (response.data as List)
@@ -323,6 +324,5 @@ class DataController {
 
   Future<void> fetchFirstData() async {
     namaAdming();
-    fetchAllPasien();
   }
 }

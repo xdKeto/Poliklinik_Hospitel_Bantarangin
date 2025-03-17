@@ -20,7 +20,7 @@ class Config {
 
     // REGISTRASI
     'poliAktif': () => '$apiURL/poliklinik?status=aktif',
-    'allPasien': () => '$apiURL/pasien',
+    'allPasien': (String nama, String page) => '$apiURL/pasien?nama=$nama&page=$page&limit=20',
     'registerPasien': () => '$apiURL/pasien/register', //POST
     'putPasien': () => '$apiURL/kunjungan', //PUT
 

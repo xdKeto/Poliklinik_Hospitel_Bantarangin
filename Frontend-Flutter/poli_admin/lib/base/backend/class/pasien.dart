@@ -50,7 +50,7 @@ class Pasien {
       'ID_Pasien': idPasien,
       'Jenis_Kelamin': jenisKelamin,
       'Kecamatan': kecamatan,
-      'Kelurahan': kelurahan, 
+      'Kelurahan': kelurahan,
       'Kota_Tinggal': kotaTinggal,
       'NIK': nik,
       'Nama': nama,

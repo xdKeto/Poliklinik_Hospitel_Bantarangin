@@ -310,6 +310,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         },
                         columns: [
                           DataColumn(
+                            label: Text('Poli Tujuan'),
+                          ),
+                          DataColumn(
                             label: Text('No. Antrian'),
                           ),
                           DataColumn(
@@ -317,9 +320,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                           ),
                           DataColumn(
                             label: Text('Nama Pasien'),
-                          ),
-                          DataColumn(
-                            label: Text('Poli Tujuan'),
                           ),
                           DataColumn(label: Center(child: Text('Status'))),
                           DataColumn(label: Center(child: Text('Aksi'))),
@@ -354,10 +354,10 @@ class AntrianRowSource extends DataTableSource {
           },
         ),
         cells: [
+          DataCell(Text(data.namaPoli)),
           DataCell(Text(data.nomorAntrian.toString())),
           DataCell(Text(data.idRm.toString())),
           DataCell(Text(data.nama)),
-          DataCell(Text(data.namaPoli)),
           DataCell(Center(child: StatusBox(status: data.status))),
           DataCell(Center(
               child: IconDropdown(

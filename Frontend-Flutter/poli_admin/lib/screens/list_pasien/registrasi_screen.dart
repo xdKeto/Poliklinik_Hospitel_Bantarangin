@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:poli_admin/base/backend/class/pasien.dart';
-import 'package:poli_admin/base/backend/class/poliklinik.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -47,22 +49,19 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   bool isPost = true;
 
   final List<String> listPoli = [];
-
   final List<String> listGender = ["Laki-Laki", "Perempuan"];
 
   String? selectedValue;
   var selectedDate = DateTime.now();
   var parsedDate = DateTime.now();
   var tanggalcontroller = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-  // List<Pasien> allPasien = [];
   DataController dataController = DataController();
+  Timer? debouncer;
 
   var namaController = TextEditingController();
   var jenisKelaminController = TextEditingController();
   var tempatLahirController = TextEditingController();
-  var tanggalLahirController = TextEditingController();
   var nikController = TextEditingController();
   var noTelpController = TextEditingController();
   var alamatController = TextEditingController();
@@ -79,7 +78,6 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
   Future<void> fetchData() async {
     try {
       await dataController.fetchPoliAktif();
-      await dataController.fetchAllPasien();
 
       setState(() {
         if (dataController.poliAktif.isNotEmpty) {
@@ -99,7 +97,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     namaController.dispose();
     jenisKelaminController.dispose();
     tempatLahirController.dispose();
-    tanggalLahirController.dispose();
+    tanggalcontroller.dispose();
     nikController.dispose();
     noTelpController.dispose();
     alamatController.dispose();
@@ -109,8 +107,28 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     super.dispose();
   }
 
-  void autoFillDataPasien(Pasien pasien){
-    
+  void autoFillDataPasien(Pasien pasien) {
+    setState(() {
+      isPost = false;
+      tempatLahirController.text = pasien.tempatLahir;
+      tanggalcontroller.text =
+          DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
+      nikController.text = pasien.nik;
+      noTelpController.text = pasien.noTelp;
+      alamatController.text = pasien.alamat;
+      kelurahanController.text = pasien.kelurahan;
+      kecamatanController.text = pasien.kecamatan;
+      tempatTinggalController.text = pasien.kotaTinggal;
+
+      tanggalLahir = DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
+      nik = pasien.nik;
+      noTelp = pasien.noTelp;
+      tempatLahir = pasien.tempatLahir;
+      alamat = pasien.alamat;
+      kelurahan = pasien.kelurahan;
+      kecamatan = pasien.kecamatan;
+      tempatTinggal = pasien.kotaTinggal;
+    });
   }
 
   void doRegistrasi() async {
@@ -146,6 +164,17 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             "keluhan_utama": keluhanUtama
           });
         } else {
+          print('ini put pasien');
+          print(idPoli);
+          print(nama);
+          print(jenisKelamin);
+          print(tempatLahir);
+          print(tanggalLahir);
+          print(nik);
+          print(noTelp);
+          print(alamat);
+          print(kelurahan);
+          print(kecamatan);
           response = await dataController
               .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
             "id_poli": idPoli,
@@ -317,23 +346,89 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           text: 'Nama Lengkap',
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
-                                      TextFormField(
-                                        cursorColor: Colors.black,
-                                        decoration: AppStyles.formBox.copyWith(
-                                            hintText: 'Nama Lengkap',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Field nama pasien harus terisi";
-                                          }
+                                      TypeAheadField<Pasien>(
+                                        builder:
+                                            (context, controller, focusNode) {
+                                          namaController = controller;
+                                          return TextField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            cursorColor: Colors.black,
+                                            decoration: AppStyles.formBox
+                                                .copyWith(
+                                                    hintText: 'Nama Lengkap',
+                                                    hintStyle: TextStyle(
+                                                        color: AppStyles
+                                                            .greyColor2)),
+                                            onChanged: (value) {
+                                              nama = value;
+                                            },
+                                          );
+                                        },
+                                        itemBuilder:
+                                            (context, Pasien suggestions) {
+                                          return ListTile(
+                                            title: Text(
+                                              suggestions.nama,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppStyles.sidebarText
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            subtitle: Text(
+                                                "NIK - ${suggestions.nik}"),
+                                          );
+                                        },
+                                        onSelected: (value) {
+                                          namaController.text = value.nama;
+                                          autoFillDataPasien(value);
+                                        },
+                                        suggestionsCallback: (search) async {
+                                          if (search.length < 2) return [];
 
-                                          return null;
+                                          try {
+                                            return await dataController
+                                                .fetchAllPasien(search, "1");
+                                          } catch (e) {
+                                            print('error fetching query: $e');
+                                            return [];
+                                          }
                                         },
-                                        onChanged: (value) {
-                                          nama = value;
+                                        loadingBuilder: (context) => Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Center(
+                                              child: LoadingAnimationWidget
+                                                  .waveDots(
+                                                      color: Colors.black,
+                                                      size: 48)),
+                                        ),
+                                        errorBuilder: (context, error) =>
+                                            Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Center(child: Text('Error!')),
+                                        ),
+                                        emptyBuilder: (context) => Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Text('No Data'),
+                                        ),
+                                        constraints:
+                                            BoxConstraints(maxHeight: 350),
+                                        decorationBuilder: (context, child) {
+                                          return Container(
+                                            decoration: AppStyles.whiteBox
+                                                .copyWith(
+                                                    border:
+                                                        Border.all(
+                                                            color: Colors.black,
+                                                            width: 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                            child: child,
+                                          );
                                         },
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -409,6 +504,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: tempatLahirController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'e.g: Surabaya',
@@ -522,6 +618,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: nikController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Nomor NIK / KTP',
@@ -552,6 +649,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: noTelpController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Nomor HP',
@@ -586,7 +684,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
-                                        // maxLines: 2,
+                                        controller: alamatController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Alamat Rumah',
@@ -621,6 +719,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: kelurahanController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Keluarahan',
@@ -651,6 +750,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
+                                        controller: kecamatanController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Kecamatan',
@@ -685,7 +785,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           style: AppStyles.contentText.copyWith(
                                               fontWeight: FontWeight.bold)),
                                       TextFormField(
-                                        // maxLines: 2,
+                                        controller: tempatTinggalController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Kota Tempat Tinggal',

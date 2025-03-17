@@ -4,7 +4,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:poli_admin/base/backend/class/antrian_pasien.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -45,13 +44,10 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   @override
   void initState() {
     super.initState();
-    print("INIT STATE TRIGGERED!!!!!");
     listPriv();
     fetchData();
 
-    refreshData = Timer.periodic(Duration(seconds: 10), (timer) {
-      fetchData();
-    });
+    refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
   }
 
   @override
@@ -71,18 +67,21 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       }
       await dataController.fetchAllAntrian();
 
-      setState(() {
-        listStatus = ['-- Semua Status --'];
-        for (var status in dataController.statusAntrian) {
-          listStatus.add(status.status);
-        }
+      if (mounted) {
+        setState(() {
+          listStatus = ['-- Semua Status --'];
+          for (var status in dataController.statusAntrian) {
+            listStatus.add(status.status);
+          }
 
-        filteredList = List.from(dataController.antrianToday);
+          filteredList = List.from(dataController.antrianToday);
 
-        filteredList.sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
+          filteredList
+              .sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
 
-        isLoading = false;
-      });
+          isLoading = false;
+        });
+      }
     } catch (e) {
       print('Error fetching data: $e');
       setState(() {
@@ -249,7 +248,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ),
               SizedBox(height: 12),
               Expanded(
-                child: isLoading
+                child: (isLoading)
                     ? Center(
                         child: CircularProgressIndicator(
                         color: AppStyles.primaryColor,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:poli_admin/base/backend/class/antrian_pasien.dart';
+import 'package:poli_admin/base/backend/class/billing.dart';
 import 'package:poli_admin/base/backend/class/pasien.dart';
 import 'package:poli_admin/base/backend/class/poliklinik.dart';
 import 'package:poli_admin/base/backend/class/status_antrian.dart';
@@ -32,6 +33,10 @@ class DataController {
   List<Poliklinik> poliAktif = [];
   List<Pasien> allPasien = [];
   String? nama;
+  List<Billing> billing = [];
+  List<Billing> billingByPoli = [];
+  List<Billing> billingByStatus = [];
+  List<Billing> billingByBoth = [];
 
   //
   /* 
@@ -195,7 +200,7 @@ class DataController {
         antrianToday = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
             .toList();
-        print(antrianToday);
+        // print(antrianToday);
       }
     } catch (e) {
       throw Exception("failed to fetch antrian today: $e");
@@ -213,7 +218,7 @@ class DataController {
         antrianTunggu = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
             .toList();
-        print(antrianTunggu);
+        // print(antrianTunggu);
       }
     } catch (e) {
       throw Exception("failed to fetch status tunda: $e");
@@ -231,7 +236,7 @@ class DataController {
         antrianTunda = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
             .toList();
-        print(antrianTunda);
+        // print(antrianTunda);
       }
     } catch (e) {
       throw Exception("failed to fetch status tunda: $e");
@@ -249,7 +254,7 @@ class DataController {
         antrianKonsul = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
             .toList();
-        print(antrianKonsul);
+        // print(antrianKonsul);
       }
     } catch (e) {
       throw Exception("failed to fetch status konsul: $e");
@@ -267,7 +272,7 @@ class DataController {
         antrianSelesai = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
             .toList();
-        print(antrianSelesai);
+        // print(antrianSelesai);
       }
     } catch (e) {
       throw Exception("failed to fetch status selesai: $e");
@@ -295,7 +300,6 @@ class DataController {
   }
 
   Future<List<Pasien>> fetchAllPasien(String nama, String page) async {
-    print("fetching pasien..");
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["allPasien"]!(nama, page), "get", "");
@@ -312,6 +316,77 @@ class DataController {
     }
 
     return allPasien;
+  }
+
+  Future<List<Billing>> fetchBilling() async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["allBilling"]!(), "get", "");
+      print('billing: ${response.status}');
+      if (response.data != null) {
+        billing = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
+        print(billing);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    return billing;
+  }
+
+  Future<List<Billing>> fetchBillingByPoli(String poli) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["billingByPoli"]!(poli), "get", "");
+      print('billing by poli: ${response.status}');
+      if (response.data != null) {
+        billingByPoli = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
+        print(billingByPoli);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    return billingByPoli;
+  }
+
+  Future<List<Billing>> fetchBillingByStatus(String status) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["billingByStatus"]!(status), "get", "");
+      print('billing by status: ${response.status}');
+      if (response.data != null) {
+        billingByStatus = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
+        print(billingByStatus);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    return billingByStatus;
+  }
+
+  Future<List<Billing>> fetchBillingByBoth(String poli, String status) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["billingByBoth"]!(poli, status), "get", "");
+      print('billing by both: ${response.status}');
+      if (response.data != null) {
+        billingByBoth = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    return billingByBoth;
   }
 
   Future<void> fetchAllAntrian() async {

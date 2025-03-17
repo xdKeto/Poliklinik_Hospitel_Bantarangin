@@ -332,7 +332,6 @@ class DataController {
             .toList();
         // print("billing: $billing");
       }
-      print("null billing??");
     } catch (e) {
       throw Exception(e);
     }
@@ -349,7 +348,6 @@ class DataController {
         billingByPoli = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
-        print(billingByPoli);
       }
     } catch (e) {
       throw Exception(e);
@@ -367,7 +365,6 @@ class DataController {
         billingByStatus = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
-        print(billingByStatus);
       }
     } catch (e) {
       throw Exception(e);

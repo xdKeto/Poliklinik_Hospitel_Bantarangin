@@ -27,7 +27,7 @@ class BillingScreen extends StatefulWidget {
 }
 
 class _BillingScreenState extends State<BillingScreen> {
-  final List<String> listPoli = ['-- Semua Poliklinik --'];
+  late List<String> listPoli = [];
   final List<String> listStatus = ['-- Semua Status --', 'Belum', 'Sudah'];
 
   String? selectedPoli;
@@ -50,7 +50,6 @@ class _BillingScreenState extends State<BillingScreen> {
     fetchData();
 
     refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-    print("billing list: $filteredList");
   }
 
   Future<void> fetchData() async {
@@ -65,6 +64,7 @@ class _BillingScreenState extends State<BillingScreen> {
         setState(() {
           if (dataController.poliAktif.isNotEmpty) {
             listPoli.clear();
+            listPoli = ["-- Semua Poliklinik --"];
             for (var poli in dataController.poliAktif) {
               listPoli.add(poli.namaPoli);
             }

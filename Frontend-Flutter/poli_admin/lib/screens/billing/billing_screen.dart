@@ -28,7 +28,12 @@ class BillingScreen extends StatefulWidget {
 
 class _BillingScreenState extends State<BillingScreen> {
   late List<String> listPoli = [];
-  final List<String> listStatus = ['-- Semua Status --', 'Belum', 'Sudah'];
+  final List<String> listStatus = [
+    '-- Semua Status --',
+    'Belum',
+    'Proses',
+    'Sudah'
+  ];
 
   String? selectedPoli;
   String? selectedStatus;
@@ -52,28 +57,42 @@ class _BillingScreenState extends State<BillingScreen> {
     refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
   }
 
+  @override
+  void dispose() {
+    refreshData?.cancel();
+    super.dispose();
+  }
+
   Future<void> fetchData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
+      String? currentPoli = selectedPoli;
+      String? currentStatus = selectedStatus;
+      String currentQuery = searchQuery;
+
       await dataController.fetchPoliAktif();
-      await dataController.fetchBilling();
+      await dataController.fetchAllBilling();
 
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-        setState(() {
-          if (dataController.poliAktif.isNotEmpty) {
-            listPoli.clear();
-            listPoli = ["-- Semua Poliklinik --"];
-            for (var poli in dataController.poliAktif) {
-              listPoli.add(poli.namaPoli);
-            }
+      setState(() {
+        if (dataController.poliAktif.isNotEmpty) {
+          listPoli.clear();
+          listPoli = ["-- Semua Poliklinik --"];
+          for (var poli in dataController.poliAktif) {
+            listPoli.add(poli.namaPoli);
           }
+        }
 
-          filteredList = List.from(dataController.billing);
-          isLoading = false;
-        });
-      }
+        selectedPoli = currentPoli;
+        selectedStatus = currentStatus;
+        searchQuery = currentQuery;
+
+        applyFilters();
+
+        isLoading = false;
+      });
     } catch (e) {
       print('error fetching billing data: $e');
       setState(() {
@@ -82,16 +101,54 @@ class _BillingScreenState extends State<BillingScreen> {
     }
   }
 
-  void onSearch(String query) {
-    setState(() {});
-  }
-
   void applyFilters() {
-    setState(() {});
+    setState(() {
+      List<Billing> tempList = List.from(dataController.billing);
+
+      if (selectedStatus != null && selectedStatus != "-- Semua Status --") {
+        if (selectedStatus == "Belum") {
+          tempList = List.from(dataController.billingStatusBelum);
+        } else if (selectedStatus == "Proses") {
+          tempList = List.from(dataController.billingStatusProses);
+        } else if (selectedStatus == "Sudah") {
+          tempList = List.from(dataController.billingStatusSelesai);
+        } else {
+          tempList = tempList
+              .where((billing) => billing.status == selectedStatus)
+              .toList();
+        }
+      }
+
+      if (selectedPoli != null && selectedPoli != "-- Semua Poliklinik --") {
+        tempList = tempList
+            .where((billing) => billing.namaPoli == selectedPoli)
+            .toList();
+      }
+
+      if (searchQuery.isNotEmpty) {
+        tempList = tempList
+            .where((billing) =>
+                billing.idRm
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                billing.namaPasien
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                billing.namaPoli
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
+            .toList();
+      }
+
+      filteredList = tempList;
+    });
   }
 
-  void onSort(int columnIndex, bool ascending) {
-    setState(() {});
+  void onSearch(String query) {
+    setState(() {
+      searchQuery = query;
+      applyFilters();
+    });
   }
 
   @override
@@ -271,7 +328,8 @@ class _BillingScreenState extends State<BillingScreen> {
                           DataColumn(label: Text('No.')),
                           DataColumn(label: Text('No. Rekam Medis')),
                           DataColumn(
-                              label: Text('Nama Pasien'), onSort: onSort),
+                            label: Text('Nama Pasien'),
+                          ),
                           DataColumn(label: Text('Poli Tujuan')),
                           DataColumn(label: Center(child: Text('Status'))),
                           DataColumn(label: Center(child: Text('Rincian'))),
@@ -306,7 +364,7 @@ class RowSource extends DataTableSource {
         ),
         cells: [
           DataCell(Text((index + 1).toString())),
-          DataCell(Text(data.idRm.toString())),
+          DataCell(Text(data.idRm)),
           DataCell(Text(data.namaPasien)),
           DataCell(Text(data.namaPoli)),
           DataCell(Center(child: StatusBox(status: data.status))),

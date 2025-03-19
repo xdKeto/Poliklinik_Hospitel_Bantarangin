@@ -39,7 +39,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   List<AntrianPasien> filteredList = [];
   final TextEditingController controller = TextEditingController();
   final DataController dataController = DataController();
-  bool isLoading = true;
+  late bool isLoading;
 
   @override
   void initState() {
@@ -67,23 +67,18 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       }
       await dataController.fetchAllAntrian();
 
-      if (mounted) {
-        setState(() {
-          listStatus = ['-- Semua Status --'];
-          for (var status in dataController.statusAntrian) {
-            listStatus.add(status.status);
-          }
+      setState(() {
+        listStatus = ['-- Semua Status --'];
+        for (var status in dataController.statusAntrian) {
+          listStatus.add(status.status);
+        }
 
-          filteredList = List.from(dataController.antrianToday);
+        applyFilters();
 
-          filteredList
-              .sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
-
-          isLoading = false;
-        });
-      }
+        isLoading = false;
+      });
     } catch (e) {
-      print('Error fetching data: $e');
+      print('error di fetching data: $e');
       setState(() {
         isLoading = false;
       });
@@ -116,6 +111,9 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       }
 
       filteredList.sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
+      if (controller.text.isNotEmpty) {
+        onSearch(controller.text);
+      }
     });
   }
 
@@ -238,8 +236,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          controller.clear();
-                          selectedStatus = '-- Semua Status --';
                           fetchData();
                         });
                       },
@@ -367,13 +363,11 @@ class AntrianRowSource extends DataTableSource {
         cells: [
           DataCell(Text(data.namaPoli)),
           DataCell(Text(data.nomorAntrian.toString())),
-          DataCell(Text(data.idRm.toString())),
+          DataCell(Text(data.idRm)),
           DataCell(Text(data.nama)),
           DataCell(Center(child: StatusBox(status: data.status))),
           DataCell(Center(
-              child: IconDropdown(
-            status: data.status,
-          ))),
+              child: IconDropdown(status: data.status, id: data.idAntrian))),
         ]);
   }
 

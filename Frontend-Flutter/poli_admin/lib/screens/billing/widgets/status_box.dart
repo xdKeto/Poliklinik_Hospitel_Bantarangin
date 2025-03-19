@@ -12,7 +12,11 @@ class StatusBox extends StatelessWidget {
     if (status.toLowerCase() == 'sudah') {
       color = AppStyles.greenColor2;
     } else if (status.toLowerCase() == 'belum') {
+      color = AppStyles.accentColor2;
+    }else if (status.toLowerCase() == 'batal' || status.toLowerCase() == 'dibatalkan') {
       color = AppStyles.redColor;
+    }else {
+      color = AppStyles.primaryColor;
     }
 
     return Container(

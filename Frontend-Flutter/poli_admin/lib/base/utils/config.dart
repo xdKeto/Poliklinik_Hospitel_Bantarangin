@@ -14,21 +14,25 @@ class Config {
     'tundaStatus': () => '$apiURL/antrian/today?status=Ditunda',
     'konsultasiStatus': () => '$apiURL/antrian/today?status=Konsultasi',
     'selesaiStatus': () => '$apiURL/antrian/today?status=Selesai',
-    'tundaAntrian': (String id) => '$apiURL/kunjungan/tunda?id_antrian=$id', // PUT
-    'putAntrian': (String idAntrian, String idPoli) =>
-        '$apiURL/kunjungan/reschedule?id_antrian=$idAntrian&id_poli=$idPoli', // PUT
+    'tundaAntrian': (String id) =>
+        '$apiURL/antrian/tunda?id_antrian=$id', // PUT
+    'putAntrian': (String id) =>
+        '$apiURL/antrian/reschedule?id_antrian=$id', // PUT
+    'batalAntrian': (String id) =>
+        '$apiURL/antrian/batalkan?id_antrian=$id', // PUT
 
     // REGISTRASI
     'poliAktif': () => '$apiURL/poliklinik?status=aktif',
-    'allPasien': (String nama, String page) => '$apiURL/pasien?nama=$nama&page=$page&limit=20',
+    'allPasien': (String nama, String page) =>
+        '$apiURL/pasien?nama=$nama&page=$page&limit=20',
     'registerPasien': () => '$apiURL/pasien/register', //POST
     'putPasien': () => '$apiURL/kunjungan', //PUT
 
     // BILLING
     'billingByPoli': (String id) => '$apiURL/billing?id_poli=$id',
-    'billingByStatus': (String id) => '$apiURL/billing?status=$id',
-    'billingByBoth': (String idPoli, String statusPoli) =>
-        '$apiURL/billing?id_poli=$idPoli&status=$statusPoli',
+    'billingStatusBelum': () => '$apiURL/billing?status=1',
+    'billingStatusProses': () => '$apiURL/billing?status=2',
+    'billingStatusSudah': () => '$apiURL/billing?status=3',
     'allBilling': () => '$apiURL/billing'
   };
 }

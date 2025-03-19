@@ -1,7 +1,7 @@
 class Billing {
   final int idKunjungan;
   final int idPasien;
-  final int idRm;
+  final String idRm;
   final String namaPasien;
   final String namaPoli;
   final String status;

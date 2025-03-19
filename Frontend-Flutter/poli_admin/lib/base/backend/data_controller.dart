@@ -35,8 +35,9 @@ class DataController {
   String? nama;
   List<Billing> billing = [];
   List<Billing> billingByPoli = [];
-  List<Billing> billingByStatus = [];
-  List<Billing> billingByBoth = [];
+  List<Billing> billingStatusBelum = [];
+  List<Billing> billingStatusProses = [];
+  List<Billing> billingStatusSelesai = [];
 
   //
   /* 
@@ -311,7 +312,7 @@ class DataController {
             .toList();
 
         // print(allPasien);
-      }else {
+      } else {
         return [];
       }
     } catch (e) {
@@ -321,6 +322,7 @@ class DataController {
     return allPasien;
   }
 
+  // ===== BILLING =====
   Future<List<Billing>> fetchBilling() async {
     try {
       ResponseRequestAPI response =
@@ -348,6 +350,8 @@ class DataController {
         billingByPoli = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
+      } else {
+        billingByPoli.clear();
       }
     } catch (e) {
       throw Exception(e);
@@ -356,13 +360,13 @@ class DataController {
     return billingByPoli;
   }
 
-  Future<List<Billing>> fetchBillingByStatus(String status) async {
+  Future<List<Billing>> fetchBillingBelum() async {
     try {
       ResponseRequestAPI response = await apiConnector(
-          Config.apiEndpoints["billingByStatus"]!(status), "get", "");
+          Config.apiEndpoints["billingStatusBelum"]!(), "get", "");
       print('billing by status: ${response.status}');
       if (response.data != null) {
-        billingByStatus = (response.data as List)
+        billingStatusBelum = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
       }
@@ -370,16 +374,16 @@ class DataController {
       throw Exception(e);
     }
 
-    return billingByStatus;
+    return billingStatusBelum;
   }
 
-  Future<List<Billing>> fetchBillingByBoth(String poli, String status) async {
+  Future<List<Billing>> fetchBillingProses() async {
     try {
       ResponseRequestAPI response = await apiConnector(
-          Config.apiEndpoints["billingByBoth"]!(poli, status), "get", "");
-      print('billing by both: ${response.status}');
+          Config.apiEndpoints["billingStatusProses"]!(), "get", "");
+      print('billing by status: ${response.status}');
       if (response.data != null) {
-        billingByBoth = (response.data as List)
+        billingStatusProses = (response.data as List)
             .map((item) => Billing.fromJson(item))
             .toList();
       }
@@ -387,7 +391,24 @@ class DataController {
       throw Exception(e);
     }
 
-    return billingByBoth;
+    return billingStatusProses;
+  }
+
+  Future<List<Billing>> fetchBillingSelesai() async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["billingStatusSudah"]!(), "get", "");
+      print('billing by status: ${response.status}');
+      if (response.data != null) {
+        billingStatusSelesai = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+
+    return billingStatusSelesai;
   }
 
   Future<void> fetchAllAntrian() async {
@@ -396,6 +417,13 @@ class DataController {
     fetchStatusTunda();
     fetchStatusKonsul();
     fetchStatusSelesai();
+  }
+
+  Future<void> fetchAllBilling() async {
+    fetchBilling();
+    fetchBillingBelum();
+    fetchBillingProses();
+    fetchBillingSelesai();
   }
 
   Future<void> fetchFirstData() async {

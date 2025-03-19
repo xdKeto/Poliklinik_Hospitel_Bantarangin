@@ -1,7 +1,8 @@
 class AntrianPasien {
+  final int idAntrian;
   final int idPasien;
   final int idPoli;
-  final int idRm;
+  final String idRm;
   final int idStatus;
   final String nama;
   final String namaPoli;
@@ -10,6 +11,7 @@ class AntrianPasien {
   final String status;
 
   AntrianPasien({
+    required this.idAntrian,
     required this.idPasien,
     required this.idPoli,
     required this.idRm,
@@ -23,6 +25,7 @@ class AntrianPasien {
 
   factory AntrianPasien.fromJson(Map<String, dynamic> json) {
     return AntrianPasien(
+      idAntrian: json['id_antrian'],
       idPasien: json['id_pasien'],
       idPoli: json['id_poli'],
       idRm: json['id_rm'],
@@ -37,6 +40,7 @@ class AntrianPasien {
 
   Map<String, dynamic> toJson() {
     return {
+      'id_antrian': idAntrian,
       'id_pasien': idPasien,
       'id_poli': idPoli,
       'id_rm': idRm,

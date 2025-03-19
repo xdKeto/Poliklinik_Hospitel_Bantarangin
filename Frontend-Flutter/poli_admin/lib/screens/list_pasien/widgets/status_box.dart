@@ -17,8 +17,10 @@ class StatusBox extends StatelessWidget {
       color = AppStyles.greenColor2;
     } else if (status.toLowerCase() == 'konsultasi') {
       color = AppStyles.secondaryColor;
-    } else {
+    } else if (status.toLowerCase() == 'screening') {
       color = AppStyles.accentColor2;
+    } else {
+      color = AppStyles.primaryColor;
     }
 
     return Container(

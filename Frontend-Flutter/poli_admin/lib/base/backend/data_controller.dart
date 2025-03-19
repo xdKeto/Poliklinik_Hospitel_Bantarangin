@@ -34,7 +34,6 @@ class DataController {
   List<Pasien> allPasien = [];
   String? nama;
   List<Billing> billing = [];
-  List<Billing> billingByPoli = [];
   List<Billing> billingStatusBelum = [];
   List<Billing> billingStatusProses = [];
   List<Billing> billingStatusSelesai = [];
@@ -339,25 +338,6 @@ class DataController {
     }
 
     return billing;
-  }
-
-  Future<List<Billing>> fetchBillingByPoli(String poli) async {
-    try {
-      ResponseRequestAPI response = await apiConnector(
-          Config.apiEndpoints["billingByPoli"]!(poli), "get", "");
-      print('billing by poli: ${response.status}');
-      if (response.data != null) {
-        billingByPoli = (response.data as List)
-            .map((item) => Billing.fromJson(item))
-            .toList();
-      } else {
-        billingByPoli.clear();
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
-
-    return billingByPoli;
   }
 
   Future<List<Billing>> fetchBillingBelum() async {

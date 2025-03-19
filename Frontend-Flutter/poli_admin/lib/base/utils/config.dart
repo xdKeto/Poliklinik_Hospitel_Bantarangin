@@ -29,7 +29,6 @@ class Config {
     'putPasien': () => '$apiURL/kunjungan', //PUT
 
     // BILLING
-    'billingByPoli': (String id) => '$apiURL/billing?id_poli=$id',
     'billingStatusBelum': () => '$apiURL/billing?status=1',
     'billingStatusProses': () => '$apiURL/billing?status=2',
     'billingStatusSudah': () => '$apiURL/billing?status=3',

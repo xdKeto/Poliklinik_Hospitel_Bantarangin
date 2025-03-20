@@ -48,8 +48,4 @@ class HealthRecord {
       'catatan': catatan,
     };
   }
-
-  // static List<HealthRecord> fromJsonList(String temp) {
-  //   return  HealthRecord.fromJson(json.decode(temp));
-  // }
 }

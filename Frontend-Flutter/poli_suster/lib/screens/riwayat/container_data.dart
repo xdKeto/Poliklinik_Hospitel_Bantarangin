@@ -1,7 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poli_suster/base/class/event.dart';
+import 'package:poli_suster/base/backend/class/health_record.dart';
 import 'package:poli_suster/base/global_widgets/bold_n_reg_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 

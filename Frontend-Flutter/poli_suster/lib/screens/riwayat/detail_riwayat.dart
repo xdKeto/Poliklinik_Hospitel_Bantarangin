@@ -58,7 +58,7 @@ class DetailRiwayat extends StatelessWidget {
                     children: [
                       DataField(
                           title: "Tensi Darah",
-                          data: data.tensiDarah,
+                          data: data.tensiDarah, 
                           type: "mmHg"),
                       SizedBox(
                         width: 32,

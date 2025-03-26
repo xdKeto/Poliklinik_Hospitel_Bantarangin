@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => SucfailAlert(
             isSuccess: true,
             boldText: "Login Successful",
-            italicText: "your credentials are correct",
+            italicText: "welcome, admin",
           ),
         );
 
@@ -102,9 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => SucfailAlert(
             isSuccess: false,
             boldText: "Login Failed",
-            italicText: response.status == 401
-                ? "please check your credentials"
-                : response.message,
+            italicText: response.message,
           ),
         );
       }

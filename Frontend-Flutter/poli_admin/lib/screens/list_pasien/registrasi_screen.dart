@@ -164,17 +164,17 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             "keluhan_utama": keluhanUtama
           });
         } else {
-          print('ini put pasien');
-          print(idPoli);
-          print(nama);
-          print(jenisKelamin);
-          print(tempatLahir);
-          print(tanggalLahir);
-          print(nik);
-          print(noTelp);
-          print(alamat);
-          print(kelurahan);
-          print(kecamatan);
+          // print('ini put pasien');
+          // print(idPoli);
+          // print(nama);
+          // print(jenisKelamin);
+          // print(tempatLahir);
+          // print(tanggalLahir);
+          // print(nik);
+          // print(noTelp);
+          // print(alamat);
+          // print(kelurahan);
+          // print(kecamatan);
           response = await dataController
               .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
             "id_poli": idPoli,

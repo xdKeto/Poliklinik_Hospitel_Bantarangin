@@ -32,9 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> refreshAntrian() async {
-
-  }
+  Future<void> refreshAntrian() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 24,
                 ),
-                Expanded(child: HomeTabs()),
+                Expanded(
+                    child: HomeTabs()),
               ],
             ),
           ),

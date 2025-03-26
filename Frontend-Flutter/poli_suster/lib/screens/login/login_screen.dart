@@ -84,6 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
             DateTime.now().add(Duration(hours: 12)).millisecondsSinceEpoch;
         await prefs.setInt('auth_token_expiration', expiredTime);
 
+        await prefs.setInt('logged_in_idPoli', idPoli!);
+
         if (!context.mounted) return;
 
         showDialog(
@@ -104,7 +106,8 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
 
-        await dataController.fetchFirstData();
+        dataController.setPoli(idPoli!);
+        await dataController.fetchFirstData(idPoli!);
 
         if (context.mounted) {
           Navigator.pop(context2);

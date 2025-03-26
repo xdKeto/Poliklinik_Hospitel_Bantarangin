@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:poli_suster/base/backend/class/antrian.dart';
 import 'package:poli_suster/base/backend/class/poliklinik.dart';
 import 'package:poli_suster/base/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,9 @@ class DataController {
   //
   List user = [];
   List<Poliklinik> poliAktif = [];
-  String? nama;
+  Antrian antrianNow = Antrian(idAntrian: 0, nomorAntrian: 0);
+  String nama = "";
+  int? idPoli;
 
   //
   /* 
@@ -108,6 +111,12 @@ class DataController {
     return prefs.getInt('auth_token_expiration') ?? 0;
   }
 
+   Future<int> getLoggedInPoli() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getInt('logged_in_idPoli') ?? 0;
+  }
+
   Future<bool> cekPriv(int priv) async {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
@@ -128,7 +137,17 @@ class DataController {
     String? token = await getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
     nama = decodedToken["nama"];
+
+    List<String> namaL = nama.split(" ");
+
+    nama = namaL.isNotEmpty ? namaL.first : "";
   }
+
+  void setPoli(int id) {
+    idPoli = id;
+  }
+
+ 
   //  ==== USER =====
 
   //
@@ -152,7 +171,24 @@ class DataController {
     return poliAktif;
   }
 
-  Future<void> fetchFirstData() async {
-    
+  Future<Antrian> fetchAntrian(int id) async {
+    try {
+      ResponseRequestAPI response =
+          await apiConnector(Config.apiEndpoints["antrianNow"]!(id), "get", "");
+
+      if (response.data != null) {
+        antrianNow = Antrian.fromJson(response.data);
+        print("antrian now: ${antrianNow.nomorAntrian}");
+      }
+    } catch (e) {
+      throw Exception("failed to fetch antrian: $e");
+    }
+
+    return antrianNow;
+  }
+
+  Future<void> fetchFirstData(int id) async {
+    await fetchAntrian(id);
+    namaSuster();
   }
 }

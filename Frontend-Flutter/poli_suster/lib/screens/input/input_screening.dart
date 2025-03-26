@@ -45,9 +45,34 @@ class _InputScreeningState extends State<InputScreening> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 170,
+                          width: 72,
                           height: 40,
                           child: TextFormField(
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            cursorColor: Colors.black,
+                            decoration: AppStyles.formBox.copyWith(),
+                            onChanged: (value) {},
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '/',
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        SizedBox(
+                          width: 72,
+                          height: 40,
+                          child: TextFormField(
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -61,7 +86,7 @@ class _InputScreeningState extends State<InputScreening> {
                           style: AppStyles.contentText.copyWith(
                               color: AppStyles.primaryColor,
                               fontWeight: FontWeight.bold),
-                        )
+                        ),
                       ],
                     )
                   ],
@@ -89,9 +114,6 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             keyboardType:
                                 TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -133,9 +155,6 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             keyboardType:
                                 TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},
@@ -177,9 +196,6 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             keyboardType:
                                 TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {},

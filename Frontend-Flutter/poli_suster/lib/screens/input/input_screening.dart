@@ -4,22 +4,26 @@ import 'package:flutter/services.dart';
 import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
 import 'package:poli_suster/base/global_widgets/loading_alert.dart';
+import 'package:poli_suster/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/base/utils/config.dart';
 import 'package:poli_suster/screens/input/data_pasien.dart';
 
 class InputScreening extends StatefulWidget {
-  const InputScreening({super.key});
+  final Future<void> Function() refreshAntrian;
+  final VoidCallback? onScreeningComplete;
+
+  const InputScreening(
+      {super.key, required this.refreshAntrian, this.onScreeningComplete});
 
   @override
   State<InputScreening> createState() => _InputScreeningState();
 }
 
 class _InputScreeningState extends State<InputScreening> {
-  int tensiDarah1 = 0;
-  int tensiDarah2 = 0;
-  String tensiDarah = "";
+  int systolic = 0;
+  int diatolic = 0;
   int beratBadan = 0;
   int tinggiBadan = 0;
   int suhuTubuh = 0;
@@ -27,8 +31,8 @@ class _InputScreeningState extends State<InputScreening> {
   int respRate = 0;
   String catatan = "";
 
-  var tensiDarahController1 = TextEditingController();
-  var tensiDarahController2 = TextEditingController();
+  var systolicController = TextEditingController();
+  var diatolicController = TextEditingController();
   var beratBadanController = TextEditingController();
   var tinggiBadanController = TextEditingController();
   var suhuTubuhController = TextEditingController();
@@ -45,8 +49,8 @@ class _InputScreeningState extends State<InputScreening> {
 
   @override
   void dispose() {
-    tensiDarahController1.dispose();
-    tensiDarahController2.dispose();
+    systolicController.dispose();
+    diatolicController.dispose();
     beratBadanController.dispose();
     tinggiBadanController.dispose();
     suhuTubuhController.dispose();
@@ -70,14 +74,53 @@ class _InputScreeningState extends State<InputScreening> {
           barrierDismissible: false);
 
       DataController dataController = DataController();
-      // ResponseRequestAPI response = await dataController.apiConnector(Config.apiEndpoints["inputScreening"]!(), method, body)
+      ResponseRequestAPI response = await dataController.apiConnector(
+          Config.apiEndpoints["inputScreening"]!(
+              dataController.antrianNow.idAntrian.toString()),
+          "post",
+          {
+            "systolic": systolic,
+            "diatolic": diatolic,
+            "berat_badan": beratBadan,
+            "suhu_tubuh": suhuTubuh,
+            "tinggi_badan": tinggiBadan,
+            "detak_nadi": detakNadi,
+            "laju_respirasi": respRate,
+            "keterangan": catatan
+          });
+      if (!context.mounted) return;
+      Navigator.pop(context2);
+
+      if (response.status == 200) {
+        if (!context.mounted) return;
+
+        await showDialog(
+            context: context2,
+            builder: (context) {
+              return SucfailAlert(
+                  isSuccess: true,
+                  boldText: "Input Berhasil",
+                  italicText: "data screening pasien berhasil");
+            });
+        clearForms();
+        await widget.refreshAntrian();
+        widget.onScreeningComplete?.call();
+      } else {
+        if (!context.mounted) return;
+        await showDialog(
+            context: context2,
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Input Gagal",
+                italicText: response.message));
+      }
     }
   }
 
   void clearForms() {
     setState(() {
-      tensiDarahController1.clear();
-      tensiDarahController2.clear();
+      systolicController.clear();
+      diatolicController.clear();
       beratBadanController.clear();
       tinggiBadanController.clear();
       suhuTubuhController.clear();
@@ -125,13 +168,13 @@ class _InputScreeningState extends State<InputScreening> {
                             width: 72,
                             height: 40,
                             child: TextFormField(
-                              controller: tensiDarahController1,
+                              controller: systolicController,
                               keyboardType: TextInputType.numberWithOptions(
                                   decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
-                                tensiDarah1 = int.parse(value);
+                                systolic = int.parse(value);
                               },
                             ),
                           ),
@@ -151,13 +194,13 @@ class _InputScreeningState extends State<InputScreening> {
                             width: 72,
                             height: 40,
                             child: TextFormField(
-                              controller: tensiDarahController2,
+                              controller: diatolicController,
                               keyboardType: TextInputType.numberWithOptions(
                                   decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
-                                tensiDarah2 = int.parse(value);
+                                diatolic = int.parse(value);
                               },
                             ),
                           ),
@@ -524,10 +567,14 @@ class _InputScreeningState extends State<InputScreening> {
                   showDialog(
                       context: context,
                       builder: (context) => ConfirmAlert(
-                          icon: FluentIcons.error_circle_12_regular,
-                          boldText:
-                              'Apakah anda ingin menyimpan\ndata poliklinik baru?',
-                          yesText: 'simpan'));
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText:
+                                'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                            yesText: 'simpan',
+                            yesFunc: () {
+                              doScreening();
+                            },
+                          ));
                 },
                 child: TheButton(
                   text: 'Simpan',

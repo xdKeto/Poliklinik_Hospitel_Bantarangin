@@ -41,8 +41,6 @@ class AppStyles {
       borderSide: BorderSide(color: Colors.black),
       borderRadius: BorderRadius.circular(10.0),
     ),
-    // isDense: true,
-    // contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 6)
   );
 
   static BoxDecoration whiteBox = BoxDecoration(

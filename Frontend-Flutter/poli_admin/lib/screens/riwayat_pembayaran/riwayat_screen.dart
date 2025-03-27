@@ -214,6 +214,13 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                         );
                       }
                     },
+                    empty: Center(
+                      child: Text(
+                        'Tidak ada Data',
+                        style: AppStyles.subheadingText
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     columns: [
                       DataColumn(label: Text('No.')),
                       DataColumn(label: Text('Nama Pasien'), onSort: onSort),

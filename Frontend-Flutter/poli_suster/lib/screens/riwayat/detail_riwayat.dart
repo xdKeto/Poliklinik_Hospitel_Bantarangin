@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poli_suster/base/class/event.dart';
+import 'package:poli_suster/base/backend/class/health_record.dart';
 import 'package:poli_suster/base/global_widgets/grey_divider.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/screens/riwayat/data_field.dart';
@@ -58,7 +58,7 @@ class DetailRiwayat extends StatelessWidget {
                     children: [
                       DataField(
                           title: "Tensi Darah",
-                          data: data.tensiDarah,
+                          data: data.tensiDarah, 
                           type: "mmHg"),
                       SizedBox(
                         width: 32,
@@ -80,7 +80,7 @@ class DetailRiwayat extends StatelessWidget {
                           data: data.tinggiBadan.toString(),
                           type: "cm"),
                       SizedBox(
-                        width: 48,
+                        width: 54,
                       ),
                       DataField(
                           title: "Suhu Tubuh",
@@ -125,11 +125,13 @@ class DetailRiwayat extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      DataField(
-                        title: "Catatan Tambahan",
-                        data: data.catatan,
-                        type: "",
-                        isLong: true,
+                      Expanded(
+                        child: DataField(
+                          title: "Catatan Tambahan",
+                          data: data.catatan,
+                          type: "",
+                          isLong: true,
+                        ),
                       )
                     ],
                   )

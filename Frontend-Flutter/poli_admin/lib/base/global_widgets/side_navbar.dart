@@ -1,6 +1,7 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/icon_text.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
@@ -26,6 +27,7 @@ class _SideNavbarState extends State<SideNavbar> {
   SideMenuController sideMenu = SideMenuController();
   int _selectedIndex = 0;
   bool _isExpanded = false;
+  late bool priv = false;
 
   List<Widget> pages = [];
 
@@ -40,10 +42,9 @@ class _SideNavbarState extends State<SideNavbar> {
           navigateToPage: (index) => navigateToPage(index),
         ),
         BillingScreen(
-          isExpand: _isExpanded,
-          toggleSidebar: toggleSidebar,
-          navigateToPage: (index) => navigateToPage(index),
-        ),
+            isExpand: _isExpanded,
+            toggleSidebar: toggleSidebar,
+            navigateToPage: (index) => navigateToPage(index)),
         RiwayatScreen(
           isExpand: _isExpanded,
           toggleSidebar: toggleSidebar,
@@ -72,6 +73,9 @@ class _SideNavbarState extends State<SideNavbar> {
   @override
   void initState() {
     super.initState();
+
+    cekSession();
+    listPriv();
     sideMenu.addListener((index) {
       setState(() {
         _selectedIndex = index;
@@ -105,6 +109,22 @@ class _SideNavbarState extends State<SideNavbar> {
         navigateToPage: (index) => navigateToPage(index),
       ),
     ];
+  }
+
+  void cekSession() async {
+    bool session = await DataController().cekToken();
+    print('session checked');
+    if (!session) {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    }
+  }
+
+  void listPriv() async {
+    var temp = await DataController().cekPriv(6);
+
+    setState(() {
+      priv = temp;
+    });
   }
 
   @override
@@ -188,11 +208,12 @@ class _SideNavbarState extends State<SideNavbar> {
                             icon: FluentIcons.error_circle_12_regular,
                             boldText: 'Apakah anda yakin\ningin keluar?',
                             yesText: 'keluar',
-                            yesFunc: () {
+                            yesFunc: () async {
+                              await DataController().userLogout();
+
+                              if (!context.mounted) return;
                               Navigator.pushReplacementNamed(
-                                context,
-                                AppRoutes.login,
-                              );
+                                  context, AppRoutes.login);
                             },
                             color: AppStyles.redColor,
                           ));
@@ -227,14 +248,18 @@ class _SideNavbarState extends State<SideNavbar> {
                   icon: Icon(_selectedIndex == 0
                       ? FluentIcons.contact_card_16_filled
                       : FluentIcons.contact_card_16_regular)),
-              SideMenuItem(
-                  title: 'List Billing',
-                  onTap: (index, _) {
-                    sideMenu.changePage(index);
-                  },
-                  icon: Icon(_selectedIndex == 1
-                      ? FluentIcons.receipt_16_filled
-                      : FluentIcons.receipt_16_regular)),
+              priv
+                  ? SideMenuItem(
+                      title: 'List Billing',
+                      onTap: (index, _) {
+                        sideMenu.changePage(index);
+                      },
+                      icon: Icon(_selectedIndex == 1
+                          ? FluentIcons.receipt_16_filled
+                          : FluentIcons.receipt_16_regular))
+                  : SideMenuItem(builder: (context, displayMode) {
+                      return SizedBox.shrink();
+                    }),
               SideMenuItem(
                   title: 'Riwayat Pembayaran',
                   onTap: (index, _) {

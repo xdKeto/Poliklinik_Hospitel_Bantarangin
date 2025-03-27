@@ -1,19 +1,164 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
+import 'package:poli_suster/base/global_widgets/loading_alert.dart';
+import 'package:poli_suster/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
+import 'package:poli_suster/base/utils/config.dart';
 import 'package:poli_suster/screens/input/data_pasien.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputScreening extends StatefulWidget {
-  const InputScreening({super.key});
+  final Future<void> Function() refreshAntrian;
+  final VoidCallback? onScreeningComplete;
+
+  const InputScreening(
+      {super.key, required this.refreshAntrian, this.onScreeningComplete});
 
   @override
   State<InputScreening> createState() => _InputScreeningState();
 }
 
 class _InputScreeningState extends State<InputScreening> {
+  int systolic = 0;
+  int diatolic = 0;
+  int beratBadan = 0;
+  int tinggiBadan = 0;
+  int suhuTubuh = 0;
+  int detakNadi = 0;
+  int respRate = 0;
+  String catatan = "";
+
+  var systolicController = TextEditingController();
+  var diatolicController = TextEditingController();
+  var beratBadanController = TextEditingController();
+  var tinggiBadanController = TextEditingController();
+  var suhuTubuhController = TextEditingController();
+  var detakNadiController = TextEditingController();
+  var respRateController = TextEditingController();
+  var catatanController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    systolicController.dispose();
+    diatolicController.dispose();
+    beratBadanController.dispose();
+    tinggiBadanController.dispose();
+    suhuTubuhController.dispose();
+    detakNadiController.dispose();
+    respRateController.dispose();
+    catatanController.dispose();
+
+    super.dispose();
+  }
+
+  void doScreening() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final context2 = context;
+      Navigator.pop(context2);
+
+      showDialog(
+          context: context2,
+          builder: (context) => const LoadingAlert(),
+          barrierDismissible: false);
+
+      try {
+        DataController dataController = DataController();
+        ResponseRequestAPI response = await dataController.apiConnector(
+            Config.apiEndpoints["inputScreening"]!(
+                dataController.antrianNow?.idAntrian.toString()),
+            "post",
+            {
+              "systolic": systolic,
+              "diatolic": diatolic,
+              "berat_badan": beratBadan,
+              "suhu_tubuh": suhuTubuh,
+              "tinggi_badan": tinggiBadan,
+              "detak_nadi": detakNadi,
+              "laju_respirasi": respRate,
+              "keterangan": catatan
+            });
+
+        if (context2.mounted) {
+          Navigator.pop(context2);
+        }
+
+        if (response.status == 200) {
+          clearForms();
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('current_id_pasien');
+
+          await widget.refreshAntrian();
+
+          if (context2.mounted) {
+            showDialog(
+                context: context2,
+                barrierDismissible: false,
+                builder: (context) {
+                  return SucfailAlert(
+                      isSuccess: true,
+                      boldText: "Input Berhasil",
+                      italicText: "data screening pasien berhasil");
+                });
+
+            await Future.delayed(const Duration(seconds: 2));
+            if (context2.mounted) {
+              Navigator.pop(context2);
+              widget.onScreeningComplete?.call();
+            }
+          }
+        } else {
+          if (context2.mounted) {
+            await showDialog(
+                context: context2,
+                barrierDismissible: false,
+                builder: (context) => SucfailAlert(
+                    isSuccess: false,
+                    boldText: "Input Gagal",
+                    italicText: response.message));
+          }
+        }
+      } catch (e) {
+        if (context2.mounted) {
+          Navigator.pop(context2);
+          await showDialog(
+              context: context2,
+              barrierDismissible: false,
+              builder: (context) => SucfailAlert(
+                  isSuccess: false,
+                  boldText: "Input Gagal",
+                  italicText: e.toString()));
+        }
+      }
+    }
+  }
+
+  void clearForms() {
+    setState(() {
+      systolicController.clear();
+      diatolicController.clear();
+      beratBadanController.clear();
+      tinggiBadanController.clear();
+      suhuTubuhController.clear();
+      detakNadiController.clear();
+      respRateController.clear();
+      catatanController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -27,181 +172,233 @@ class _InputScreeningState extends State<InputScreening> {
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tensi Darah',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          height: 40,
-                          child: TextFormField(
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+            child: Form(
+              key: _formKey,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tensi Darah',
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 72,
+                            height: 40,
+                            child: TextFormField(
+                              controller: systolicController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox.copyWith(),
+                              onChanged: (value) {
+                                systolic = int.parse(value);
+                              },
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'mmHG',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 32,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Berat Badan',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          height: 40,
-                          child: TextFormField(
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+                          SizedBox(
+                            width: 8,
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'kg',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 32,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tinggi Badan',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          height: 40,
-                          child: TextFormField(
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+                          Text(
+                            '/',
+                            style: AppStyles.contentText.copyWith(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'cm',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 32,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Suhu Tubuh',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          height: 40,
-                          child: TextFormField(
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+                          SizedBox(
+                            width: 8,
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          '°C',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 32,
-                ),
-              ],
+                          SizedBox(
+                            width: 72,
+                            height: 40,
+                            child: TextFormField(
+                              controller: diatolicController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox.copyWith(),
+                              onChanged: (value) {
+                                diatolic = int.parse(value);
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            'mmHG',
+                            style: AppStyles.contentText.copyWith(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Berat Badan',
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 170,
+                            height: 40,
+                            child: TextFormField(
+                              controller: beratBadanController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox.copyWith(),
+                              onChanged: (value) {
+                                beratBadan = int.parse(value);
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Field ini wajib diisi';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            'kg',
+                            style: AppStyles.contentText.copyWith(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tinggi Badan',
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 170,
+                            height: 40,
+                            child: TextFormField(
+                              controller: tinggiBadanController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox.copyWith(),
+                              onChanged: (value) {
+                                tinggiBadan = int.parse(value);
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Field ini wajib diisi';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            'cm',
+                            style: AppStyles.contentText.copyWith(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Suhu Tubuh',
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 170,
+                            height: 40,
+                            child: TextFormField(
+                              controller: suhuTubuhController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              cursorColor: Colors.black,
+                              decoration: AppStyles.formBox.copyWith(),
+                              onChanged: (value) {
+                                suhuTubuh = int.parse(value);
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Field ini wajib diisi';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            '°C',
+                            style: AppStyles.contentText.copyWith(
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: 32,
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -212,49 +409,6 @@ class _InputScreeningState extends State<InputScreening> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Gula Darah',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          height: 40,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            cursorColor: Colors.black,
-                            decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'mg/dL',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: 32,
-                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -273,13 +427,23 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            controller: detakNadiController,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              detakNadi = int.parse(value);
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Field ini wajib diisi';
+                              }
+
+                              return null;
+                            },
                           ),
                         ),
                         SizedBox(
@@ -316,13 +480,22 @@ class _InputScreeningState extends State<InputScreening> {
                           width: 170,
                           height: 40,
                           child: TextFormField(
+                            controller: respRateController,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              respRate = int.parse(value);
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Field ini wajib diisi';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         SizedBox(
@@ -360,10 +533,19 @@ class _InputScreeningState extends State<InputScreening> {
                       height: 8,
                     ),
                     TextFormField(
-                      maxLines: 3,
+                      controller: catatanController,
+                      maxLines: 4,
                       cursorColor: Colors.black,
                       decoration: AppStyles.formBox.copyWith(),
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        catatan = value;
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Field ini wajib diisi';
+                        }
+                        return null;
+                      },
                     )
                   ],
                 ),
@@ -380,7 +562,16 @@ class _InputScreeningState extends State<InputScreening> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => ConfirmAlert(
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText: 'Apakah anda ingin reset semua field?',
+                            yesText: 'reset',
+                            yesFunc: clearForms,
+                          ));
+                },
                 child: TheButton(
                   text: 'Reset',
                   color: AppStyles.greyBtnColor,
@@ -403,10 +594,14 @@ class _InputScreeningState extends State<InputScreening> {
                   showDialog(
                       context: context,
                       builder: (context) => ConfirmAlert(
-                          icon: FluentIcons.error_circle_12_regular,
-                          boldText:
-                              'Apakah anda ingin menyimpan\ndata poliklinik baru?',
-                          yesText: 'simpan'));
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText:
+                                'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                            yesText: 'simpan',
+                            yesFunc: () {
+                              doScreening();
+                            },
+                          ));
                 },
                 child: TheButton(
                   text: 'Simpan',

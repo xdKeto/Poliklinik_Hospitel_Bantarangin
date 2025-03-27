@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:poli_suster/base/utils/app_routes.dart';
 import 'package:poli_suster/screens/home_screen.dart';
 import 'package:poli_suster/screens/login/login_screen.dart';
+import 'package:poli_suster/screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +23,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Poliklinik Hospitel Bantarangin',
-      // home: LoginScreen(),
-      initialRoute: AppRoutes.login,
+      home: SplashScreen(),
+      // initialRoute: AppRoutes.home,
       routes: {
         AppRoutes.login: (context) => LoginScreen(),
         AppRoutes.home: (context) => HomeScreen(),

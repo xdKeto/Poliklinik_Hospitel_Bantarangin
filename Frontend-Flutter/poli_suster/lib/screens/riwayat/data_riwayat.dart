@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poli_suster/base/class/event.dart';
+import 'package:poli_suster/base/backend/class/health_record.dart';
 import 'package:poli_suster/screens/riwayat/data_field.dart';
 
 class DataRiwayat extends StatelessWidget {

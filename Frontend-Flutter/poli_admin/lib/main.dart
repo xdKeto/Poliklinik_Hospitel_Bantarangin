@@ -4,6 +4,7 @@ import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/screens/login/login_screen.dart';
 
 void main() {
+  // debugPaintSizeEnabled = true;
   runApp(const MyApp());
 }
 

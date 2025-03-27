@@ -10,17 +10,21 @@ class StatusBox extends StatelessWidget {
     Color color = AppStyles.accentColor;
 
     if (status.toLowerCase() == 'ditunda') {
-      color = AppStyles.accentColor2;
+      color = AppStyles.greyBtnColor;
     } else if (status.toLowerCase() == 'menunggu') {
       color = AppStyles.redColor;
     } else if (status.toLowerCase() == 'selesai') {
       color = AppStyles.greenColor2;
-    }else if (status.toLowerCase() == 'konsultasi'){
+    } else if (status.toLowerCase() == 'konsultasi') {
       color = AppStyles.secondaryColor;
+    } else if (status.toLowerCase() == 'screening') {
+      color = AppStyles.accentColor2;
+    } else {
+      color = AppStyles.primaryColor;
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 2),  
+      padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 2),
       height: 30,
       width: 100,
       decoration: BoxDecoration(

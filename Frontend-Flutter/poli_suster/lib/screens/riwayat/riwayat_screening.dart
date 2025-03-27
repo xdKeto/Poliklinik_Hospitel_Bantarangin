@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poli_suster/base/class/event.dart';
+import 'package:poli_suster/base/backend/class/health_record.dart';
 import 'package:poli_suster/base/dummy/data.dart';
 import 'package:poli_suster/screens/riwayat/container_data.dart';
 import 'package:poli_suster/screens/riwayat/detail_riwayat.dart';
@@ -21,6 +21,8 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
     for (var i = 0; i < listRiwayat.length; i++) {
       listScreening.add(HealthRecord.fromJson(listRiwayat[i]));
     }
+
+    listScreening = listScreening.reversed.toList();
   }
 
   @override
@@ -45,7 +47,7 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 5 / 6),
+                        childAspectRatio: 8 / 6),
                     itemCount: listRiwayat.length,
                     itemBuilder: (context, index) {
                       return InkWell(

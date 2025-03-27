@@ -1,42 +1,100 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
+import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
+import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/base/utils/config.dart';
 
 class IconDropdown extends StatefulWidget {
   final String status;
-  const IconDropdown({super.key, required this.status});
+  final int id;
+  const IconDropdown({super.key, required this.status, required this.id});
 
   @override
   State<IconDropdown> createState() => _IconDropdownState();
 }
 
 class _IconDropdownState extends State<IconDropdown> {
+  bool privData = false;
+  bool privLabel = false;
+  bool privGelang = false;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    listPriv();
+  }
+
+  void listPriv() async {
+    var temp1 = await DataController().cekPriv(3);
+    var temp2 = await DataController().cekPriv(4);
+    var temp3 = await DataController().cekPriv(5);
+
+    setState(() {
+      privData = temp1;
+      privLabel = temp2;
+      privGelang = temp3;
+      loading = false;
+    });
+  }
+
+  List<MenuItem> privItems() {
+    List<MenuItem> items = [];
+
+    if (privData) {
+      items.add(MenuItems.dataPasien);
+    }
+
+    if (privLabel) {
+      items.add(MenuItems.labelPasien);
+    }
+
+    if (privGelang) {
+      items.add(MenuItems.gelangPasien);
+    }
+
+    return items;
+  }
+
+  List<MenuItem> dropdownItems() {
+    List<MenuItem> items = privItems();
+    if (widget.status.toLowerCase() == 'selesai' ||
+        widget.status.toLowerCase() == 'konsultasi' ||
+        widget.status.toLowerCase() == 'screening') {
+      return items;
+    } else if (widget.status.toLowerCase() == 'menunggu') {
+      return [...items, MenuItems.tundaPasien, MenuItems.batalAntrian];
+    } else if (widget.status.toLowerCase() == 'dibatalkan') {
+      return [];
+    } else {
+      return [MenuItems.masukAntrian, MenuItems.batalAntrian];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return LoadingAnimationWidget.horizontalRotatingDots(
+          color: Colors.black, size: 20);
+    }
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: Icon(Icons.more_horiz),
-        items: (widget.status.toLowerCase() == 'selesai' ||
-                widget.status.toLowerCase() == 'konsultasi')
-            ? MenuItems.items
-                .map((item) => DropdownMenuItem<MenuItem>(
-                    value: item, child: MenuItems.buildItem(item)))
-                .toList()
-            : (widget.status.toLowerCase() == 'menunggu')
-                ? MenuItems.items2
-                    .map((item) => DropdownMenuItem<MenuItem>(
-                        value: item, child: MenuItems.buildItem(item)))
-                    .toList()
-                : MenuItems.items3
-                    .map((item) => DropdownMenuItem<MenuItem>(
-                        value: item, child: MenuItems.buildItem(item)))
-                    .toList(),
+        items: dropdownItems()
+            .map((item) =>
+                DropdownMenuItem(value: item, child: MenuItems.buildItem(item)))
+            .toList(),
         onChanged: (value) {
-          MenuItems.onChanged(context, value as MenuItem);
+          MenuItems.onChanged(context, value as MenuItem, widget.id);
         },
         dropdownStyleData: DropdownStyleData(
-            width: 160,
+            width: 180,
             padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -67,20 +125,8 @@ class MenuItems {
       MenuItem(text: 'Tunda Antrian', icon: FluentIcons.previous_16_regular);
   static const masukAntrian = MenuItem(
       text: 'Masuk Antrian', icon: FluentIcons.people_queue_20_regular);
-
-  // kalo selesai || konsultasi
-  static const List<MenuItem> items = [dataPasien, gelangPasien, labelPasien];
-
-  // kalo menunggu
-  static const List<MenuItem> items2 = [
-    dataPasien,
-    gelangPasien,
-    labelPasien,
-    tundaPasien
-  ];
-
-  // kalo ditunda
-  static const List<MenuItem> items3 = [masukAntrian];
+  static const batalAntrian =
+      MenuItem(text: "Batalkan Antrian", icon: Icons.close);
 
   static Widget buildItem(MenuItem item) {
     return Row(
@@ -102,7 +148,7 @@ class MenuItems {
     );
   }
 
-  static void onChanged(BuildContext context, MenuItem item) {
+  static void onChanged(BuildContext context, MenuItem item, int id) async {
     switch (item) {
       case MenuItems.dataPasien:
         print('print data');
@@ -114,10 +160,154 @@ class MenuItems {
         print('print label');
         break;
       case MenuItems.tundaPasien:
-        print('tunda pasien');
+        showDialog(
+            context: context,
+            builder: (context) => ConfirmAlert(
+                  icon: FluentIcons.previous_16_regular,
+                  boldText: "Tunda Antrian?",
+                  yesText: "tunda",
+                  yesFunc: () async {
+                    ResponseRequestAPI response = await DataController()
+                        .apiConnector(
+                            Config.apiEndpoints["tundaAntrian"]!(id.toString()),
+                            "put",
+                            "");
+
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                    if (response.status == 200) {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            Future.delayed(Duration(seconds: 1), () {
+                              if (context.mounted) {
+                                Navigator.pop(context);
+
+                                if (context.mounted) {
+                                  Navigator.pushReplacementNamed(
+                                      context, AppRoutes.dashboard);
+                                }
+                              }
+                            });
+
+                            return SucfailAlert(
+                                isSuccess: true,
+                                boldText: "Berhasil",
+                                italicText: "antrian berhasil ditunda");
+                          });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => SucfailAlert(
+                          isSuccess: false,
+                          boldText: "Gagal",
+                          italicText: response.message,
+                        ),
+                      );
+                    }
+                  },
+                ));
         break;
       case MenuItems.masukAntrian:
-        print('masuk antrian');
+        showDialog(
+            context: context,
+            builder: (context) => ConfirmAlert(
+                  icon: FluentIcons.previous_16_regular,
+                  boldText: "Masukkan ke Antrian?",
+                  yesText: "masukkan",
+                  yesFunc: () async {
+                    ResponseRequestAPI response = await DataController()
+                        .apiConnector(
+                            Config.apiEndpoints["putAntrian"]!(id.toString()),
+                            "put",
+                            "");
+
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                    if (response.status == 200) {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            Future.delayed(Duration(seconds: 1), () {
+                              if (context.mounted) {
+                                Navigator.pop(context);
+
+                                if (context.mounted) {
+                                  Navigator.pushReplacementNamed(
+                                      context, AppRoutes.dashboard);
+                                }
+                              }
+                            });
+
+                            return SucfailAlert(
+                                isSuccess: true,
+                                boldText: "Berhasil",
+                                italicText: "antrian berhasil dimasukkan");
+                          });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => SucfailAlert(
+                          isSuccess: false,
+                          boldText: "Gagal",
+                          italicText: response.message,
+                        ),
+                      );
+                    }
+                  },
+                ));
+        break;
+      case MenuItems.batalAntrian:
+        showDialog(
+            context: context,
+            builder: (context) => ConfirmAlert(
+                  icon: FluentIcons.previous_16_regular,
+                  boldText: "Batalkan Antrian?",
+                  yesText: "batal",
+                  yesFunc: () async {
+                    ResponseRequestAPI response = await DataController()
+                        .apiConnector(
+                            Config.apiEndpoints["batalAntrian"]!(id.toString()),
+                            "put",
+                            "");
+
+                    if (!context.mounted) return;
+                    Navigator.pop(context);
+                    if (response.status == 200) {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            Future.delayed(Duration(seconds: 1), () {
+                              if (context.mounted) {
+                                Navigator.pop(context);
+
+                                if (context.mounted) {
+                                  Navigator.pushReplacementNamed(
+                                      context, AppRoutes.dashboard);
+                                }
+                              }
+                            });
+
+                            return SucfailAlert(
+                                isSuccess: true,
+                                boldText: "Berhasil",
+                                italicText: "antrian berhasil dibatalkan");
+                          });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => SucfailAlert(
+                          isSuccess: false,
+                          boldText: "Gagal",
+                          italicText: response.message,
+                        ),
+                      );
+                    }
+                  },
+                ));
         break;
     }
   }

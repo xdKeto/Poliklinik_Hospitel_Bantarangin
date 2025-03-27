@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_media.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/base/utils/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,12 +18,95 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // late TextEditingController controller;
+  String? email;
+  String? password;
+  String? token;
   bool isHidden = true;
+
+  @override
+  void initState() {
+    super.initState();
+    cekSession();
+  }
+
+  void cekSession() async {
+    bool session = await DataController().cekToken();
+    if (session) {
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+    }
+  }
 
   void togglePassword() {
     setState(() {
       isHidden = !isHidden;
     });
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  void doLogin() async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      final context2 = context;
+
+      showDialog(
+          context: context,
+          builder: (context) => LoadingAlert(),
+          barrierDismissible: false);
+
+      DataController dataController = DataController();
+      ResponseRequestAPI response = await dataController.apiConnector(
+          Config.apiEndpoints['login']!(),
+          "post",
+          {"username": email, "password": password});
+
+      if (!context.mounted) return;
+      Navigator.pop(context2);
+      if (response.status == 200) {
+        token = response.data;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token!);
+
+        if (!context.mounted) return;
+        showDialog(
+          context: context2,
+          builder: (context) => SucfailAlert(
+            isSuccess: true,
+            boldText: "Login Successful",
+            italicText: "welcome, admin",
+          ),
+        );
+
+        await Future.delayed(Duration(seconds: 1));
+
+        if (context.mounted) Navigator.pop(context2);
+
+        if (context.mounted) {
+          showDialog(
+            context: context2,
+            builder: (context) => LoadingAlert(),
+            barrierDismissible: false,
+          );
+        }
+
+        await DataController().fetchFirstData();
+
+        if (context.mounted) {
+          Navigator.pop(context2);
+          Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
+        }
+      } else {
+        showDialog(
+          context: context2,
+          builder: (context) => SucfailAlert(
+            isSuccess: false,
+            boldText: "Login Failed",
+            italicText: response.message,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -95,42 +183,69 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: screenHeight * 0.05,
                             ),
-                            LabelRequired(
-                                text: 'Username',
-                                style: AppStyles.normalText.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppStyles.textColor)),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
-                            TextFormField(
-                              cursorColor: Colors.black,
-                              decoration: AppStyles.formBox,
-                              onChanged: (value) {},
-                            ),
-                            SizedBox(
-                              height: screenHeight * 0.02,
-                            ),
-                            LabelRequired(
-                                text: 'Password',
-                                style: AppStyles.normalText.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppStyles.textColor)),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
-                            TextFormField(
-                              cursorColor: Colors.black,
-                              obscureText: isHidden,
-                              decoration: AppStyles.formBox.copyWith(
-                                  suffixIcon: IconButton(
-                                      onPressed: () => togglePassword(),
-                                      icon: Icon(isHidden
-                                          ? Icons.visibility_off
-                                          : Icons.visibility))),
-                              onChanged: (value) {},
+                            Form(
+                              key: formKey,
+                              child: Column(
+                                children: [
+                                  LabelRequired(
+                                      text: 'Username',
+                                      style: AppStyles.normalText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyles.textColor)),
+                                  SizedBox(
+                                    height: screenHeight * 0.01,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter your username';
+                                      }
+
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      email = value;
+                                    },
+                                    cursorColor: Colors.black,
+                                    decoration: AppStyles.formBox,
+                                    onSaved: (value) {},
+                                  ),
+                                  SizedBox(
+                                    height: screenHeight * 0.02,
+                                  ),
+                                  LabelRequired(
+                                      text: 'Password',
+                                      style: AppStyles.normalText.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyles.textColor)),
+                                  SizedBox(
+                                    height: screenHeight * 0.01,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter your password';
+                                      }
+
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                    cursorColor: Colors.black,
+                                    obscureText: isHidden,
+                                    decoration: AppStyles.formBox.copyWith(
+                                        suffixIcon: IconButton(
+                                            onPressed: () => togglePassword(),
+                                            icon: Icon(isHidden
+                                                ? Icons.visibility_off
+                                                : Icons.visibility))),
+                                    onSaved: (value) {},
+                                  ),
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: screenHeight * 0.04,
@@ -140,8 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                     child: InkWell(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, AppRoutes.dashboard);
+                                    doLogin();
                                   },
                                   child: TheButton(
                                     text: 'Login',

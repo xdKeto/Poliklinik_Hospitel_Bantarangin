@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
 import 'package:poli_suster/base/global_widgets/home_tabs.dart';
 import 'package:poli_suster/base/utils/app_routes.dart';
@@ -13,8 +14,67 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DataController dataController = DataController();
+  String antrianStr = "000";
+
+  @override
+  void initState() {
+    super.initState();
+    displayData();
+  }
+
+  Future<void> displayData() async {
+    try {
+      // final idPoli = await dataController.getLoggedInPoli();
+      // await dataController.fetchAntrian(idPoli);
+      if (mounted) {
+        setState(() {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
+            antrianStr = "000";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
+            antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
+            antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
+          } else {
+            antrianStr = "${dataController.antrianNow?.nomorAntrian}";
+          }
+        });
+      }
+    } catch (e) {
+      print('Error displaying data antrian: $e');
+    }
+  }
+
   Future<void> refreshAntrian() async {
-    print('antrian refreshed');
+    try {
+      final idPoli = await dataController.getLoggedInPoli();
+
+      if (dataController.antrianNow == null) {
+        await dataController.fetchAntrian(idPoli);
+      }
+
+      if (mounted) {
+        setState(() {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
+            antrianStr = "000";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
+            antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
+            antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
+          } else {
+            antrianStr = "${dataController.antrianNow?.nomorAntrian}";
+          }
+        });
+      }
+    } catch (e) {
+      print('Error refreshing antrian: $e');
+    }
   }
 
   @override
@@ -42,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Row(
                         children: [
                           Text(
-                            'Welcome, [nama suster]',
+                            'Welcome, ${dataController.nama}',
                             style: AppStyles.headingText.copyWith(
                                 color: AppStyles.primaryColor,
                                 fontWeight: FontWeight.w600),
@@ -62,20 +122,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               showDialog(
                                   context: context,
                                   builder: (context) => ConfirmAlert(
-                                      icon: FluentIcons.error_circle_12_regular,
-                                      boldText:
-                                          "Apakah anda yakin\ningin keluar?",
-                                      yesText: 'keluar',
-                                      color: AppStyles.redColor,
-                                      yesFunc: () =>
+                                        icon:
+                                            FluentIcons.error_circle_12_regular,
+                                        boldText:
+                                            "Apakah anda yakin\ningin keluar?",
+                                        yesText: 'keluar',
+                                        color: AppStyles.redColor,
+                                        yesFunc: () async {
+                                          await DataController().userLogout();
+
+                                          if (!context.mounted) return;
                                           Navigator.pushReplacementNamed(
-                                            context,
-                                            AppRoutes.login,
-                                          )));
+                                              context, AppRoutes.login);
+                                        },
+                                      ));
                             },
                             child: Container(
-                              // height: 40,
-                              // width: 40,
                               decoration: AppStyles.buttonBox2(
                                   AppStyles.primaryColor, 12),
                               padding: EdgeInsets.all(8),
@@ -119,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: EdgeInsets.all(8),
                             child: Center(
                               child: Text(
-                                '023',
+                                antrianStr!,
                                 style: AppStyles.headingText.copyWith(
                                     fontSize: 40,
                                     color: Colors.black,
@@ -135,7 +197,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 24,
                 ),
-                Expanded(child: HomeTabs()),
+                Expanded(
+                    child: HomeTabs(
+                  refreshAntrian: refreshAntrian,
+                )),
               ],
             ),
           ),

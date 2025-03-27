@@ -1,0 +1,51 @@
+class Config {
+  static const String apiURL =
+      'http://leap.crossnet.co.id:8080/api/administrasi';
+
+  // API ENDPOINTS
+
+  static final apiEndpoints = {
+    'login': () => '$apiURL/login',
+
+    // ANTRIAN
+    'listStatus': () => '$apiURL/status_antrian',
+    'antrianToday': () => '$apiURL/antrian/today',
+    'tungguStatus': () => '$apiURL/antrian/today?status=Menunggu',
+    'tundaStatus': () => '$apiURL/antrian/today?status=Ditunda',
+    'konsultasiStatus': () => '$apiURL/antrian/today?status=Konsultasi',
+    'selesaiStatus': () => '$apiURL/antrian/today?status=Selesai',
+    'tundaAntrian': (String id) =>
+        '$apiURL/antrian/tunda?id_antrian=$id', // PUT
+    'putAntrian': (String id) =>
+        '$apiURL/antrian/reschedule?id_antrian=$id', // PUT
+    'batalAntrian': (String id) =>
+        '$apiURL/antrian/batalkan?id_antrian=$id', // PUT
+
+    // REGISTRASI
+    'poliAktif': () => '$apiURL/poliklinik?status=aktif',
+    'allPasien': (String nama, String page) =>
+        '$apiURL/pasien?nama=$nama&page=$page&limit=20',
+    'registerPasien': () => '$apiURL/pasien/register', //POST
+    'putPasien': () => '$apiURL/kunjungan', //PUT
+
+    // BILLING
+    'billingStatusBelum': () => '$apiURL/billing?status=1',
+    'billingStatusProses': () => '$apiURL/billing?status=2',
+    'billingStatusSudah': () => '$apiURL/billing?status=3',
+    'allBilling': () => '$apiURL/billing',
+
+    // WEBSOCKET
+    'wsUrl': () => 'ws://leap.crossnet.co.id:8080/ws'
+  };
+}
+
+class ResponseRequestAPI {
+  int status = 0;
+  String message = "";
+  dynamic data = [];
+  ResponseRequestAPI({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+}

@@ -46,7 +46,7 @@ class DataController {
 
   /* 
     LISTS
-   */
+  */
   List user = [];
   List<AntrianPasien> antrianToday = [];
   List<AntrianPasien> antrianTunggu = [];
@@ -96,8 +96,6 @@ class DataController {
         response = await http.delete(Uri.parse(url),
             body: json.encode(body), headers: headers);
       }
-      // print(response.statusCode);
-      // print(response.body);
 
       if (response.body.isEmpty) {
         return ResponseRequestAPI(

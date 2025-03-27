@@ -83,9 +83,7 @@ class _HomeTabsState extends State<HomeTabs>
             child: InputScreening(
           refreshAntrian: widget.refreshAntrian,
           onScreeningComplete: () {
-            if (_tabController.index != 0) {
-              _tabController.animateTo(0);
-            }
+            _tabController.animateTo(1);
           },
         ))
       ],

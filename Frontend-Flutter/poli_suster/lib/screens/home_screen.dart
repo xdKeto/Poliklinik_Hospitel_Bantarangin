@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DataController dataController = DataController();
-  String? antrianStr;
+  String antrianStr = "000";
 
   @override
   void initState() {

@@ -66,53 +66,77 @@ class _InputScreeningState extends State<InputScreening> {
       _formKey.currentState!.save();
 
       final context2 = context;
-
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (context) => LoadingAlert(),
-          barrierDismissible: false);
-
-      DataController dataController = DataController();
-      ResponseRequestAPI response = await dataController.apiConnector(
-          Config.apiEndpoints["inputScreening"]!(
-              dataController.antrianNow.idAntrian.toString()),
-          "post",
-          {
-            "systolic": systolic,
-            "diatolic": diatolic,
-            "berat_badan": beratBadan,
-            "suhu_tubuh": suhuTubuh,
-            "tinggi_badan": tinggiBadan,
-            "detak_nadi": detakNadi,
-            "laju_respirasi": respRate,
-            "keterangan": catatan
-          });
-      if (!context.mounted) return;
       Navigator.pop(context2);
 
-      if (response.status == 200) {
-        if (!context.mounted) return;
+      showDialog(
+          context: context2,
+          builder: (context) => const LoadingAlert(),
+          barrierDismissible: false);
 
-        await showDialog(
-            context: context2,
-            builder: (context) {
-              return SucfailAlert(
-                  isSuccess: true,
-                  boldText: "Input Berhasil",
-                  italicText: "data screening pasien berhasil");
+      try {
+        DataController dataController = DataController();
+        ResponseRequestAPI response = await dataController.apiConnector(
+            Config.apiEndpoints["inputScreening"]!(
+                dataController.antrianNow.idAntrian.toString()),
+            "post",
+            {
+              "systolic": systolic,
+              "diatolic": diatolic,
+              "berat_badan": beratBadan,
+              "suhu_tubuh": suhuTubuh,
+              "tinggi_badan": tinggiBadan,
+              "detak_nadi": detakNadi,
+              "laju_respirasi": respRate,
+              "keterangan": catatan
             });
-        clearForms();
-        await widget.refreshAntrian();
-        widget.onScreeningComplete?.call();
-      } else {
-        if (!context.mounted) return;
-        await showDialog(
-            context: context2,
-            builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Input Gagal",
-                italicText: response.message));
+
+        if (context2.mounted) {
+          Navigator.pop(context2);
+        }
+
+        if (response.status == 200) {
+          clearForms();
+          await widget.refreshAntrian();
+
+          if (context2.mounted) {
+            showDialog(
+                context: context2,
+                barrierDismissible: false,
+                builder: (context) {
+                  return SucfailAlert(
+                      isSuccess: true,
+                      boldText: "Input Berhasil",
+                      italicText: "data screening pasien berhasil");
+                });
+
+            await Future.delayed(const Duration(seconds: 2));
+            if (context2.mounted) {
+              Navigator.pop(context2);
+              widget.onScreeningComplete?.call();
+            }
+          }
+        } else {
+          if (context2.mounted) {
+            await showDialog(
+                context: context2,
+                barrierDismissible: false,
+                builder: (context) => SucfailAlert(
+                    isSuccess: false,
+                    boldText: "Input Gagal",
+                    italicText: response.message));
+          }
+        }
+      } catch (e) {
+        if (context2.mounted) {
+          Navigator.pop(context2);
+          await showDialog(
+              context: context2,
+              barrierDismissible: false,
+              builder: (context) => SucfailAlert(
+                  isSuccess: false,
+                  boldText: "Input Gagal",
+                  italicText: e.toString()));
+        }
       }
     }
   }
@@ -128,8 +152,6 @@ class _InputScreeningState extends State<InputScreening> {
       respRateController.clear();
       catatanController.clear();
     });
-
-    Navigator.pop(context);
   }
 
   @override

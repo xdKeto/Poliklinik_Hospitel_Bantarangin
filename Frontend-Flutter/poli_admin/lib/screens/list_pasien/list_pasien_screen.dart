@@ -96,14 +96,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     setState(() {
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
         filteredList = List.from(dataController.antrianToday);
-      } else if (selectedStatus == "Menunggu") {
-        filteredList = List.from(dataController.antrianTunggu);
-      } else if (selectedStatus == "Ditunda") {
-        filteredList = List.from(dataController.antrianTunda);
-      } else if (selectedStatus == "Konsultasi") {
-        filteredList = List.from(dataController.antrianKonsul);
-      } else if (selectedStatus == "Selesai") {
-        filteredList = List.from(dataController.antrianSelesai);
       } else {
         filteredList = dataController.antrianToday
             .where((antrian) => antrian.status == selectedStatus)
@@ -122,14 +114,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       List<AntrianPasien> baseList;
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
         baseList = List.from(dataController.antrianToday);
-      } else if (selectedStatus == "Menunggu") {
-        baseList = List.from(dataController.antrianTunggu);
-      } else if (selectedStatus == "Ditunda") {
-        baseList = List.from(dataController.antrianTunda);
-      } else if (selectedStatus == "Konsultasi") {
-        baseList = List.from(dataController.antrianKonsul);
-      } else if (selectedStatus == "Selesai") {
-        baseList = List.from(dataController.antrianSelesai);
       } else {
         baseList = dataController.antrianToday
             .where((antrian) => antrian.status == selectedStatus)

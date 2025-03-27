@@ -32,7 +32,10 @@ class Config {
     'billingStatusBelum': () => '$apiURL/billing?status=1',
     'billingStatusProses': () => '$apiURL/billing?status=2',
     'billingStatusSudah': () => '$apiURL/billing?status=3',
-    'allBilling': () => '$apiURL/billing'
+    'allBilling': () => '$apiURL/billing',
+
+    // WEBSOCKET
+    'wsUrl': () => 'ws://leap.crossnet.co.id:8080/ws'
   };
 }
 

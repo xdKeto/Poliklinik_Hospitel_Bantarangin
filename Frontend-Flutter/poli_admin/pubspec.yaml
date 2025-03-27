@@ -49,6 +49,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   skeletonizer: ^1.4.3
   flutter_typeahead: ^5.2.0
+  web_socket_channel: ^3.0.2
 
 dev_dependencies:
   flutter_test:

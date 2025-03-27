@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:poli_admin/base/backend/class/antrian_pasien.dart';
@@ -5,24 +6,47 @@ import 'package:poli_admin/base/backend/class/billing.dart';
 import 'package:poli_admin/base/backend/class/pasien.dart';
 import 'package:poli_admin/base/backend/class/poliklinik.dart';
 import 'package:poli_admin/base/backend/class/status_antrian.dart';
+import 'package:poli_admin/base/backend/web_socket_manager.dart';
 import 'package:poli_admin/base/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DataController {
   static final DataController _instance = DataController._internal();
+  final WebSocketManager webSocketManager = WebSocketManager();
+
+  // notify listeners
+  final StreamController<List<AntrianPasien>> _antrianController =
+      StreamController<List<AntrianPasien>>.broadcast();
+  final StreamController<List<Billing>> _billingController =
+      StreamController<List<Billing>>.broadcast();
+
+  Stream<List<AntrianPasien>> get antrianStream => _antrianController.stream;
+  Stream<List<Billing>> get billingStream => _billingController.stream;
 
   factory DataController() {
     return _instance;
   }
 
-  DataController._internal();
+  DataController._internal(){
+    _initWebSocket();
+  }
 
-  //
+/* 
+    WEBSOCKET STUFF
+  */
+
+  void _initWebSocket() {
+    webSocketManager.connect();
+    webSocketManager.messageStream.listen((message) {
+      print('received message: $message');
+    });
+  }
+
+
   /* 
     LISTS
    */
-  //
   List user = [];
   List<AntrianPasien> antrianToday = [];
   List<AntrianPasien> antrianTunggu = [];
@@ -38,12 +62,10 @@ class DataController {
   List<Billing> billingStatusProses = [];
   List<Billing> billingStatusSelesai = [];
 
-  //
+  
   /* 
     MAIN API CALLERRRR 💪
-   */
-  //
-
+  */
   Future<ResponseRequestAPI> apiConnector(
       String url, String method, dynamic body) async {
     try {
@@ -98,11 +120,9 @@ class DataController {
     }
   }
 
-  //
   /* 
     FUNCTIONS
    */
-  //
 
   // ===== USER =====
   // logout
@@ -166,11 +186,9 @@ class DataController {
   }
   // ===== USER =====
 
-  //
   /* 
     FETCHERS
    */
-  //
 
   // ===== ANTRIAN =====
   Future<List<StatusAntrian>> fetchListStatus() async {

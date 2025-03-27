@@ -9,6 +9,7 @@ import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/base/utils/config.dart';
 import 'package:poli_suster/screens/input/data_pasien.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputScreening extends StatefulWidget {
   final Future<void> Function() refreshAntrian;
@@ -77,7 +78,7 @@ class _InputScreeningState extends State<InputScreening> {
         DataController dataController = DataController();
         ResponseRequestAPI response = await dataController.apiConnector(
             Config.apiEndpoints["inputScreening"]!(
-                dataController.antrianNow.idAntrian.toString()),
+                dataController.antrianNow?.idAntrian.toString()),
             "post",
             {
               "systolic": systolic,
@@ -96,6 +97,10 @@ class _InputScreeningState extends State<InputScreening> {
 
         if (response.status == 200) {
           clearForms();
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('current_id_pasien');
+
           await widget.refreshAntrian();
 
           if (context2.mounted) {

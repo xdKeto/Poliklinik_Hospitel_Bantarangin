@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:poli_suster/base/backend/class/antrian.dart';
+import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/btrb_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 
@@ -7,6 +9,8 @@ class DataPasien extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Antrian pasien = DataController().antrianNow!;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 16),
@@ -20,32 +24,34 @@ class DataPasien extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  btrbText(topText: 'Nama Pasien', botText: 'John Doe'),
+                  btrbText(topText: 'Nama Pasien', botText: pasien.namaPasien),
                   SizedBox(
                     width: 32,
                   ),
-                  btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
-                  SizedBox(
-                    width: 32,
-                  ),
-                  btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
-                  SizedBox(
-                    width: 32,
-                  ),
-                  btrbText(topText: 'Tempat Lahir', botText: 'Surabaya'),
-                  SizedBox(
-                    width: 32,
-                  ),
-                  btrbText(topText: 'Tanggal Lahir', botText: '2/18/2025'),
+                  btrbText(topText: 'Nomor Rekam Medis', botText: pasien.idRm),
                   SizedBox(
                     width: 32,
                   ),
                   btrbText(
-                      topText: 'Nomor KTP/NIK', botText: '3201021405980001'),
+                      topText: 'Jenis Kelamin', botText: pasien.jenisKelamin),
                   SizedBox(
                     width: 32,
                   ),
-                  btrbText(topText: 'Nomor HP', botText: '081243567891'),
+                  btrbText(
+                      topText: 'Tempat Lahir', botText: pasien.tempatLahir),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(
+                      topText: 'Tanggal Lahir', botText: pasien.tanggalLahir),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Nomor KTP/NIK', botText: pasien.nik),
+                  SizedBox(
+                    width: 32,
+                  ),
+                  btrbText(topText: 'Nomor HP', botText: pasien.noTelp),
                   SizedBox(
                     width: 32,
                   ),
@@ -65,21 +71,20 @@ class DataPasien extends StatelessWidget {
                   SizedBox(
                     width: 400,
                     child: btrbText(
-                        topText: 'Alamat Rumah',
-                        botText:
-                            'Jl. Contoh Raya No. 99, Sukamaju, Damai Sejahtera, Kota Bahagia, 12345, Indonesia'),
+                        topText: 'Alamat Rumah', botText: pasien.alamat),
                   ),
                   SizedBox(
                     width: 32,
                   ),
-                  btrbText(topText: 'Nomor Rekam Medis', botText: 'RM2024001'),
+                  btrbText(topText: 'Kota', botText: pasien.kota),
                   SizedBox(
                     width: 32,
                   ),
-                  btrbText(topText: 'Jenis Kelamin', botText: 'Laki-laki'),
+                  btrbText(topText: 'Kelurahan', botText: pasien.kelurahan),
                   SizedBox(
                     width: 32,
                   ),
+                  btrbText(topText: 'Kecamatan', botText: pasien.kecamatan),
                 ],
               ),
             ),

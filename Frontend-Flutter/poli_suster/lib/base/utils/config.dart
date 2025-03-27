@@ -9,6 +9,7 @@ class Config {
         'inputScreening': (String id) => '$apiURL/input?id_antrian=$id',
         'riwayatScreening': (String id)=> '$apiURL?id_pasien=$id',
         'antrianNow': (int id) => '$apiURL/antrian/terlama?id_poli=$id',
+        'dataAntrian': (String id) => '$apiURL/masukkan?id_poli=$id',
 
       };
 }

@@ -20,23 +20,55 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    refreshAntrian();
+    displayData();
+  }
+
+  Future<void> displayData() async {
+    try {
+      // final idPoli = await dataController.getLoggedInPoli();
+      // await dataController.fetchAntrian(idPoli);
+      if (mounted) {
+        setState(() {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
+            antrianStr = "000";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
+            antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
+            antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
+          } else {
+            antrianStr = "${dataController.antrianNow?.nomorAntrian}";
+          }
+        });
+      }
+    } catch (e) {
+      print('Error displaying data antrian: $e');
+    }
   }
 
   Future<void> refreshAntrian() async {
     try {
       final idPoli = await dataController.getLoggedInPoli();
-      await dataController.fetchAntrian(idPoli);
+
+      if (dataController.antrianNow == null) {
+        await dataController.fetchAntrian(idPoli);
+      }
+
       if (mounted) {
         setState(() {
-          if (dataController.antrianNow.nomorAntrian == 0) {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
             antrianStr = "000";
-          } else if (dataController.antrianNow.nomorAntrian <= 9) {
-            antrianStr = "00${dataController.antrianNow.nomorAntrian}";
-          } else if (dataController.antrianNow.nomorAntrian <= 99) {
-            antrianStr = "0${dataController.antrianNow.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
+            antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
+            antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
           } else {
-            antrianStr = "${dataController.antrianNow.nomorAntrian}";
+            antrianStr = "${dataController.antrianNow?.nomorAntrian}";
           }
         });
       }

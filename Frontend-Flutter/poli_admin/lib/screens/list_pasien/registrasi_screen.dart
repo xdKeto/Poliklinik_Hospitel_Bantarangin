@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -225,9 +226,25 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pastikan semua field telah terisi')),
-      );
+      Navigator.pop(context);
+      ElegantNotification.error(
+        title: Text(
+          'Form Error',
+          style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
+        ),
+        description: Text(
+          'Pastikan semua field telah terisi',
+          style: AppStyles.contentText,
+        ),
+        icon: Icon(
+          FluentIcons.error_circle_16_regular,
+          color: AppStyles.redColor,
+          size: 48,
+        ),
+        width: 400,
+        height: 75,
+        toastDuration: Duration(seconds: 5),
+      ).show(context);
     }
   }
 

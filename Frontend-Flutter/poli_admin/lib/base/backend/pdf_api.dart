@@ -3,11 +3,9 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:universal_html/html.dart' as html;
+
 
 class PdfApi {
-  // Check if the current environment supports all PDF features
-
   static Future<Uint8List> cetakAntrian(
       int noAntrian,
       String nama,
@@ -68,35 +66,5 @@ class PdfApi {
     return pdf.save();
   }
 
-  static Future<void> saveAndLaunchPdf(
-      Uint8List pdfBytes, String fileName) async {
-    final blob = html.Blob([pdfBytes], 'application/pdf');
-
-    final url = html.Url.createObjectUrlFromBlob(blob);
-
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', fileName)
-      ..style.display = 'none';
-
-    html.document.body?.children.add(anchor);
-
-    anchor.click();
-
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
-  }
-
-  static Future<void> openPdfInNewTab(Uint8List pdfBytes) async {
-    final blob = html.Blob([pdfBytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-
-    html.window.open(url, '_blank');
-  }
-
-  static Future<void> printPdf(Uint8List pdfBytes) async {
-    await Printing.layoutPdf(
-      onLayout: (format) => pdfBytes,
-      name: 'Nomor Antrian',
-    );
-  }
+ 
 }

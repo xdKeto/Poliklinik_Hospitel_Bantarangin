@@ -39,15 +39,26 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   List<AntrianPasien> filteredList = [];
   final TextEditingController controller = TextEditingController();
   final DataController dataController = DataController();
-  late bool isLoading;
+  bool isLoading = true;
+
+  bool firstLoad = true;
 
   @override
   void initState() {
     super.initState();
     listPriv();
-    fetchData();
+  }
 
-    refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (firstLoad) {
+      fetchData();
+      firstLoad = false;
+
+      refreshData =
+          Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+    }
   }
 
   @override

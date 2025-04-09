@@ -250,7 +250,7 @@ class _SideNavbarState extends State<SideNavbar> {
                       : FluentIcons.contact_card_16_regular)),
               priv
                   ? SideMenuItem(
-                      title: 'List Billing',
+                      title: 'List Tagihan',
                       onTap: (index, _) {
                         sideMenu.changePage(index);
                       },

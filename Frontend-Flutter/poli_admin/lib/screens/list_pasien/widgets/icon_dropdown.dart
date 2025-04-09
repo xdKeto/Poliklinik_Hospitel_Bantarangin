@@ -213,7 +213,7 @@ class MenuItems {
         showDialog(
             context: context,
             builder: (context) => ConfirmAlert(
-                  icon: FluentIcons.previous_16_regular,
+                  icon: FluentIcons.next_16_regular,
                   boldText: "Masukkan ke Antrian?",
                   yesText: "masukkan",
                   yesFunc: () async {
@@ -263,7 +263,8 @@ class MenuItems {
         showDialog(
             context: context,
             builder: (context) => ConfirmAlert(
-                  icon: FluentIcons.previous_16_regular,
+                  icon: FluentIcons.error_circle_12_regular,
+                  color: AppStyles.redColor,
                   boldText: "Batalkan Antrian?",
                   yesText: "batal",
                   yesFunc: () async {

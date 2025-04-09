@@ -48,13 +48,24 @@ class _BillingScreenState extends State<BillingScreen> {
   DataController dataController = DataController();
   bool isLoading = true;
   Timer? refreshData;
+  bool _firstLoad = true;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+  }
 
-    refreshData = Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_firstLoad) {
+      fetchData();
+      _firstLoad = false;
+
+      refreshData =
+          Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+    }
   }
 
   @override

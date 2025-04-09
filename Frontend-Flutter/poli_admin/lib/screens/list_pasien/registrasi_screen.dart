@@ -120,6 +120,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       kecamatanController.text = pasien.kecamatan;
       tempatTinggalController.text = pasien.kotaTinggal;
 
+      nama = pasien.nama;
       tanggalLahir = DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
       nik = pasien.nik;
       noTelp = pasien.noTelp;

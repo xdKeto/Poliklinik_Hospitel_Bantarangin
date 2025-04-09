@@ -28,8 +28,8 @@ class DataController {
     return _instance;
   }
 
-  DataController._internal(){
-    _initWebSocket();
+  DataController._internal() {
+    // _initWebSocket();
   }
 
 /* 
@@ -42,7 +42,6 @@ class DataController {
       print('received message: $message');
     });
   }
-
 
   /* 
     LISTS
@@ -62,7 +61,6 @@ class DataController {
   List<Billing> billingStatusProses = [];
   List<Billing> billingStatusSelesai = [];
 
-  
   /* 
     MAIN API CALLERRRR 💪
   */
@@ -193,7 +191,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints['listStatus']!(), "get", "");
-      print('list status: ${response.status}');
+      // print('list status: ${response.status}');
       if (response.data != null) {
         statusAntrian = (response.data as List)
             .map((item) => StatusAntrian.fromJson(item))
@@ -211,7 +209,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["antrianToday"]!(), "get", "");
-      print('antrian today: ${response.status}');
+      // print('antrian today: ${response.status}');
       if (response.data != null) {
         antrianToday = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
@@ -229,7 +227,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["tungguStatus"]!(), "get", "");
-      print('status tunggu: ${response.status}');
+      // print('status tunggu: ${response.status}');
       if (response.data != null) {
         antrianTunggu = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
@@ -247,7 +245,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["tundaStatus"]!(), "get", "");
-      print('status tunda: ${response.status}');
+      // print('status tunda: ${response.status}');
       if (response.data != null) {
         antrianTunda = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
@@ -265,7 +263,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["konsultasiStatus"]!(), "get", "");
-      print('status konsul: ${response.status}');
+      // print('status konsul: ${response.status}');
       if (response.data != null) {
         antrianKonsul = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
@@ -283,7 +281,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["selesaiStatus"]!(), "get", "");
-      print('status selesai: ${response.status}');
+      // print('status selesai: ${response.status}');
       if (response.data != null) {
         antrianSelesai = (response.data as List)
             .map((item) => AntrianPasien.fromJson(item))
@@ -301,7 +299,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["poliAktif"]!(), "get", "");
-      print('poli aktif: ${response.status}');
+      // print('poli aktif: ${response.status}');
       if (response.data != null) {
         poliAktif = (response.data as List)
             .map((item) => Poliklinik.fromJson(item))
@@ -342,7 +340,7 @@ class DataController {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["allBilling"]!(), "get", "");
-      print('billing: ${response.status}');
+      // print('billing: ${response.status}');
       if (response.data != null) {
         billing = (response.data as List)
             .map((item) => Billing.fromJson(item))
@@ -360,7 +358,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["billingStatusBelum"]!(), "get", "");
-      print('billing by status: ${response.status}');
+      // print('billing by status: ${response.status}');
       if (response.data != null) {
         billingStatusBelum = (response.data as List)
             .map((item) => Billing.fromJson(item))
@@ -377,7 +375,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["billingStatusProses"]!(), "get", "");
-      print('billing by status: ${response.status}');
+      // print('billing by status: ${response.status}');
       if (response.data != null) {
         billingStatusProses = (response.data as List)
             .map((item) => Billing.fromJson(item))
@@ -394,7 +392,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(
           Config.apiEndpoints["billingStatusSudah"]!(), "get", "");
-      print('billing by status: ${response.status}');
+      // print('billing by status: ${response.status}');
       if (response.data != null) {
         billingStatusSelesai = (response.data as List)
             .map((item) => Billing.fromJson(item))

@@ -1,3 +1,4 @@
+import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/dummy/data.dart';
 
 class DetailBilling extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -30,6 +32,15 @@ class _DetailBillingState extends State<DetailBilling> {
   var selectedDate = DateTime.now();
   var parsedDate = DateTime.now();
   var tanggalcontroller = TextEditingController();
+
+  int rowsPerPage = 10;
+  List<Map<String, dynamic>> filteredList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredList = List.from(listobat);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +94,10 @@ class _DetailBillingState extends State<DetailBilling> {
                                 'Nomor Rekam Medis: RM2024001',
                                 style: AppStyles.contentText,
                               ),
+                              Text(
+                                'Poli Tujuan: Poli Gigi',
+                                style: AppStyles.contentText,
+                              ),
                             ],
                           ),
                           SizedBox(
@@ -92,11 +107,15 @@ class _DetailBillingState extends State<DetailBilling> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Poli Tujuan: Poli Gigi',
+                                'Dokter: dr. [nama dokter]',
                                 style: AppStyles.contentText,
                               ),
                               Text(
-                                'Dokter: dr. [nama dokter]',
+                                'Biaya Dokter: Rp500.000  ',
+                                style: AppStyles.contentText,
+                              ),
+                              Text(
+                                'Yang Ditugaskan: [nama tenkes]',
                                 style: AppStyles.contentText,
                               ),
                             ],
@@ -127,79 +146,48 @@ class _DetailBillingState extends State<DetailBilling> {
                       SizedBox(
                         height: 6,
                       ),
-                      Text(
-                        'Biaya Dokter',
-                        style: AppStyles.contentText
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Konsultasi',
-                            style: AppStyles.contentText,
-                          ),
-                          Text(
-                            'Rp                                   0,00',
-                            style: AppStyles.contentText,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Pelayanan',
-                            style: AppStyles.contentText,
-                          ),
-                          Text(
-                            'Rp                                   0,00',
-                            style: AppStyles.contentText,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        'Biaya Obat Resep',
-                        style: AppStyles.contentText
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Resep',
-                            style: AppStyles.contentText,
-                          ),
-                          Text(
-                            'Rp                                   0,00',
-                            style: AppStyles.contentText,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        'Biaya Obat Racikan',
-                        style: AppStyles.contentText
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Racikan',
-                            style: AppStyles.contentText,
-                          ),
-                          Text(
-                            'Rp                                   0,00',
-                            style: AppStyles.contentText,
-                          ),
-                        ],
-                      ),
+                      ConstrainedBox(
+                          constraints: BoxConstraints(maxHeight: 325),
+                          child: PaginatedDataTable2(
+                              // style
+                              headingTextStyle: AppStyles.sidebarText.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyles.textColor),
+                              headingRowColor: WidgetStateProperty.resolveWith(
+                                  (states) => AppStyles.greyColor),
+                              headingRowDecoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(6),
+                                      topRight: Radius.circular(6))),
+                              dataTextStyle: AppStyles.contentText
+                                  .copyWith(color: AppStyles.textColor),
+                              minWidth: 768,
+                              dividerThickness: 1,
+                              horizontalMargin: 12,
+                              dataRowHeight: 40,
+                              columnSpacing: 12,
+                              hidePaginator: true,
+                              empty: Center(
+                                child: Text(
+                                  'Tidak ada Data',
+                                  style: AppStyles.subheadingText
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              columns: [
+                                DataColumn(
+                                  label: Text('No.'),
+                                ),
+                                DataColumn(label: Text('Nama Obat')),
+                                DataColumn(label: Text('Keterangan')),
+                                DataColumn(label: Text('Jumlah')),
+                                DataColumn(label: Text('Satuan')),
+                                DataColumn(label: Text('Harga Satuan')),
+                                DataColumn(label: Text('Total')),
+                              ],
+                              source: RowSource(
+                                  myData: filteredList,
+                                  count: filteredList.length))),
                       SizedBox(
                         height: 6,
                       ),
@@ -343,7 +331,7 @@ class _DetailBillingState extends State<DetailBilling> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 27, right: 27),
+                padding: const EdgeInsets.only(left: 27, right: 27, bottom: 22),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -382,6 +370,8 @@ class _DetailBillingState extends State<DetailBilling> {
                         color: AppStyles.primaryColor,
                         textColor: AppStyles.primaryColor,
                         border: true,
+                        // horiPadding: 16,
+                        vertPadding: 10,
                       ),
                     ),
                     SizedBox(
@@ -417,4 +407,39 @@ class _DetailBillingState extends State<DetailBilling> {
       ),
     );
   }
+}
+
+class RowSource extends DataTableSource {
+  final List<Map<String, dynamic>> myData;
+  final int count;
+
+  RowSource({required this.myData, required this.count});
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= myData.length) return null;
+    var data = myData[index];
+    return DataRow(
+        color: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            return Colors.white;
+          },
+        ),
+        cells: [
+          DataCell(Text((index + 1).toString())),
+          DataCell(Text(data['nama'])),
+          DataCell(Text(data['keterangan'])),
+          DataCell(Text(data['jumlah'].toString())),
+          DataCell(Text(data['jenis'])),
+          DataCell(Text(data['harga_satuan'].toString())),
+          DataCell(Text(data['total_harga'].toString())),
+        ]);
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+  @override
+  int get rowCount => count;
+  @override
+  int get selectedRowCount => 0;
 }

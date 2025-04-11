@@ -18,6 +18,8 @@ import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/base/utils/config.dart';
+import 'package:poli_admin/base/backend/pdf_api.dart';
+import 'package:printing/printing.dart';
 
 class RegistrasiScreen extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -105,6 +107,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     kelurahanController.dispose();
     kecamatanController.dispose();
     tempatTinggalController.dispose();
+    debouncer?.cancel();
     super.dispose();
   }
 
@@ -122,6 +125,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       tempatTinggalController.text = pasien.kotaTinggal;
 
       nama = pasien.nama;
+      jenisKelamin = pasien.jenisKelamin;
       tanggalLahir = DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
       nik = pasien.nik;
       noTelp = pasien.noTelp;
@@ -130,6 +134,35 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       kelurahan = pasien.kelurahan;
       kecamatan = pasien.kecamatan;
       tempatTinggal = pasien.kotaTinggal;
+    });
+  }
+
+  void clearForm() {
+    setState(() {
+      namaController.text = "";
+      tempatLahirController.text = "";
+      tanggalcontroller.text = "";
+      nikController.text = "";
+      noTelpController.text = "";
+      alamatController.text = "";
+      kelurahanController.text = "";
+      kecamatanController.text = "";
+      tempatTinggalController.text = "";
+
+      nama = "";
+      jenisKelamin = "";
+      tempatLahir = "";
+      tanggalLahir = "";
+      nik = "";
+      noTelp = "";
+      alamat = "";
+      kelurahan = "";
+      kecamatan = "";
+      tempatTinggal = "";
+      idPoli = 0;
+      keluhanUtama = "";
+
+      isPost = true;
     });
   }
 
@@ -190,6 +223,43 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             "kelurahan": kelurahan,
             "kecamatan": kecamatan,
           });
+
+          // Check if error message indicates patient not found
+          if (response.status != 200 &&
+              response.message.contains("pasien with NIK") &&
+              response.message.contains("not found")) {
+            // Switch to POST method and try again
+            setState(() {
+              isPost = true;
+            });
+
+            // Close current loading dialog
+            if (!context.mounted) return;
+            Navigator.pop(context2);
+
+            // Show loading dialog again
+            showDialog(
+                context: context2,
+                builder: (context) => LoadingAlert(),
+                barrierDismissible: false);
+
+            // Try POST method
+            response = await dataController.apiConnector(
+                Config.apiEndpoints['registerPasien']!(), "post", {
+              "nama": nama,
+              "jenis_kelamin": jenisKelamin,
+              "tempat_lahir": tempatLahir,
+              "tanggal_lahir": tanggalLahir,
+              "nik": nik,
+              "no_telp": noTelp,
+              "alamat": alamat,
+              "kelurahan": kelurahan,
+              "kecamatan": kecamatan,
+              "kota_tempat_tinggal": tempatTinggal,
+              "id_poli": idPoli,
+              "keluhan_utama": keluhanUtama
+            });
+          }
         }
       } on Exception catch (e) {
         throw Exception("failed to register pasien: $e");
@@ -198,6 +268,31 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       if (!context.mounted) return;
       Navigator.pop(context2);
       if (response.status == 200) {
+        final responseData = response.data;
+        final int noAntrian = responseData['nomor_antrian'] ?? 0;
+
+        final now = DateTime.now();
+        final String tanggal = DateFormat('dd MMMM yyyy').format(now);
+        final String jam = DateFormat('HH:mm').format(now);
+
+        final poli = dataController.poliAktif
+            .firstWhere((poli) => poli.idPoli == idPoli);
+
+        // generate  pdf
+        final pdfData = await PdfApi.cetakAntrian(
+            noAntrian,
+            nama!,
+            jenisKelamin!,
+            DateTime.parse(tanggalLahir!),
+            tanggal,
+            jam,
+            poli.namaPoli);
+
+        // pop up buat print
+        await Printing.layoutPdf(
+          onLayout: (format) => pdfData,
+        );
+
         if (!context.mounted) return;
         showDialog(
             context: context2,
@@ -341,10 +436,28 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Data Pasien',
-                        style: AppStyles.tambahanText
-                            .copyWith(fontWeight: FontWeight.bold),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Data Pasien',
+                            style: AppStyles.tambahanText
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              clearForm();
+                            },
+                            child: TheButton(
+                              text: 'Clear Form',
+                              color: AppStyles.primaryColor,
+                              iconColor: AppStyles.primaryColor,
+                              textColor: AppStyles.primaryColor,
+                              border: true,
+                              isIcon: false,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         height: 8,
@@ -465,6 +578,10 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                         decoration: AppStyles.formBox.copyWith(
                                             contentPadding: EdgeInsets.zero),
                                         hint: Text('-- Pilih jenis kelamin --'),
+                                        value: jenisKelamin != null &&
+                                                jenisKelamin!.isNotEmpty
+                                            ? jenisKelamin
+                                            : null,
                                         items: listGender
                                             .map((item) =>
                                                 DropdownMenuItem<String>(

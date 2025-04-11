@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-
 
 class PdfApi {
   static Future<Uint8List> cetakAntrian(
@@ -12,7 +11,8 @@ class PdfApi {
       String jenisKelamin,
       DateTime tanggalLahir,
       String tanggal,
-      String jam) async {
+      String jam,
+      String poli) async {
     final pdf = pw.Document();
 
     String antrianStr = "000";
@@ -39,32 +39,90 @@ class PdfApi {
       ageDisplay = "$years tahun";
     }
 
-    pdf.addPage(pw.Page(
-        pageFormat: PdfPageFormat(PdfPageFormat.cm * 10, PdfPageFormat.cm * 10),
-        build: (_) {
-          return pw.Container(
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(color: PdfColor.fromInt(0xFF000000)),
-            ),
-            margin: pw.EdgeInsets.all(16),
-            child: pw.Column(
-              children: [
-                pw.Text(antrianStr,
-                    style: pw.TextStyle(
-                        fontSize: 40, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Text(nama, style: pw.TextStyle(fontSize: 16)),
-                pw.Text(jenisKelamin, style: pw.TextStyle(fontSize: 14)),
-                pw.Text("Umur: $ageDisplay", style: pw.TextStyle(fontSize: 14)),
-                pw.Text(tanggal, style: pw.TextStyle(fontSize: 14)),
-                pw.Text(jam, style: pw.TextStyle(fontSize: 14)),
-              ],
-            ),
-          );
-        }));
+    pdf.addPage(pw.Page(build: (_) {
+      return pw.Container(
+        width: 100 * PdfPageFormat.mm,
+        height: 100 * PdfPageFormat.mm,
+        decoration: pw.BoxDecoration(
+          border: pw.Border.all(color: PdfColor.fromInt(0xFF000000)),
+        ),
+        child: pw.Column(
+          children: [
+            pw.Container(
+                padding: pw.EdgeInsets.all(6),
+                decoration: pw.BoxDecoration(
+                    border: pw.Border(
+                        bottom: pw.BorderSide(
+                            color: PdfColor.fromInt(0xFF000000)))),
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text("Hospitel Bantarangin",
+                          style: pw.TextStyle(
+                            fontSize: 14,
+                            fontWeight: pw.FontWeight.bold,
+                          )),
+                      pw.SizedBox(height: 8),
+                      pw.Text(
+                          "Jl. Ponorogo - Wonogiri, Tengah, Kauman, Kec. Kauman, Kabupaten Ponorogo, Jawa Timur 63541",
+                          style: pw.TextStyle(fontSize: 10),
+                          textAlign: pw.TextAlign.center),
+                    ])),
+            pw.SizedBox(height: 6),
+            pw.Container(
+                padding: pw.EdgeInsets.all(6),
+                decoration: pw.BoxDecoration(
+                    border: pw.Border(
+                        bottom:
+                            pw.BorderSide(color: PdfColor.fromInt(0xFF000000)),
+                        top: pw.BorderSide(
+                            color: PdfColor.fromInt(0xFF000000)))),
+                child: pw.Center(
+                  child: pw.Text(poli.toUpperCase(),
+                      style: pw.TextStyle(
+                          fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                )),
+            pw.Container(
+                width: double.infinity,
+                padding: pw.EdgeInsets.all(8),
+                decoration: pw.BoxDecoration(
+                    border: pw.Border(
+                        bottom: pw.BorderSide(
+                            color: PdfColor.fromInt(0xFF000000)))),
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text("NOMOR ANTRIAN",
+                          style: pw.TextStyle(
+                              fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                      pw.SizedBox(height: 4),
+                      pw.Text(antrianStr,
+                          style: pw.TextStyle(
+                              fontSize: 65, fontWeight: pw.FontWeight.bold)),
+                    ])),
+            pw.SizedBox(height: 6),
+            pw.Container(
+                width: double.infinity,
+                padding: pw.EdgeInsets.all(4),
+                decoration: pw.BoxDecoration(
+                    border: pw.Border(
+                        top: pw.BorderSide(
+                            color: PdfColor.fromInt(0xFF000000)))),
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text(nama, style: pw.TextStyle(fontSize: 10)),
+                      pw.Text(jenisKelamin, style: pw.TextStyle(fontSize: 10)),
+                      pw.Text("Umur: $ageDisplay",
+                          style: pw.TextStyle(fontSize: 10)),
+                      pw.Text(tanggal, style: pw.TextStyle(fontSize: 10)),
+                      pw.Text(jam, style: pw.TextStyle(fontSize: 10)),
+                    ])),
+          ],
+        ),
+      );
+    }));
 
     return pdf.save();
   }
-
- 
 }

@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
+import 'package:poli_suster/base/global_widgets/label_required.dart';
 import 'package:poli_suster/base/global_widgets/loading_alert.dart';
 import 'package:poli_suster/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
+import 'package:poli_suster/base/utils/app_routes.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/base/utils/config.dart';
 import 'package:poli_suster/screens/input/data_pasien.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InputScreening extends StatefulWidget {
-  final Future<void> Function() refreshAntrian;
-  final VoidCallback? onScreeningComplete;
+  final Function onScreeningComplete;
 
-  const InputScreening(
-      {super.key, required this.refreshAntrian, this.onScreeningComplete});
+  const InputScreening({super.key, required this.onScreeningComplete});
 
   @override
   State<InputScreening> createState() => _InputScreeningState();
@@ -95,13 +95,21 @@ class _InputScreeningState extends State<InputScreening> {
           Navigator.pop(context2);
         }
 
+        if (response.status == 401) {
+          // Handle auth error
+          Navigator.pushReplacementNamed(context, AppRoutes.login);
+          return;
+        }
+
         if (response.status == 200) {
           clearForms();
 
           final prefs = await SharedPreferences.getInstance();
           await prefs.remove('current_id_pasien');
 
-          await widget.refreshAntrian();
+          dataController.antrianNow = null;
+
+          widget.onScreeningComplete();
 
           if (context2.mounted) {
             showDialog(
@@ -117,7 +125,6 @@ class _InputScreeningState extends State<InputScreening> {
             await Future.delayed(const Duration(seconds: 2));
             if (context2.mounted) {
               Navigator.pop(context2);
-              widget.onScreeningComplete?.call();
             }
           }
         } else {
@@ -250,12 +257,11 @@ class _InputScreeningState extends State<InputScreening> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Berat Badan',
-                        style: AppStyles.contentText.copyWith(
-                            color: AppStyles.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      LabelRequired(
+                          text: "Berat Badan",
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -275,7 +281,7 @@ class _InputScreeningState extends State<InputScreening> {
                               },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Field ini wajib diisi';
+                                  return '';
                                 }
                                 return null;
                               },
@@ -300,12 +306,11 @@ class _InputScreeningState extends State<InputScreening> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Tinggi Badan',
-                        style: AppStyles.contentText.copyWith(
-                            color: AppStyles.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      LabelRequired(
+                          text: "Tinggi Badan",
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -350,12 +355,11 @@ class _InputScreeningState extends State<InputScreening> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Suhu Tubuh',
-                        style: AppStyles.contentText.copyWith(
-                            color: AppStyles.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      LabelRequired(
+                          text: "Suhu Tubuh",
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -561,6 +565,30 @@ class _InputScreeningState extends State<InputScreening> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => ConfirmAlert(
+                            icon: FluentIcons.error_circle_12_regular,
+                            boldText:
+                                'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                            yesText: 'simpan',
+                            yesFunc: () {
+                              doScreening();
+                            },
+                          ));
+                },
+                child: TheButton(
+                    text: "Alihkan Screening",
+                    color: AppStyles.primaryColor,
+                    textColor: AppStyles.primaryColor,
+                    border: true,
+                    vertPadding: 6),
+              ),
+              SizedBox(
+                width: 16,
+              ),
               InkWell(
                 onTap: () {
                   showDialog(

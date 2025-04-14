@@ -58,7 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
     print(idPoli);
 
     if (formKey.currentState!.validate()) {
-      print("sampe sini?");
       formKey.currentState!.save();
 
       final context2 = context;

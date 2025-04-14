@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:poli_suster/base/backend/class/antrian.dart';
 import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/btrb_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
@@ -9,7 +8,18 @@ class DataPasien extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Antrian pasien = DataController().antrianNow!;
+    final pasien = DataController().antrianNow;
+
+    if (pasien == null) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 16),
+        decoration: AppStyles.whiteBox,
+        child: Center(
+          child: Text("Tidak ada data pasien"),
+        ),
+      );
+    }
 
     return Container(
       width: double.infinity,

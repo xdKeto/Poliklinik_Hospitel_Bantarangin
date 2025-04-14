@@ -224,26 +224,24 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             "kecamatan": kecamatan,
           });
 
-          // Check if error message indicates patient not found
+          // cek error msg
           if (response.status != 200 &&
               response.message.contains("pasien with NIK") &&
               response.message.contains("not found")) {
-            // Switch to POST method and try again
+            // cobak POST lagi
             setState(() {
               isPost = true;
             });
 
-            // Close current loading dialog
             if (!context.mounted) return;
             Navigator.pop(context2);
 
-            // Show loading dialog again
             showDialog(
                 context: context2,
                 builder: (context) => LoadingAlert(),
                 barrierDismissible: false);
 
-            // Try POST method
+            // POST
             response = await dataController.apiConnector(
                 Config.apiEndpoints['registerPasien']!(), "post", {
               "nama": nama,

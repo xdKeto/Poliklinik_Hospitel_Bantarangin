@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -121,6 +120,113 @@ class PdfApi {
           ],
         ),
       );
+    }));
+
+    return pdf.save();
+  }
+
+  static Future<Uint8List> cetakLabel(String nama, String jenisKelamin,
+      DateTime tanggalLahir, String tanggal, String jam) async {
+    final pdf = pw.Document();
+
+    String ageDisplay = "";
+    final now = DateTime.now();
+    final years = now.year - tanggalLahir.year;
+    final months =
+        now.month - tanggalLahir.month + (now.year - tanggalLahir.year);
+
+    if (years < 1) {
+      ageDisplay = "$months bulan";
+    } else {
+      ageDisplay = "$years tahun";
+    }
+
+    pdf.addPage(pw.Page(build: (_) {
+      return pw.Container(
+          width: 65 * PdfPageFormat.mm,
+          height: 40 * PdfPageFormat.mm,
+          decoration: pw.BoxDecoration(
+              border: pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
+          child: pw.Column(children: [
+            pw.SizedBox(height: 8),
+            pw.Row(children: [
+              pw.Column(children: [
+                pw.Text("Hospitel Bantarangin",
+                    style: pw.TextStyle(
+                      fontSize: 12,
+                      fontWeight: pw.FontWeight.bold,
+                    )),
+                pw.SizedBox(height: 8),
+                pw.Text(
+                    "Jl. Ponorogo - Wonogiri, Tengah, Kauman, Kec. Kauman, Kabupaten Ponorogo, Jawa Timur 63541",
+                    style: pw.TextStyle(fontSize: 10),
+                    textAlign: pw.TextAlign.center),
+              ])
+            ]),
+            pw.SizedBox(height: 8),
+            pw.Divider(thickness: 2),
+            pw.Padding(
+                padding: pw.EdgeInsets.all(12),
+                child: pw.Column(children: [
+                  pw.Text("Nama Pasien: $nama"),
+                  pw.SizedBox(height: 2),
+                  pw.Text("Tgl. Lahir: $tanggalLahir ($ageDisplay)"),
+                  pw.SizedBox(height: 2),
+                  pw.Text("Jenis Kelamin: $jenisKelamin"),
+                ])),
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.end,
+                children: [pw.Text("$tanggal - $jam")])
+          ]));
+    }));
+
+    return pdf.save();
+  }
+
+  static Future<Uint8List> cetakGelang(String nama, String jenisKelamin,
+      DateTime tanggalLahir, String tanggal, String jam) async {
+    final pdf = pw.Document();
+
+    String ageDisplay = "";
+    final now = DateTime.now();
+    final years = now.year - tanggalLahir.year;
+    final months =
+        now.month - tanggalLahir.month + (now.year - tanggalLahir.year);
+
+    if (years < 1) {
+      ageDisplay = "$months bulan";
+    } else {
+      ageDisplay = "$years tahun";
+    }
+
+    pdf.addPage(pw.Page(build: (_) {
+      return pw.Container(
+          width: 25 * PdfPageFormat.mm,
+          height: 40 * PdfPageFormat.mm,
+          decoration: pw.BoxDecoration(
+              border: pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
+          child: pw.Row(children: [
+            pw.Center(
+                child: pw.Row(children: [
+              pw.VerticalDivider(thickness: 2),
+              pw.SizedBox(width: 8),
+              pw.Column(children: [
+                pw.Text("Hospitel Bantarangin",
+                    style: pw.TextStyle(
+                      fontSize: 12,
+                      fontWeight: pw.FontWeight.bold,
+                    )),
+                pw.SizedBox(height: 8),
+                pw.Text("Nama Pasien: $nama"),
+                pw.SizedBox(height: 2),
+                pw.Text("Tgl. Lahir: $tanggalLahir ($ageDisplay)"),
+                pw.SizedBox(height: 2),
+                pw.Text("Jenis Kelamin: $jenisKelamin"),
+              ]),
+              pw.SizedBox(width: 8),
+              pw.VerticalDivider(thickness: 2),
+            ]))
+          ]));
     }));
 
     return pdf.save();

@@ -68,8 +68,6 @@ class _InputScreeningState extends State<InputScreening> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Navigator.pop(context);
-
       showDialog(
           context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
 
@@ -141,8 +139,6 @@ class _InputScreeningState extends State<InputScreening> {
   }
 
   void doAlihkan() async {
-    Navigator.pop(context);
-
     showDialog(
         context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
 
@@ -152,6 +148,39 @@ class _InputScreeningState extends State<InputScreening> {
           Config.apiEndpoints["alihkanScreening"]!(dataController.antrianNow?.idAntrian.toString()),
           "put",
           "");
+
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if (response.status == 200) {
+        clearForms();
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('current_id_antrian');
+
+        dataController.antrianNow = null;
+        widget.onScreeningComplete();
+
+        if (!mounted) return;
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => SucfailAlert(
+                isSuccess: true,
+                boldText: "Berhasil dialihkan",
+                italicText: "berhasil mengalihkan pasien"));
+
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+        Navigator.pop(context);
+      } else {
+        if (!mounted) return;
+        await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => SucfailAlert(
+                isSuccess: false, boldText: "Gagal mengalihkan", italicText: response.message));
+      }
     } catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
@@ -162,7 +191,7 @@ class _InputScreeningState extends State<InputScreening> {
     }
   }
 
-  void clearForms() {
+  void clearForms({bool skipPop = false}) {
     setState(() {
       systolicController.clear();
       diatolicController.clear();
@@ -563,7 +592,7 @@ class _InputScreeningState extends State<InputScreening> {
                                   boldText: 'Apakah anda ingin menyimpan\ndata poliklinik baru?',
                                   yesText: 'simpan',
                                   yesFunc: () {
-                                    doScreening();
+                                    doAlihkan();
                                   },
                                 ));
                       },

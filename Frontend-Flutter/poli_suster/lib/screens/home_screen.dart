@@ -34,11 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (mounted) {
         setState(() {
-          if (dataController.antrianNow?.nomorAntrian == 0 || dataController.antrianNow?.nomorAntrian == null) {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
             antrianStr = "000";
-          } else if (dataController.antrianNow?.nomorAntrian != null && dataController.antrianNow!.nomorAntrian <= 9) {
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
             antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
-          } else if (dataController.antrianNow?.nomorAntrian != null && dataController.antrianNow!.nomorAntrian <= 99) {
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
             antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
           } else {
             antrianStr = "${dataController.antrianNow?.nomorAntrian}";
@@ -48,6 +51,53 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print('Error displaying data antrian: $e');
     }
+  }
+
+  Future<void> doGetAntrian() async {
+    try {
+      final idPoli = await dataController.getLoggedInPoli();
+      final tokenValid = await dataController.isTokenValid();
+      final result = await dataController.nextPatient(idPoli);
+
+      if (!tokenValid && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sesi habis, silakan login kembali')));
+        Navigator.pushReplacementNamed(context, AppRoutes.login);
+        return;
+      }
+
+      if (result == null && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Tidak ada antrian lagi')));
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          if (dataController.antrianNow?.nomorAntrian == 0 ||
+              dataController.antrianNow?.nomorAntrian == null) {
+            antrianStr = "000";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 9) {
+            antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
+          } else if (dataController.antrianNow?.nomorAntrian != null &&
+              dataController.antrianNow!.nomorAntrian <= 99) {
+            antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
+          } else {
+            antrianStr = "${dataController.antrianNow?.nomorAntrian}";
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat antrian berikutnya: $e')),
+        );
+      }
+    }
+    Navigator.pop(context);
   }
 
   @override
@@ -74,8 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             'Welcome, ${dataController.nama}',
-                            style: AppStyles.headingText
-                                .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.w600),
+                            style: AppStyles.headingText.copyWith(
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 8,
@@ -123,8 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     // Show message that there's an active screening
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content:
-                                            Text('Selesaikan atau tunda screening pasien saat ini terlebih dahulu'),
+                                        content: Text(
+                                            'Selesaikan atau tunda screening pasien saat ini terlebih dahulu'),
                                         backgroundColor: AppStyles.redColor,
                                       ),
                                     );
@@ -136,53 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               icon: FluentIcons.error_circle_12_regular,
                                               boldText: "Antrian selanjutnya?",
                                               yesText: "selanjutnya",
-                                              italicText: "Memanggil antrian paling atas di status Tunggu",
-                                              yesFunc: () async {
-                                                try {
-                                                  final idPoli = await dataController.getLoggedInPoli();
-                                                  final tokenValid = await dataController.isTokenValid();
-                                                  final result = await dataController.nextPatient(idPoli);
-
-                                                  if (!tokenValid && mounted) {
-                                                    Navigator.pop(context);
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                        SnackBar(content: Text('Sesi habis, silakan login kembali')));
-                                                    Navigator.pushReplacementNamed(context, AppRoutes.login);
-                                                    return;
-                                                  }
-
-                                                  if (result == null && mounted) {
-                                                    Navigator.pop(context);
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                        SnackBar(content: Text('Tidak ada antrian lagi')));
-                                                    return;
-                                                  }
-
-                                                  if (mounted) {
-                                                    setState(() {
-                                                      if (dataController.antrianNow?.nomorAntrian == 0 ||
-                                                          dataController.antrianNow?.nomorAntrian == null) {
-                                                        antrianStr = "000";
-                                                      } else if (dataController.antrianNow?.nomorAntrian != null &&
-                                                          dataController.antrianNow!.nomorAntrian <= 9) {
-                                                        antrianStr = "00${dataController.antrianNow?.nomorAntrian}";
-                                                      } else if (dataController.antrianNow?.nomorAntrian != null &&
-                                                          dataController.antrianNow!.nomorAntrian <= 99) {
-                                                        antrianStr = "0${dataController.antrianNow?.nomorAntrian}";
-                                                      } else {
-                                                        antrianStr = "${dataController.antrianNow?.nomorAntrian}";
-                                                      }
-                                                    });
-                                                  }
-                                                } catch (e) {
-                                                  if (mounted) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      SnackBar(content: Text('Gagal memuat antrian berikutnya: $e')),
-                                                    );
-                                                  }
-                                                }
-                                                Navigator.pop(context);
-                                              },
+                                              italicText:
+                                                  "Memanggil antrian paling atas di status Tunggu",
+                                              yesFunc: () => doGetAntrian(),
                                             ));
                                   },
                             child: TheButton(
@@ -206,7 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             'Nomor antrian saat ini',
-                            style: AppStyles.subheadingText.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                            style: AppStyles.subheadingText
+                                .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 8,
@@ -224,8 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Center(
                               child: Text(
                                 antrianStr,
-                                style: AppStyles.headingText
-                                    .copyWith(fontSize: 40, color: Colors.black, fontWeight: FontWeight.bold),
+                                style: AppStyles.headingText.copyWith(
+                                    fontSize: 40, color: Colors.black, fontWeight: FontWeight.bold),
                               ),
                             ),
                           )

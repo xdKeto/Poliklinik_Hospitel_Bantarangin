@@ -43,6 +43,8 @@ class _InputScreeningState extends State<InputScreening> {
 
   final _formKey = GlobalKey<FormState>();
 
+  DataController dataController = DataController();
+
   @override
   void initState() {
     super.initState();
@@ -66,37 +68,30 @@ class _InputScreeningState extends State<InputScreening> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final context2 = context;
-      Navigator.pop(context2);
+      Navigator.pop(context);
 
       showDialog(
-          context: context2,
-          builder: (context) => const LoadingAlert(),
-          barrierDismissible: false);
+          context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
 
       try {
         DataController dataController = DataController();
         ResponseRequestAPI response = await dataController.apiConnector(
-            Config.apiEndpoints["inputScreening"]!(
-                dataController.antrianNow?.idAntrian.toString()),
-            "post",
-            {
-              "systolic": systolic,
-              "diatolic": diatolic,
-              "berat_badan": beratBadan,
-              "suhu_tubuh": suhuTubuh,
-              "tinggi_badan": tinggiBadan,
-              "detak_nadi": detakNadi,
-              "laju_respirasi": respRate,
-              "keterangan": catatan
-            });
+            Config.apiEndpoints["inputScreening"]!(dataController.antrianNow?.idAntrian.toString()),
+            "post", {
+          "systolic": systolic,
+          "diatolic": diatolic,
+          "berat_badan": beratBadan,
+          "suhu_tubuh": suhuTubuh,
+          "tinggi_badan": tinggiBadan,
+          "detak_nadi": detakNadi,
+          "laju_respirasi": respRate,
+          "keterangan": catatan
+        });
 
-        if (context2.mounted) {
-          Navigator.pop(context2);
-        }
+        if (!mounted) return;
+        Navigator.pop(context);
 
         if (response.status == 401) {
-          // Handle auth error
           Navigator.pushReplacementNamed(context, AppRoutes.login);
           return;
         }
@@ -111,45 +106,59 @@ class _InputScreeningState extends State<InputScreening> {
 
           widget.onScreeningComplete();
 
-          if (context2.mounted) {
-            showDialog(
-                context: context2,
-                barrierDismissible: false,
-                builder: (context) {
-                  return SucfailAlert(
-                      isSuccess: true,
-                      boldText: "Input Berhasil",
-                      italicText: "data screening pasien berhasil");
-                });
+          if (!mounted) return;
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return SucfailAlert(
+                    isSuccess: true,
+                    boldText: "Input Berhasil",
+                    italicText: "data screening pasien berhasil");
+              });
 
-            await Future.delayed(const Duration(seconds: 2));
-            if (context2.mounted) {
-              Navigator.pop(context2);
-            }
-          }
+          await Future.delayed(const Duration(seconds: 2));
+          if (!mounted) return;
+          Navigator.pop(context);
         } else {
-          if (context2.mounted) {
-            await showDialog(
-                context: context2,
-                barrierDismissible: false,
-                builder: (context) => SucfailAlert(
-                    isSuccess: false,
-                    boldText: "Input Gagal",
-                    italicText: response.message));
-          }
-        }
-      } catch (e) {
-        if (context2.mounted) {
-          Navigator.pop(context2);
+          if (!mounted) return;
           await showDialog(
-              context: context2,
+              context: context,
               barrierDismissible: false,
               builder: (context) => SucfailAlert(
-                  isSuccess: false,
-                  boldText: "Input Gagal",
-                  italicText: e.toString()));
+                  isSuccess: false, boldText: "Input Gagal", italicText: response.message));
         }
+      } catch (e) {
+        if (!mounted) return;
+        Navigator.pop(context);
+        await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) =>
+                SucfailAlert(isSuccess: false, boldText: "Input Gagal", italicText: e.toString()));
       }
+    }
+  }
+
+  void doAlihkan() async {
+    Navigator.pop(context);
+
+    showDialog(
+        context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
+
+    try {
+      DataController dataController = DataController();
+      ResponseRequestAPI response = await dataController.apiConnector(
+          Config.apiEndpoints["alihkanScreening"]!(dataController.antrianNow?.idAntrian.toString()),
+          "put",
+          "");
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context);
+      await showDialog(
+          context: context,
+          builder: (context) => SucfailAlert(
+              isSuccess: false, boldText: "Gagal mengalihkan", italicText: e.toString()));
     }
   }
 
@@ -164,6 +173,8 @@ class _InputScreeningState extends State<InputScreening> {
       respRateController.clear();
       catatanController.clear();
     });
+
+    Navigator.pop(context);
   }
 
   @override
@@ -187,12 +198,10 @@ class _InputScreeningState extends State<InputScreening> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Tensi Darah',
-                        style: AppStyles.contentText.copyWith(
-                            color: AppStyles.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      LabelRequired(
+                          text: "Tensi Darah",
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -203,8 +212,7 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: systolicController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -218,8 +226,7 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             '/',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor,
-                                fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
                             width: 8,
@@ -229,8 +236,7 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: diatolicController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -244,8 +250,7 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'mmHG',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor,
-                                fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                           ),
                         ],
                       )
@@ -260,8 +265,7 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Berat Badan",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -272,18 +276,11 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: beratBadanController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
                                 beratBadan = int.parse(value);
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '';
-                                }
-                                return null;
                               },
                             ),
                           ),
@@ -293,8 +290,7 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'kg',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor,
-                                fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -309,8 +305,7 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Tinggi Badan",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -321,8 +316,7 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: tinggiBadanController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -342,8 +336,7 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'cm',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor,
-                                fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -358,8 +351,7 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Suhu Tubuh",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -370,8 +362,7 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: suhuTubuhController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -391,8 +382,7 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             '°C',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor,
-                                fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -416,12 +406,10 @@ class _InputScreeningState extends State<InputScreening> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Detak / Nadi',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    LabelRequired(
+                        text: "Detak / Nadi",
+                        style: AppStyles.contentText
+                            .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 8,
                     ),
@@ -433,16 +421,14 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             controller: detakNadiController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {
                               detakNadi = int.parse(value);
                             },
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null || value.isEmpty) {
                                 return 'Field ini wajib diisi';
                               }
 
@@ -455,9 +441,8 @@ class _InputScreeningState extends State<InputScreening> {
                         ),
                         Text(
                           'hbpm',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText
+                              .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                         )
                       ],
                     )
@@ -469,12 +454,10 @@ class _InputScreeningState extends State<InputScreening> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Resp. Rate',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    LabelRequired(
+                        text: "Resp. Rate",
+                        style: AppStyles.contentText
+                            .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 8,
                     ),
@@ -486,16 +469,14 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             controller: respRateController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {
                               respRate = int.parse(value);
                             },
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null || value.isEmpty) {
                                 return 'Field ini wajib diisi';
                               }
                               return null;
@@ -507,9 +488,8 @@ class _InputScreeningState extends State<InputScreening> {
                         ),
                         Text(
                           'menit',
-                          style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor,
-                              fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText
+                              .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                         )
                       ],
                     )
@@ -529,9 +509,8 @@ class _InputScreeningState extends State<InputScreening> {
                   children: [
                     Text(
                       'Catatan Tambahan',
-                      style: AppStyles.contentText.copyWith(
-                          color: AppStyles.primaryColor,
-                          fontWeight: FontWeight.bold),
+                      style: AppStyles.contentText
+                          .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 8,
@@ -545,7 +524,7 @@ class _InputScreeningState extends State<InputScreening> {
                         catatan = value;
                       },
                       validator: (value) {
-                        if (value!.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Field ini wajib diisi';
                         }
                         return null;
@@ -566,25 +545,36 @@ class _InputScreeningState extends State<InputScreening> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => ConfirmAlert(
-                            icon: FluentIcons.error_circle_12_regular,
-                            boldText:
-                                'Apakah anda ingin menyimpan\ndata poliklinik baru?',
-                            yesText: 'simpan',
-                            yesFunc: () {
-                              doScreening();
-                            },
-                          ));
-                },
+                onTap: dataController.antrianNow == null
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Tidak ada antrian saat ini, tekan "Antrian Selanjutnya" untuk memulai'),
+                            backgroundColor: AppStyles.redColor,
+                          ),
+                        );
+                      }
+                    : () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => ConfirmAlert(
+                                  icon: FluentIcons.error_circle_12_regular,
+                                  boldText: 'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                                  yesText: 'simpan',
+                                  yesFunc: () {
+                                    doScreening();
+                                  },
+                                ));
+                      },
                 child: TheButton(
-                    text: "Alihkan Screening",
-                    color: AppStyles.primaryColor,
-                    textColor: AppStyles.primaryColor,
-                    border: true,
-                    vertPadding: 6),
+                  text: "Alihkan Screening",
+                  color: AppStyles.primaryColor,
+                  textColor: AppStyles.primaryColor,
+                  border: true,
+                  vertPadding: 6,
+                  opacity: dataController.antrianNow == null ? 0.5 : 1.0,
+                ),
               ),
               SizedBox(
                 width: 16,
@@ -618,19 +608,28 @@ class _InputScreeningState extends State<InputScreening> {
                 width: 16,
               ),
               InkWell(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => ConfirmAlert(
-                            icon: FluentIcons.error_circle_12_regular,
-                            boldText:
-                                'Apakah anda ingin menyimpan\ndata poliklinik baru?',
-                            yesText: 'simpan',
-                            yesFunc: () {
-                              doScreening();
-                            },
-                          ));
-                },
+                onTap: dataController.antrianNow == null
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Tidak ada antrian saat ini, tekan "Antrian Selanjutnya" untuk memulai'),
+                            backgroundColor: AppStyles.redColor,
+                          ),
+                        );
+                      }
+                    : () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => ConfirmAlert(
+                                  icon: FluentIcons.error_circle_12_regular,
+                                  boldText: 'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                                  yesText: 'simpan',
+                                  yesFunc: () {
+                                    doScreening();
+                                  },
+                                ));
+                      },
                 child: TheButton(
                   text: 'Simpan',
                   color: AppStyles.accentColor,
@@ -643,6 +642,7 @@ class _InputScreeningState extends State<InputScreening> {
                   border: true,
                   vertPadding: 4,
                   horiPadding: 12,
+                  opacity: dataController.antrianNow == null ? 0.5 : 1.0,
                 ),
               ),
             ],

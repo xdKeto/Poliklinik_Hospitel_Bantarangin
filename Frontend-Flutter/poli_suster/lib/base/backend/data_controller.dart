@@ -36,9 +36,10 @@ class DataController {
    */
   //
   Future<ResponseRequestAPI> apiConnector(String url, String method, dynamic body) async {
-    // Check token first
-    if (!await isTokenValid() && url != Config.apiEndpoints["login"]!()) {
-      // Token invalid, redirect to login
+    if (!await isTokenValid() &&
+        url != Config.apiEndpoints["login"]!() &&
+        url != Config.apiEndpoints["dropdownPoli"]!() &&
+        url != Config.apiEndpoints["antrianNow"]!()) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('auth_token');
 
@@ -68,8 +69,9 @@ class DataController {
           body: json.encode(body),
           headers: headers,
         );
-        print(jsonEncode(body));
+        // print(jsonEncode(body));
       } else if (method == "get") {
+        // print("headers: $headers");
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
         response = await http.put(Uri.parse(url), body: json.encode(body), headers: headers);
@@ -183,7 +185,8 @@ class DataController {
   Future<List<Poliklinik>> fetchPoli() async {
     try {
       ResponseRequestAPI response = await apiConnector(Config.apiEndpoints["dropdownPoli"]!(), "get", "");
-      print("dropdown poli: ${response.status}");
+      // print("dropdown poli: ${response.status}");
+      // print("dropdown poli: ${response.message}");
       if (response.data != null) {
         poliAktif = (response.data as List).map((e) => Poliklinik.fromJson(e)).toList();
       }
@@ -212,8 +215,7 @@ class DataController {
     try {
       ResponseRequestAPI response = await apiConnector(Config.apiEndpoints["dataAntrian"]!(id.toString()), "put", "");
 
-      if (response.status == 401) {
-      }
+      if (response.status == 401) {}
 
       if (response.data != null && response.data.isNotEmpty) {
         antrianNow = Antrian.fromJson(response.data);
@@ -241,9 +243,9 @@ class DataController {
       if (expiration == 0) return false;
 
       final expirationDate = DateTime.fromMillisecondsSinceEpoch(expiration);
-      print("expired: $expirationDate");
+      // print("expired: $expirationDate");
       final now = DateTime.now();
-      print("now: $now");
+      // print("now: $now");
       final buffer = const Duration(minutes: 1);
       return now.add(buffer).isBefore(expirationDate);
     } catch (e) {

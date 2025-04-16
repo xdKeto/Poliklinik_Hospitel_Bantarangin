@@ -49,58 +49,52 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print("error fetching data in login screen: $e");
     }
+
+    // print(listPoli);
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   void doLogin() async {
-    print(username);
-    print(password);
-    print(idPoli);
+    // print(username);
+    // print(password);
+    // print(idPoli);
 
     if (formKey.currentState!.validate()) {
-      print("sampe sini?");
       formKey.currentState!.save();
 
-      final context2 = context;
-
-      showDialog(
-          context: context,
-          builder: (context) => LoadingAlert(),
-          barrierDismissible: false);
+      showDialog(context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
 
       ResponseRequestAPI response = await dataController.apiConnector(
           Config.apiEndpoints["login"]!(),
           "post",
           {"username": username, "password": password, "id_poli": idPoli});
 
-      if (!context.mounted) return;
-      Navigator.pop(context2);
+      if (!mounted) return;
+      Navigator.pop(context);
       if (response.status == 200) {
         token = response.data["token"];
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token!);
 
-        final expiredTime =
-            DateTime.now().add(Duration(hours: 12)).millisecondsSinceEpoch;
+        final expiredTime = DateTime.now().add(Duration(hours: 12)).millisecondsSinceEpoch;
         await prefs.setInt('auth_token_expiration', expiredTime);
 
         await prefs.setInt('logged_in_idPoli', idPoli!);
 
-        if (!context.mounted) return;
+        if (!mounted) return;
 
         showDialog(
-            context: context2,
+            context: context,
             builder: (context) => SucfailAlert(
-                isSuccess: true,
-                boldText: "Login Successful",
-                italicText: "welcome, suster"));
+                isSuccess: true, boldText: "Login Successful", italicText: "welcome, suster"));
 
         await Future.delayed(Duration(seconds: 1));
-        if (context.mounted) Navigator.pop(context2);
+        if (!mounted) return;
+        Navigator.pop(context);
 
         if (context.mounted) {
           showDialog(
-            context: context2,
+            context: context,
             builder: (context) => LoadingAlert(),
             barrierDismissible: false,
           );
@@ -109,17 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
         dataController.setPoli(idPoli!);
         await dataController.fetchFirstData(idPoli!);
 
-        if (context.mounted) {
-          Navigator.pop(context2);
-          Navigator.pushReplacementNamed(context2, AppRoutes.home);
-        }
+        if (!mounted) return;
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
         showDialog(
-            context: context2,
+            context: context,
             builder: (context) => SucfailAlert(
-                isSuccess: false,
-                boldText: "Login Failed",
-                italicText: response.message));
+                isSuccess: false, boldText: "Login Failed", italicText: response.message));
       }
     }
   }
@@ -171,8 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     width: screenWidth * 0.3,
                     height: screenHeight * 0.87,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
@@ -195,14 +185,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text(
                                   'HOSPITEL BANTARANGIN',
                                   style: AppStyles.loginHeadText.copyWith(
-                                      color: AppStyles.textColor,
-                                      fontWeight: FontWeight.bold),
+                                      color: AppStyles.textColor, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   'GENERAL HOSPITAL',
                                   style: AppStyles.loginHeadText.copyWith(
-                                      color: AppStyles.textColor,
-                                      fontWeight: FontWeight.bold),
+                                      color: AppStyles.textColor, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -282,8 +270,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   DropdownButtonFormField2<String>(
                                     isExpanded: true,
-                                    decoration: AppStyles.formBox.copyWith(
-                                        contentPadding: EdgeInsets.zero),
+                                    decoration:
+                                        AppStyles.formBox.copyWith(contentPadding: EdgeInsets.zero),
                                     hint: Text('-- Pilih Poliklinik --'),
                                     items: listPoli
                                         .map((item) => DropdownMenuItem<String>(
@@ -298,8 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onChanged: (value) {
                                       try {
                                         final poli = dataController.poliAktif
-                                            .firstWhere((poli) =>
-                                                poli.namaPoli == value);
+                                            .firstWhere((poli) => poli.namaPoli == value);
                                         setState(() {
                                           idPoli = poli.idPoli;
                                         });
@@ -310,8 +297,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onSaved: (newValue) {
                                       selectedValue = newValue.toString();
                                     },
-                                    buttonStyleData: ButtonStyleData(
-                                        padding: EdgeInsets.only(right: 8)),
+                                    buttonStyleData:
+                                        ButtonStyleData(padding: EdgeInsets.only(right: 8)),
                                     iconStyleData: const IconStyleData(
                                       icon: Icon(
                                         Icons.arrow_drop_down,
@@ -325,8 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     menuItemStyleData: const MenuItemStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
+                                      padding: EdgeInsets.symmetric(horizontal: 16),
                                     ),
                                   ),
                                 ],

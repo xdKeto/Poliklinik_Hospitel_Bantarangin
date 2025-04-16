@@ -8,9 +8,9 @@ import 'package:poli_suster/screens/riwayat/riwayat_screening.dart';
 import 'package:tab_container/tab_container.dart';
 
 class HomeTabs extends StatefulWidget {
-  final Future<void> Function() refreshAntrian;
+  final Function onScreeningComplete;
 
-  const HomeTabs({super.key, required this.refreshAntrian});
+  const HomeTabs({super.key, required this.onScreeningComplete});
 
   @override
   State<HomeTabs> createState() => _HomeTabsState();
@@ -79,13 +79,7 @@ class _HomeTabsState extends State<HomeTabs>
       children: [
         SingleChildScrollView(child: RincianPasien()),
         SingleChildScrollView(child: RiwayatScreening()),
-        SingleChildScrollView(
-            child: InputScreening(
-          refreshAntrian: widget.refreshAntrian,
-          onScreeningComplete: () {
-            _tabController.animateTo(1);
-          },
-        ))
+        SingleChildScrollView(child: InputScreening(onScreeningComplete: widget.onScreeningComplete))
       ],
     );
   }

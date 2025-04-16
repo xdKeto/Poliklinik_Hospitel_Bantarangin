@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poli_suster/base/backend/class/antrian.dart';
@@ -33,8 +35,22 @@ class DataController {
     MAIN API CALLERRRR 💪
    */
   //
-  Future<ResponseRequestAPI> apiConnector(
-      String url, String method, dynamic body) async {
+  Future<ResponseRequestAPI> apiConnector(String url, String method, dynamic body) async {
+    if (!await isTokenValid() &&
+        url != Config.apiEndpoints["login"]!() &&
+        url != Config.apiEndpoints["dropdownPoli"]!() &&
+        url != Config.apiEndpoints["antrianNow"]!()) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+
+      return ResponseRequestAPI(
+        status: 401,
+        message: "Session expired, please login again",
+        data: [],
+      );
+    }
+
+    // Proceed with normal API call
     try {
       http.Response response;
       String? token = await getToken();
@@ -53,37 +69,47 @@ class DataController {
           body: json.encode(body),
           headers: headers,
         );
-        print(jsonEncode(body));
+        // print(jsonEncode(body));
       } else if (method == "get") {
+        // print("headers: $headers");
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
-        response = await http.put(Uri.parse(url),
-            body: json.encode(body), headers: headers);
+        response = await http.put(Uri.parse(url), body: json.encode(body), headers: headers);
       } else {
-        response = await http.delete(Uri.parse(url),
-            body: json.encode(body), headers: headers);
+        response = await http.delete(Uri.parse(url), body: json.encode(body), headers: headers);
       }
       // print(response.statusCode);
       // print(response.body);
 
       if (response.body.isEmpty) {
-        return ResponseRequestAPI(
-            status: response.statusCode, message: "Empty response", data: []);
+        return ResponseRequestAPI(status: response.statusCode, message: "Empty response", data: []);
       }
 
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       return ResponseRequestAPI(
         status: response.statusCode,
-        message: jsonResponse.containsKey('message')
-            ? jsonResponse['message']
-            : "No message",
+        message: jsonResponse.containsKey('message') ? jsonResponse['message'] : "No message",
         data: jsonResponse.containsKey('data') ? jsonResponse['data'] : "",
       );
     } catch (e) {
-      print(e);
-      return ResponseRequestAPI(
-          status: 500, message: "Error: ${e.toString()}", data: []);
+      print("API Error: $url - $e");
+
+      String errorMessage = "Terjadi kesalahan";
+      int statusCode = 500;
+
+      if (e is SocketException) {
+        errorMessage = "Tidak dapat terhubung ke server";
+        statusCode = 503;
+      } else if (e is TimeoutException) {
+        errorMessage = "Koneksi timeout";
+        statusCode = 504;
+      } else if (e is FormatException) {
+        errorMessage = "Format data tidak valid";
+        statusCode = 422;
+      }
+
+      return ResponseRequestAPI(status: statusCode, message: errorMessage, data: []);
     }
   }
 
@@ -158,12 +184,11 @@ class DataController {
   //
   Future<List<Poliklinik>> fetchPoli() async {
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints["dropdownPoli"]!(), "get", "");
-      print("dropdown poli: ${response.status}");
+      ResponseRequestAPI response = await apiConnector(Config.apiEndpoints["dropdownPoli"]!(), "get", "");
+      // print("dropdown poli: ${response.status}");
+      // print("dropdown poli: ${response.message}");
       if (response.data != null) {
-        poliAktif =
-            (response.data as List).map((e) => Poliklinik.fromJson(e)).toList();
+        poliAktif = (response.data as List).map((e) => Poliklinik.fromJson(e)).toList();
       }
     } catch (e) {
       throw Exception("failed to fetch poli aktif: $e");
@@ -172,46 +197,60 @@ class DataController {
     return poliAktif;
   }
 
-  Future<Antrian?> fetchAntrian(int id) async {
+  Future<void> fetchFirstData(int id) async {
     try {
-      ResponseRequestAPI response = await apiConnector(
-          Config.apiEndpoints["dataAntrian"]!(id.toString()), "put", "");
+      ResponseRequestAPI response = await apiConnector(Config.apiEndpoints["antrianNow"]!(id), "get", "");
 
       if (response.data != null) {
+        antrianNow = Antrian.fromJson(response.data);
+      }
+    } catch (e) {
+      print("Failed to fetch current patient: $e");
+    }
+
+    await namaSuster();
+  }
+
+  Future<Antrian?> nextPatient(int id) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(Config.apiEndpoints["dataAntrian"]!(id.toString()), "put", "");
+
+      if (response.status == 401) {}
+
+      if (response.data != null && response.data.isNotEmpty) {
         antrianNow = Antrian.fromJson(response.data);
 
         if (antrianNow != null) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setInt('current_id_pasien', antrianNow!.idPasien);
+          await prefs.setInt('current_id_antrian', antrianNow!.idAntrian);
         }
-
-        print("antrian now: ${antrianNow?.nomorAntrian}");
+        return antrianNow;
+      } else {
+        antrianNow = null;
+        return null;
       }
     } catch (e) {
-      throw Exception("failed to fetch antrian: $e");
+      throw Exception("failed to fetch next patient: $e");
     }
-
-    return antrianNow;
   }
 
-  Future<AntrianTunggu?> fetchAntrianTunggu(int id) async {
+  Future<bool> isTokenValid() async {
+    final token = await getToken();
+    if (token == null) return false;
+
     try {
-      ResponseRequestAPI response = await apiConnector(
-          Config.apiEndpoints["antrianNow"]!(id.toString()), "put", "");
+      final expiration = await getExpiration();
+      if (expiration == 0) return false;
 
-      if (response.data != null) {
-        antrianTunggu = AntrianTunggu.fromJson(response.data);
-        print("antrian tunggu: ${antrianTunggu?.nomorAntrian}");
-      }
+      final expirationDate = DateTime.fromMillisecondsSinceEpoch(expiration);
+      // print("expired: $expirationDate");
+      final now = DateTime.now();
+      // print("now: $now");
+      final buffer = const Duration(minutes: 1);
+      return now.add(buffer).isBefore(expirationDate);
     } catch (e) {
-      throw Exception("failed to fetch antrian tunggu: $e");
+      print("Error checking token validity: $e");
+      return false;
     }
-
-    return antrianTunggu;
-  }
-
-  Future<void> fetchFirstData(int id) async {
-    await fetchAntrian(id);
-    await namaSuster();
   }
 }

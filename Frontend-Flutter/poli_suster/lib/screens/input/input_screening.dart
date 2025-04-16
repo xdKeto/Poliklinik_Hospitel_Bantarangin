@@ -100,7 +100,7 @@ class _InputScreeningState extends State<InputScreening> {
           clearForms();
 
           final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('current_id_pasien');
+          await prefs.remove('current_id_antrian');
 
           dataController.antrianNow = null;
 

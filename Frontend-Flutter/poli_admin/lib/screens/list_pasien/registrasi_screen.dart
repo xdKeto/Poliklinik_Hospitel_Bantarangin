@@ -264,7 +264,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       }
 
       if (!context.mounted) return;
-      Navigator.pop(context2);
+      Navigator.pop(context2); // pop loading
       if (response.status == 200) {
         final responseData = response.data;
         final int noAntrian = responseData['nomor_antrian'] ?? 0;

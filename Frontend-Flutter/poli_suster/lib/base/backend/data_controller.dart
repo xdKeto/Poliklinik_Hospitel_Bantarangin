@@ -222,7 +222,7 @@ class DataController {
 
         if (antrianNow != null) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setInt('current_id_pasien', antrianNow!.idPasien);
+          await prefs.setInt('current_id_antrian', antrianNow!.idAntrian);
         }
         return antrianNow;
       } else {

@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void cekSession() async {
     bool session = await DataController().cekToken();
     if (session) {
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
     }
   }
@@ -48,29 +49,22 @@ class _LoginScreenState extends State<LoginScreen> {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      final context2 = context;
-
-      showDialog(
-          context: context,
-          builder: (context) => LoadingAlert(),
-          barrierDismissible: false);
+      showDialog(context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
 
       DataController dataController = DataController();
       ResponseRequestAPI response = await dataController.apiConnector(
-          Config.apiEndpoints['login']!(),
-          "post",
-          {"username": email, "password": password});
+          Config.apiEndpoints['login']!(), "post", {"username": email, "password": password});
 
-      if (!context.mounted) return;
-      Navigator.pop(context2);
+      if (!mounted) return;
+      Navigator.pop(context);
       if (response.status == 200) {
         token = response.data;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token!);
 
-        if (!context.mounted) return;
+        if (!mounted) return;
         showDialog(
-          context: context2,
+          context: context,
           builder: (context) => SucfailAlert(
             isSuccess: true,
             boldText: "Login Successful",
@@ -80,25 +74,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
         await Future.delayed(Duration(seconds: 1));
 
-        if (context.mounted) Navigator.pop(context2);
-
-        if (context.mounted) {
-          showDialog(
-            context: context2,
-            builder: (context) => LoadingAlert(),
-            barrierDismissible: false,
-          );
-        }
+        if (!mounted) return;
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) => LoadingAlert(),
+          barrierDismissible: false,
+        );
 
         await DataController().fetchFirstData();
 
-        if (context.mounted) {
-          Navigator.pop(context2);
-          Navigator.pushReplacementNamed(context2, AppRoutes.dashboard);
-        }
+        if (!mounted) return;
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
       } else {
         showDialog(
-          context: context2,
+          context: context,
           builder: (context) => SucfailAlert(
             isSuccess: false,
             boldText: "Login Failed",
@@ -150,8 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     width: screenWidth * 0.3,
                     height: screenHeight * 0.87,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.all(24.0),
@@ -171,14 +161,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             Text(
                               'HOSPITEL BANTARANGIN',
                               style: AppStyles.loginHeadText.copyWith(
-                                  color: AppStyles.textColor,
-                                  fontWeight: FontWeight.bold),
+                                  color: AppStyles.textColor, fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'GENERAL HOSPITAL',
                               style: AppStyles.loginHeadText.copyWith(
-                                  color: AppStyles.textColor,
-                                  fontWeight: FontWeight.bold),
+                                  color: AppStyles.textColor, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: screenHeight * 0.05,

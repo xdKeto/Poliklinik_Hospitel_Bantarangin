@@ -61,6 +61,15 @@ class _IconDropdownState extends State<IconDropdown> {
     return items;
   }
 
+  /// menunggu = cetak data, tunda, batal
+  /// screening = cetak data, tunda
+  /// pra-konsultasi = cetak data, tunda
+  /// konsultasi = cetak data, cetak label, cetak gelang
+  /// selesai = cetak data, cetak label, cetak gelang
+  /// ditunda = masukkan antrian, batalkan
+  /// dibatalkan = -
+  ///
+
   List<MenuItem> dropdownItems() {
     List<MenuItem> items = privItems();
     if (widget.status.toLowerCase() == 'selesai' ||

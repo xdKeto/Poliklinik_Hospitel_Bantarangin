@@ -221,6 +221,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             "alamat": alamat,
             "kelurahan": kelurahan,
             "kecamatan": kecamatan,
+            "keluhan_utama": keluhanUtama,
+            "kota_tempat_tinggal": tempatTinggal
           });
 
           // cek error msg

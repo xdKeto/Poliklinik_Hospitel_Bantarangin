@@ -1,4 +1,4 @@
-class RiwayatScreening {
+class RiwayatPasien {
   final int idScreening;
   final int idPasien;
   final int idKaryawan;
@@ -7,12 +7,13 @@ class RiwayatScreening {
   final int beratBadan;
   final int suhuTubuh;
   final int tinggiBadan;
+  final int gulaDarah;
   final int detakNadi;
   final int lajuRespirasi;
   final String keterangan;
   final DateTime createdAt;
 
-  RiwayatScreening({
+  RiwayatPasien({
     required this.idScreening,
     required this.idPasien,
     required this.idKaryawan,
@@ -21,14 +22,15 @@ class RiwayatScreening {
     required this.beratBadan,
     required this.suhuTubuh,
     required this.tinggiBadan,
+    required this.gulaDarah,
     required this.detakNadi,
     required this.lajuRespirasi,
     required this.keterangan,
     required this.createdAt,
   });
 
-  factory RiwayatScreening.fromJson(Map<String, dynamic> json) {
-    return RiwayatScreening(
+  factory RiwayatPasien.fromJson(Map<String, dynamic> json) {
+    return RiwayatPasien(
       idScreening: json['id_screening'],
       idPasien: json['id_pasien'],
       idKaryawan: json['id_karyawan'],
@@ -37,6 +39,7 @@ class RiwayatScreening {
       beratBadan: json['berat_badan'],
       suhuTubuh: json['suhu_tubuh'],
       tinggiBadan: json['tinggi_badan'],
+      gulaDarah: json['gula_darah'],
       detakNadi: json['detak_nadi'],
       lajuRespirasi: json['laju_respirasi'],
       keterangan: json['keterangan'],
@@ -54,6 +57,7 @@ class RiwayatScreening {
       'berat_badan': beratBadan,
       'suhu_tubuh': suhuTubuh,
       'tinggi_badan': tinggiBadan,
+      'gula_darah': gulaDarah,
       'detak_nadi': detakNadi,
       'laju_respirasi': lajuRespirasi,
       'keterangan': keterangan,

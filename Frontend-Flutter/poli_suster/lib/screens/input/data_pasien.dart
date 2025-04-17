@@ -1,4 +1,6 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 
 class DataPasien extends StatefulWidget {
@@ -9,6 +11,9 @@ class DataPasien extends StatefulWidget {
 }
 
 class _DataPasienState extends State<DataPasien> {
+  DataController dataController = DataController();
+  String formattedDate = DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now());
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -18,14 +23,14 @@ class _DataPasienState extends State<DataPasien> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'John Doe',
-              style: AppStyles.subheadingText.copyWith(
-                  fontWeight: FontWeight.bold, color: AppStyles.primaryColor),
+              dataController.antrianNow?.namaPasien ?? "",
+              style: AppStyles.subheadingText
+                  .copyWith(fontWeight: FontWeight.bold, color: AppStyles.primaryColor),
             ),
             Text(
-              '01 Januari 2024',
-              style: AppStyles.subheadingText.copyWith(
-                  fontWeight: FontWeight.bold, color: AppStyles.primaryColor),
+              formattedDate,
+              style: AppStyles.subheadingText
+                  .copyWith(fontWeight: FontWeight.bold, color: AppStyles.primaryColor),
             ),
           ],
         ),
@@ -33,15 +38,15 @@ class _DataPasienState extends State<DataPasien> {
           height: 8,
         ),
         Text(
-          'No. rekam medis: RM2024001',
+          'No. rekam medis: ${dataController.antrianNow?.idRm}',
           style: AppStyles.contentText,
         ),
         Text(
-          'Jenis kelamin: Laki-laki',
+          'Jenis kelamin: ${dataController.antrianNow?.jenisKelamin}',
           style: AppStyles.contentText,
         ),
         Text(
-          'Umur: 22 tahun',
+          'Umur: ${dataController.antrianNow?.umur} tahun',
           style: AppStyles.contentText,
         ),
       ],

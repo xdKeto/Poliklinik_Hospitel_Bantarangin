@@ -7,7 +7,7 @@ import 'package:poli_suster/base/backend/class/antrian.dart';
 import 'package:poli_suster/base/backend/class/antrian_tunggu.dart';
 import 'package:poli_suster/base/backend/class/health_record.dart';
 import 'package:poli_suster/base/backend/class/poliklinik.dart';
-import 'package:poli_suster/base/backend/class/riwayat_screening.dart';
+import 'package:poli_suster/base/backend/class/riwayat_pasien.dart';
 import 'package:poli_suster/base/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,7 +31,7 @@ class DataController {
   AntrianTunggu? antrianTunggu;
   String nama = "";
   int? idPoli;
-  List<RiwayatScreening> riwayatScreening = [];
+  List<RiwayatPasien> riwayatPasien = [];
 
   //
   /* 
@@ -221,19 +221,19 @@ class DataController {
     return poliAktif;
   }
 
-  Future<List<RiwayatScreening>> fetchRiwayatScreening(int id) async {
+  Future<List<RiwayatPasien>> fetchRiwayatScreening(int id) async {
     try {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints["riwayatScreening"]!(id.toString()), "get", "");
 
       if (response.data != null) {
-        riwayatScreening = (response.data as List).map((e) => RiwayatScreening.fromJson(e)).toList();
+        riwayatPasien = (response.data as List).map((e) => RiwayatPasien.fromJson(e)).toList();
       }
     } catch (e) {
       throw Exception("failed to fetch riwayat screening: $e");
     }
 
-    return riwayatScreening;
+    return riwayatPasien;
   }
 
   Future<void> fetchFirstData(int id) async {

@@ -33,37 +33,46 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
-  Timer? refreshData;
+  // Timer? refreshData;
 
   late List<String> listStatus = [];
   List<AntrianPasien> filteredList = [];
   final TextEditingController controller = TextEditingController();
   final DataController dataController = DataController();
   bool isLoading = true;
-
   bool firstLoad = true;
+
+  StreamSubscription? antrianSubscription;
 
   @override
   void initState() {
     super.initState();
     listPriv();
+
+    fetchData();
+
+    antrianSubscription = dataController.antrianStream.listen((data) {
+      setState(() {
+        applyFilters();
+      });
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (firstLoad) {
-      fetchData();
-      firstLoad = false;
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (firstLoad) {
+  //     fetchData();
+  //     firstLoad = false;
 
-      refreshData =
-          Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-    }
-  }
+  //     refreshData =
+  //         Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+  //   }
+  // }
 
   @override
   void dispose() {
-    refreshData?.cancel();
+    antrianSubscription?.cancel();
     super.dispose();
   }
 
@@ -76,7 +85,11 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       if (dataController.statusAntrian.isEmpty) {
         await dataController.fetchListStatus();
       }
-      await dataController.fetchAllAntrian();
+
+      if (firstLoad) {
+        await dataController.fetchAllAntrian();
+        firstLoad = false;
+      }
 
       setState(() {
         listStatus = ['-- Semua Status --'];
@@ -183,8 +196,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                                   iconColor: AppStyles.accentColor,
                                   textColor: AppStyles.accentColor,
                                   borderRad: 10,
-                                  hoverIcon:
-                                      FluentIcons.clipboard_edit_20_filled,
+                                  hoverIcon: FluentIcons.clipboard_edit_20_filled,
                                 ),
                               ),
                               SizedBox(
@@ -213,8 +225,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Status --'),
                         items: listStatus
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -259,23 +270,19 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                     : PaginatedDataTable2(
                         sortColumnIndex: sortColumnIndex,
                         sortAscending: sortAscending,
-                        headingTextStyle: AppStyles.sidebarText.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppStyles.textColor),
-                        headingRowColor: WidgetStateProperty.resolveWith(
-                            (states) => AppStyles.greyColor),
+                        headingTextStyle: AppStyles.sidebarText
+                            .copyWith(fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                        headingRowColor:
+                            WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
                         headingRowDecoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12))),
-                        dataTextStyle: AppStyles.contentText
-                            .copyWith(color: AppStyles.textColor),
+                                topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                        dataTextStyle: AppStyles.contentText.copyWith(color: AppStyles.textColor),
                         minWidth: 768,
                         empty: Center(
                           child: Text(
                             'Tidak ada Data',
-                            style: AppStyles.subheadingText
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         dividerThickness: 0,
@@ -287,8 +294,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         rowsPerPage: rowsPerPage,
                         availableRowsPerPage: [10, 25, 50, 100],
                         onRowsPerPageChanged: (value) {
-                          if (value != null &&
-                              [10, 25, 50, 100].contains(value)) {
+                          if (value != null && [10, 25, 50, 100].contains(value)) {
                             setState(() {
                               rowsPerPage = value;
                             });
@@ -326,9 +332,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                           DataColumn(label: Center(child: Text('Status'))),
                           DataColumn(label: Center(child: Text('Aksi'))),
                         ],
-                        source: AntrianRowSource(
-                            antrianData: filteredList,
-                            count: filteredList.length),
+                        source:
+                            AntrianRowSource(antrianData: filteredList, count: filteredList.length),
                       ),
               ),
             ],
@@ -361,8 +366,7 @@ class AntrianRowSource extends DataTableSource {
           DataCell(Text(data.idRm)),
           DataCell(Text(data.nama)),
           DataCell(Center(child: StatusBox(status: data.status))),
-          DataCell(Center(
-              child: IconDropdown(status: data.status, id: data.idAntrian))),
+          DataCell(Center(child: IconDropdown(status: data.status, id: data.idAntrian))),
         ]);
   }
 

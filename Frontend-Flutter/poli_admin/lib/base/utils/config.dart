@@ -16,6 +16,7 @@ class Config {
     'tundaAntrian': (String id) => '$apiURL/antrian/tunda?id_antrian=$id', // PUT
     'putAntrian': (String id) => '$apiURL/antrian/reschedule?id_antrian=$id', // PUT
     'batalAntrian': (String id) => '$apiURL/antrian/batalkan?id_antrian=$id', // PUT
+    'detailAntrian': (String id) => '$apiURL/detail-antrian?id_antrian=$id',
 
     // REGISTRASI
     'poliAktif': () => '$apiURL/poliklinik?status=aktif',

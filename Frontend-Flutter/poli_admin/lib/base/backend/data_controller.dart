@@ -124,6 +124,7 @@ class DataController {
   List<Billing> billingStatusBelum = [];
   List<Billing> billingStatusProses = [];
   List<Billing> billingStatusSelesai = [];
+  String? namaDokter;
 
   /* 
     MAIN API CALLERRRR 💪
@@ -174,10 +175,9 @@ class DataController {
   }
 
   /* 
-    FUNCTIONS
+    GENERAL FUNCTIONS
    */
 
-  // ===== USER =====
   // logout
   Future<void> userLogout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -237,7 +237,19 @@ class DataController {
     nama = decodedToken["nama"];
     // print(nama);
   }
-  // ===== USER =====
+
+  // get nama dokter for printing
+  Future<void> getNamaDokter(String id) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(Config.apiEndpoints['detailAntrian']!(id), "get", "");
+
+      if (response.data != null) {
+        namaDokter = response.data['nama_dokter'];
+      }
+    } catch (e) {
+      throw Exception("failed to get nama dokter: $e");
+    }
+  }
 
   /* 
     FETCHERS

@@ -72,17 +72,19 @@ class _IconDropdownState extends State<IconDropdown> {
 
   List<MenuItem> dropdownItems() {
     List<MenuItem> items = privItems();
-    if (widget.status.toLowerCase() == 'selesai' ||
-        widget.status.toLowerCase() == 'konsultasi' ||
-        widget.status.toLowerCase() == 'screening') {
+    if (widget.status.toLowerCase() == 'menunggu'){
+      return [MenuItems.dataPasien, MenuItems.tundaPasien, MenuItems.batalAntrian];
+    } else if (widget.status.toLowerCase() == 'screening' || widget.status.toLowerCase() == 'pra-konsultasi'){
+      return [MenuItems.dataPasien, MenuItems.tundaPasien]; 
+    } else if (widget.status.toLowerCase() == 'konsultasi' || widget.status.toLowerCase() == 'selesai'){
       return items;
-    } else if (widget.status.toLowerCase() == 'menunggu') {
-      return [...items, MenuItems.tundaPasien, MenuItems.batalAntrian];
-    } else if (widget.status.toLowerCase() == 'dibatalkan') {
-      return [];
-    } else {
+    } else if (widget.status.toLowerCase() == 'ditunda'){
       return [MenuItems.masukAntrian, MenuItems.batalAntrian];
+    } else if (widget.status.toLowerCase() == 'dibatalkan'){
+      return [];
     }
+
+    return items;
   }
 
   @override

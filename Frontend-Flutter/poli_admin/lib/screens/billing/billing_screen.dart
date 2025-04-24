@@ -48,29 +48,40 @@ class _BillingScreenState extends State<BillingScreen> {
   DataController dataController = DataController();
   bool isLoading = true;
   Timer? refreshData;
-  bool _firstLoad = true;
+  bool firstLoad = true;
+
+  StreamSubscription? billingSubscription;
 
   @override
   void initState() {
     super.initState();
+
+    fetchData();
+
+    billingSubscription = dataController.billingStream.listen((data) {
+      setState(() {
+        applyFilters();
+      });
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
 
-    if (_firstLoad) {
-      fetchData();
-      _firstLoad = false;
+  //   if (_firstLoad) {
+  //     fetchData();
+  //     _firstLoad = false;
 
-      refreshData =
-          Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-    }
-  }
+  //     refreshData =
+  //         Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
+  //   }
+  // }
 
   @override
   void dispose() {
-    refreshData?.cancel();
+    // refreshData?.cancel();
+    billingSubscription?.cancel();
     super.dispose();
   }
 
@@ -85,7 +96,11 @@ class _BillingScreenState extends State<BillingScreen> {
       String currentQuery = searchQuery;
 
       await dataController.fetchPoliAktif();
-      await dataController.fetchAllBilling();
+
+      if (firstLoad) {
+        await dataController.fetchAllBilling();
+        firstLoad = false;
+      }
 
       setState(() {
         if (dataController.poliAktif.isNotEmpty) {

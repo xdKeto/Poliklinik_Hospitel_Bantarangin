@@ -42,9 +42,11 @@ class DataController {
       if (message.containsKey('type')) {
         if (message['type'] == 'antrian_update') {
           _handleAntrianUpdate(message);
-        } else if (message['type'] == 'billing_update') {}
+        } else if (message['type'] == 'billing_update') {
+          _handleBillingUpdate(message);
+        }
       } else if (message.containsKey('status') && message.containsKey('id_antrian')) {
-        _handleStatusUpdate(message);
+        _handleAntrianStatusUpdate(message);
       }
     });
   }
@@ -62,7 +64,7 @@ class DataController {
     _antrianController.add(antrianToday);
   }
 
-  void _handleStatusUpdate(Map<String, dynamic> message) {
+  void _handleAntrianStatusUpdate(Map<String, dynamic> message) {
     int idAntrian = message['id_antrian'];
     String status = message['status'];
 
@@ -86,6 +88,27 @@ class DataController {
 
       _antrianController.add(antrianToday);
     }
+  }
+
+  void _handleBillingUpdate(Map<String, dynamic> message) {
+    Billing billingUpdate = Billing.fromJson(message['data']);
+
+    int index = billing.indexWhere((a) => a.idKunjungan == billingUpdate.idKunjungan);
+
+    if (index != -1) {
+      billing[index] = billingUpdate;
+    } else {
+      billing.add(billingUpdate);
+    }
+
+    _updateListStatusBilling();
+    _billingController.add(billing);
+  }
+
+  void _updateListStatusBilling() {
+    billingStatusBelum = billing.where((b) => b.status == "Belum").toList();
+    billingStatusProses = billing.where((b) => b.status == "Proses").toList();
+    billingStatusSelesai = billing.where((b) => b.status == "Sudah").toList();
   }
 
   /* 

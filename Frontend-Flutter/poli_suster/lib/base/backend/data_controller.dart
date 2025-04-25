@@ -38,7 +38,8 @@ class DataController {
     MAIN API CALLERRRR 💪
    */
   //
-  Future<ResponseRequestAPI> apiConnector(String url, String method, dynamic body) async {
+  Future<ResponseRequestAPI> apiConnector(
+      String url, String method, dynamic body) async {
     if (!await isTokenValid() &&
         url != Config.apiEndpoints["login"]!() &&
         url != Config.apiEndpoints["dropdownPoli"]!() &&
@@ -77,22 +78,27 @@ class DataController {
         // print("headers: $headers");
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
-        response = await http.put(Uri.parse(url), body: json.encode(body), headers: headers);
+        response = await http.put(Uri.parse(url),
+            body: json.encode(body), headers: headers);
       } else {
-        response = await http.delete(Uri.parse(url), body: json.encode(body), headers: headers);
+        response = await http.delete(Uri.parse(url),
+            body: json.encode(body), headers: headers);
       }
       // print(response.statusCode);
       // print(response.body);
 
       if (response.body.isEmpty) {
-        return ResponseRequestAPI(status: response.statusCode, message: "Empty response", data: []);
+        return ResponseRequestAPI(
+            status: response.statusCode, message: "Empty response", data: []);
       }
 
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       return ResponseRequestAPI(
         status: response.statusCode,
-        message: jsonResponse.containsKey('message') ? jsonResponse['message'] : "No message",
+        message: jsonResponse.containsKey('message')
+            ? jsonResponse['message']
+            : "No message",
         data: jsonResponse.containsKey('data') ? jsonResponse['data'] : "",
       );
     } catch (e) {
@@ -112,7 +118,8 @@ class DataController {
         statusCode = 422;
       }
 
-      return ResponseRequestAPI(status: statusCode, message: errorMessage, data: []);
+      return ResponseRequestAPI(
+          status: statusCode, message: errorMessage, data: []);
     }
   }
 
@@ -212,7 +219,8 @@ class DataController {
       // print("dropdown poli: ${response.status}");
       // print("dropdown poli: ${response.message}");
       if (response.data != null) {
-        poliAktif = (response.data as List).map((e) => Poliklinik.fromJson(e)).toList();
+        poliAktif =
+            (response.data as List).map((e) => Poliklinik.fromJson(e)).toList();
       }
     } catch (e) {
       throw Exception("failed to fetch poli aktif: $e");
@@ -223,11 +231,13 @@ class DataController {
 
   Future<List<RiwayatPasien>> fetchRiwayatScreening(int id) async {
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints["riwayatScreening"]!(id.toString()), "get", "");
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["riwayatScreening"]!(id.toString()), "get", "");
 
       if (response.data != null) {
-        riwayatPasien = (response.data as List).map((e) => RiwayatPasien.fromJson(e)).toList();
+        riwayatPasien = (response.data as List)
+            .map((e) => RiwayatPasien.fromJson(e))
+            .toList();
       }
     } catch (e) {
       throw Exception("failed to fetch riwayat screening: $e");
@@ -247,13 +257,15 @@ class DataController {
   Future<Antrian?> nextPatient(int id) async {
     try {
       // cek ada antrian screening atau ndak
-      ResponseRequestAPI response1 =
-          await apiConnector(Config.apiEndpoints["antrianScreening"]!(id), "get", "");
+      ResponseRequestAPI response1 = await apiConnector(
+          Config.apiEndpoints["antrianScreening"]!(id), "get", "");
+      // TODO: di antrian, tambah priority order, biar ambil yang paling atas
 
       if (response1.data != null) {
         // kalo ada fetch detail pake id paling atas
         ResponseRequestAPI response2 = await apiConnector(
-            Config.apiEndpoints["detailScreening"]!(response1.data[0]["id_antrian"].toString()),
+            Config.apiEndpoints["detailScreening"]!(
+                response1.data[0]["id_antrian"].toString()),
             "get",
             "");
 
@@ -269,8 +281,8 @@ class DataController {
         }
       } else {
         // kalau ngga ada baru ambil dari status tunggu
-        ResponseRequestAPI response3 =
-            await apiConnector(Config.apiEndpoints["dataAntrian"]!(id.toString()), "put", "");
+        ResponseRequestAPI response3 = await apiConnector(
+            Config.apiEndpoints["dataAntrian"]!(id.toString()), "put", "");
 
         if (response3.status == 401) {
           return null;

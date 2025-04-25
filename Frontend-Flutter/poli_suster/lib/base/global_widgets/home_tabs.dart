@@ -77,7 +77,7 @@ class _HomeTabsState extends State<HomeTabs>
                 color: AppStyles.primaryColor, fontWeight: FontWeight.w600)),
       ],
       children: [
-        SingleChildScrollView(child: RincianPasien()),
+        SingleChildScrollView(child: RincianPasien(onScreeningComplete: widget.onScreeningComplete)),
         SingleChildScrollView(child: RiwayatScreening()),
         SingleChildScrollView(child: InputScreening(onScreeningComplete: widget.onScreeningComplete))
       ],

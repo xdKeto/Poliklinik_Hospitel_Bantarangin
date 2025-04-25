@@ -42,20 +42,12 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   bool isLoading = true;
   bool firstLoad = true;
 
-  StreamSubscription? antrianSubscription;
-
   @override
   void initState() {
     super.initState();
     listPriv();
 
     fetchData();
-
-    antrianSubscription = dataController.antrianStream.listen((data) {
-      setState(() {
-        applyFilters();
-      });
-    });
   }
 
   // @override
@@ -72,7 +64,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
 
   @override
   void dispose() {
-    antrianSubscription?.cancel();
     super.dispose();
   }
 
@@ -196,7 +187,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                                   iconColor: AppStyles.accentColor,
                                   textColor: AppStyles.accentColor,
                                   borderRad: 10,
-                                  hoverIcon: FluentIcons.clipboard_edit_20_filled,
+                                  hoverIcon:
+                                      FluentIcons.clipboard_edit_20_filled,
                                 ),
                               ),
                               SizedBox(
@@ -225,7 +217,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Status --'),
                         items: listStatus
-                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -262,80 +255,93 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ),
               SizedBox(height: 12),
               Expanded(
-                child: (isLoading)
-                    ? Center(
-                        child: CircularProgressIndicator(
-                        color: AppStyles.primaryColor,
-                      ))
-                    : PaginatedDataTable2(
-                        sortColumnIndex: sortColumnIndex,
-                        sortAscending: sortAscending,
-                        headingTextStyle: AppStyles.sidebarText
-                            .copyWith(fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                        headingRowColor:
-                            WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
-                        headingRowDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-                        dataTextStyle: AppStyles.contentText.copyWith(color: AppStyles.textColor),
-                        minWidth: 768,
-                        empty: Center(
-                          child: Text(
-                            'Tidak ada Data',
-                            style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        dividerThickness: 0,
-                        horizontalMargin: 12,
-                        dataRowHeight: 56,
-                        columnSpacing: 12,
-                        showFirstLastButtons: true,
-                        renderEmptyRowsInTheEnd: false,
-                        rowsPerPage: rowsPerPage,
-                        availableRowsPerPage: [10, 25, 50, 100],
-                        onRowsPerPageChanged: (value) {
-                          if (value != null && [10, 25, 50, 100].contains(value)) {
-                            setState(() {
-                              rowsPerPage = value;
-                            });
-                          }
-                        },
-                        sortArrowAlwaysVisible: true,
-                        sortArrowBuilder: (bool ascending, bool sorted) {
-                          if (sorted) {
-                            return Icon(
-                              ascending
-                                  ? FluentIcons.arrow_sort_up_16_regular
-                                  : FluentIcons.arrow_sort_down_16_regular,
-                              size: 12,
+                  child: (isLoading)
+                      ? Center(
+                          child: CircularProgressIndicator(
+                          color: AppStyles.primaryColor,
+                        ))
+                      : StreamBuilder<List<AntrianPasien>>(
+                          stream: dataController.antrianStream,
+                          initialData: dataController.antrianToday,
+                          builder: (context, snapshot) {
+                            return PaginatedDataTable2(
+                              sortColumnIndex: sortColumnIndex,
+                              sortAscending: sortAscending,
+                              headingTextStyle: AppStyles.sidebarText.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyles.textColor),
+                              headingRowColor: WidgetStateProperty.resolveWith(
+                                  (states) => AppStyles.greyColor),
+                              headingRowDecoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12),
+                                      topRight: Radius.circular(12))),
+                              dataTextStyle: AppStyles.contentText
+                                  .copyWith(color: AppStyles.textColor),
+                              minWidth: 768,
+                              empty: Center(
+                                child: Text(
+                                  'Tidak ada Data',
+                                  style: AppStyles.subheadingText
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              dividerThickness: 0,
+                              horizontalMargin: 12,
+                              dataRowHeight: 56,
+                              columnSpacing: 12,
+                              showFirstLastButtons: true,
+                              renderEmptyRowsInTheEnd: false,
+                              rowsPerPage: rowsPerPage,
+                              availableRowsPerPage: [10, 25, 50, 100],
+                              onRowsPerPageChanged: (value) {
+                                if (value != null &&
+                                    [10, 25, 50, 100].contains(value)) {
+                                  setState(() {
+                                    rowsPerPage = value;
+                                  });
+                                }
+                              },
+                              sortArrowAlwaysVisible: true,
+                              sortArrowBuilder: (bool ascending, bool sorted) {
+                                if (sorted) {
+                                  return Icon(
+                                    ascending
+                                        ? FluentIcons.arrow_sort_up_16_regular
+                                        : FluentIcons
+                                            .arrow_sort_down_16_regular,
+                                    size: 12,
+                                  );
+                                } else {
+                                  return Icon(
+                                    FluentIcons.arrow_sort_16_regular,
+                                    size: 12,
+                                  );
+                                }
+                              },
+                              columns: [
+                                DataColumn(
+                                  label: Text('Poli Tujuan'),
+                                ),
+                                DataColumn(
+                                  label: Text('No. Antrian'),
+                                ),
+                                DataColumn(
+                                  label: Text('No. Rekam Medis'),
+                                ),
+                                DataColumn(
+                                  label: Text('Nama Pasien'),
+                                ),
+                                DataColumn(
+                                    label: Center(child: Text('Status'))),
+                                DataColumn(label: Center(child: Text('Aksi'))),
+                              ],
+                              source: AntrianRowSource(
+                                  antrianData: filteredList,
+                                  count: filteredList.length),
                             );
-                          } else {
-                            return Icon(
-                              FluentIcons.arrow_sort_16_regular,
-                              size: 12,
-                            );
-                          }
-                        },
-                        columns: [
-                          DataColumn(
-                            label: Text('Poli Tujuan'),
-                          ),
-                          DataColumn(
-                            label: Text('No. Antrian'),
-                          ),
-                          DataColumn(
-                            label: Text('No. Rekam Medis'),
-                          ),
-                          DataColumn(
-                            label: Text('Nama Pasien'),
-                          ),
-                          DataColumn(label: Center(child: Text('Status'))),
-                          DataColumn(label: Center(child: Text('Aksi'))),
-                        ],
-                        source:
-                            AntrianRowSource(antrianData: filteredList, count: filteredList.length),
-                      ),
-              ),
+                          },
+                        )),
             ],
           ),
         ),
@@ -366,7 +372,8 @@ class AntrianRowSource extends DataTableSource {
           DataCell(Text(data.idRm)),
           DataCell(Text(data.nama)),
           DataCell(Center(child: StatusBox(status: data.status))),
-          DataCell(Center(child: IconDropdown(status: data.status, id: data.idAntrian))),
+          DataCell(Center(
+              child: IconDropdown(status: data.status, id: data.idAntrian))),
         ]);
   }
 

@@ -72,15 +72,21 @@ class _IconDropdownState extends State<IconDropdown> {
 
   List<MenuItem> dropdownItems() {
     List<MenuItem> items = privItems();
-    if (widget.status.toLowerCase() == 'menunggu'){
-      return [MenuItems.dataPasien, MenuItems.tundaPasien, MenuItems.batalAntrian];
-    } else if (widget.status.toLowerCase() == 'screening' || widget.status.toLowerCase() == 'pra-konsultasi'){
-      return [MenuItems.dataPasien, MenuItems.tundaPasien]; 
-    } else if (widget.status.toLowerCase() == 'konsultasi' || widget.status.toLowerCase() == 'selesai'){
+    if (widget.status.toLowerCase() == 'menunggu') {
+      return [
+        MenuItems.dataPasien,
+        MenuItems.tundaPasien,
+        MenuItems.batalAntrian
+      ];
+    } else if (widget.status.toLowerCase() == 'screening' ||
+        widget.status.toLowerCase() == 'pra-konsultasi') {
+      return [MenuItems.dataPasien, MenuItems.tundaPasien];
+    } else if (widget.status.toLowerCase() == 'konsultasi' ||
+        widget.status.toLowerCase() == 'selesai') {
       return items;
-    } else if (widget.status.toLowerCase() == 'ditunda'){
+    } else if (widget.status.toLowerCase() == 'ditunda') {
       return [MenuItems.masukAntrian, MenuItems.batalAntrian];
-    } else if (widget.status.toLowerCase() == 'dibatalkan'){
+    } else if (widget.status.toLowerCase() == 'dibatalkan') {
       return [];
     }
 
@@ -171,6 +177,7 @@ class MenuItems {
         print('print label');
         break;
       case MenuItems.tundaPasien:
+        print('$id ditunda');
         showDialog(
             context: context,
             builder: (context) => ConfirmAlert(
@@ -195,10 +202,10 @@ class MenuItems {
                               if (context.mounted) {
                                 Navigator.pop(context);
 
-                                if (context.mounted) {
-                                  Navigator.pushReplacementNamed(
-                                      context, AppRoutes.dashboard);
-                                }
+                                // if (context.mounted) {
+                                //   Navigator.pushReplacementNamed(
+                                //       context, AppRoutes.dashboard);
+                                // }
                               }
                             });
 
@@ -221,6 +228,7 @@ class MenuItems {
                 ));
         break;
       case MenuItems.masukAntrian:
+        print('$id masuk antrian');
         showDialog(
             context: context,
             builder: (context) => ConfirmAlert(
@@ -245,10 +253,10 @@ class MenuItems {
                               if (context.mounted) {
                                 Navigator.pop(context);
 
-                                if (context.mounted) {
-                                  Navigator.pushReplacementNamed(
-                                      context, AppRoutes.dashboard);
-                                }
+                                // if (context.mounted) {
+                                //   Navigator.pushReplacementNamed(
+                                //       context, AppRoutes.dashboard);
+                                // }
                               }
                             });
 
@@ -271,6 +279,7 @@ class MenuItems {
                 ));
         break;
       case MenuItems.batalAntrian:
+        print('$id batal antrian');
         showDialog(
             context: context,
             builder: (context) => ConfirmAlert(
@@ -296,10 +305,10 @@ class MenuItems {
                               if (context.mounted) {
                                 Navigator.pop(context);
 
-                                if (context.mounted) {
-                                  Navigator.pushReplacementNamed(
-                                      context, AppRoutes.dashboard);
-                                }
+                                // if (context.mounted) {
+                                //   Navigator.pushReplacementNamed(
+                                //       context, AppRoutes.dashboard);
+                                // }
                               }
                             });
 

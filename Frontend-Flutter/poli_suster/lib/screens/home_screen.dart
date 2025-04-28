@@ -21,7 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    checkAuth();
     displayData();
+  }
+
+  Future<void> checkAuth() async {
+    bool isValid = await dataController.isTokenValid();
+    if (!isValid && mounted) {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    }
   }
 
   void updateQueueDisplay() {

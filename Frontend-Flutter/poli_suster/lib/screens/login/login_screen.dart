@@ -126,218 +126,221 @@ class _LoginScreenState extends State<LoginScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            right: screenWidth * 0.35,
-            top: 0,
-            bottom: 0,
-            child: Image.asset(
-              AppMedia.loginImage,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned(
-            left: screenWidth * 0.55,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  bottomLeft: Radius.circular(32),
-                ),
-                image: DecorationImage(
-                  image: AssetImage(AppMedia.loginBG),
-                  fit: BoxFit.cover,
-                ),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: screenWidth * 0.35,
+              top: 0,
+              bottom: 0,
+              child: Image.asset(
+                AppMedia.loginImage,
+                fit: BoxFit.cover,
               ),
-              child: Center(
-                child: Material(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.transparent,
-                  child: Container(
-                    width: screenWidth * 0.3,
-                    height: screenHeight * 0.87,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AppMedia.loginLogo,
-                              width: 130,
-                              height: 130,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.high,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'HOSPITEL BANTARANGIN',
-                                  style: AppStyles.loginHeadText.copyWith(
-                                      color: AppStyles.textColor, fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  'GENERAL HOSPITAL',
-                                  style: AppStyles.loginHeadText.copyWith(
-                                      color: AppStyles.textColor, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: screenHeight * 0.05,
-                            ),
-                            Form(
-                              key: formKey,
-                              child: Column(
+            ),
+            Positioned(
+              left: screenWidth * 0.55,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    bottomLeft: Radius.circular(32),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(AppMedia.loginBG),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Center(
+                  child: Material(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.transparent,
+                    child: Container(
+                      width: screenWidth * 0.3,
+                      height: screenHeight * 0.87,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                AppMedia.loginLogo,
+                                width: 130,
+                                height: 130,
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.high,
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  LabelRequired(
-                                      text: 'Username',
-                                      style: AppStyles.normalText.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppStyles.textColor)),
-                                  SizedBox(
-                                    height: screenHeight * 0.01,
+                                  Text(
+                                    'HOSPITEL BANTARANGIN',
+                                    style: AppStyles.loginHeadText.copyWith(
+                                        color: AppStyles.textColor, fontWeight: FontWeight.bold),
                                   ),
-                                  TextFormField(
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your username";
-                                      }
-
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      username = value;
-                                    },
-                                    cursorColor: Colors.black,
-                                    decoration: AppStyles.formBox,
-                                  ),
-                                  SizedBox(
-                                    height: screenHeight * 0.02,
-                                  ),
-                                  LabelRequired(
-                                      text: 'Password',
-                                      style: AppStyles.normalText.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppStyles.textColor)),
-                                  SizedBox(
-                                    height: screenHeight * 0.01,
-                                  ),
-                                  TextFormField(
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your password";
-                                      }
-
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      password = value;
-                                    },
-                                    cursorColor: Colors.black,
-                                    obscureText: isHidden,
-                                    decoration: AppStyles.formBox.copyWith(
-                                        suffixIcon: IconButton(
-                                            onPressed: () => togglePassword(),
-                                            icon: Icon(isHidden
-                                                ? Icons.visibility_off
-                                                : Icons.visibility))),
-                                  ),
-                                  SizedBox(
-                                    height: screenHeight * 0.02,
-                                  ),
-                                  LabelRequired(
-                                      text: 'Poliklinik',
-                                      style: AppStyles.normalText.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppStyles.textColor)),
-                                  SizedBox(
-                                    height: screenHeight * 0.01,
-                                  ),
-                                  DropdownButtonFormField2<String>(
-                                    isExpanded: true,
-                                    decoration:
-                                        AppStyles.formBox.copyWith(contentPadding: EdgeInsets.zero),
-                                    hint: Text('-- Pilih Poliklinik --'),
-                                    items: listPoli
-                                        .map((item) => DropdownMenuItem<String>(
-                                            value: item, child: Text(item)))
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return 'Pilih Poliklinik';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      try {
-                                        final poli = dataController.poliAktif
-                                            .firstWhere((poli) => poli.namaPoli == value);
-                                        setState(() {
-                                          idPoli = poli.idPoli;
-                                        });
-                                      } catch (e) {
-                                        print("Error setting idPoli: $e");
-                                      }
-                                    },
-                                    onSaved: (newValue) {
-                                      selectedValue = newValue.toString();
-                                    },
-                                    buttonStyleData:
-                                        ButtonStyleData(padding: EdgeInsets.only(right: 8)),
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
-                                      iconSize: 24,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      padding: EdgeInsets.symmetric(horizontal: 16),
-                                    ),
+                                  Text(
+                                    'GENERAL HOSPITAL',
+                                    style: AppStyles.loginHeadText.copyWith(
+                                        color: AppStyles.textColor, fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(
-                              height: screenHeight * 0.04,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: InkWell(
-                                  onTap: () {
-                                    doLogin();
-                                  },
-                                  child: TheButton(
-                                    text: 'Login',
-                                    color: AppStyles.accentColor,
-                                    textColor: Colors.black,
-                                    hoverable: false,
-                                  ),
-                                )),
-                              ],
-                            )
-                          ],
+                              SizedBox(
+                                height: screenHeight * 0.05,
+                              ),
+                              Form(
+                                key: formKey,
+                                child: Column(
+                                  children: [
+                                    LabelRequired(
+                                        text: 'Username',
+                                        style: AppStyles.normalText.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppStyles.textColor)),
+                                    SizedBox(
+                                      height: screenHeight * 0.01,
+                                    ),
+                                    TextFormField(
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your username";
+                                        }
+
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        username = value;
+                                      },
+                                      cursorColor: Colors.black,
+                                      decoration: AppStyles.formBox,
+                                    ),
+                                    SizedBox(
+                                      height: screenHeight * 0.02,
+                                    ),
+                                    LabelRequired(
+                                        text: 'Password',
+                                        style: AppStyles.normalText.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppStyles.textColor)),
+                                    SizedBox(
+                                      height: screenHeight * 0.01,
+                                    ),
+                                    TextFormField(
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your password";
+                                        }
+
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        password = value;
+                                      },
+                                      cursorColor: Colors.black,
+                                      obscureText: isHidden,
+                                      decoration: AppStyles.formBox.copyWith(
+                                          suffixIcon: IconButton(
+                                              onPressed: () => togglePassword(),
+                                              icon: Icon(isHidden
+                                                  ? Icons.visibility_off
+                                                  : Icons.visibility))),
+                                    ),
+                                    SizedBox(
+                                      height: screenHeight * 0.02,
+                                    ),
+                                    LabelRequired(
+                                        text: 'Poliklinik',
+                                        style: AppStyles.normalText.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppStyles.textColor)),
+                                    SizedBox(
+                                      height: screenHeight * 0.01,
+                                    ),
+                                    DropdownButtonFormField2<String>(
+                                      isExpanded: true,
+                                      decoration: AppStyles.formBox
+                                          .copyWith(contentPadding: EdgeInsets.zero),
+                                      hint: Text('-- Pilih Poliklinik --'),
+                                      items: listPoli
+                                          .map((item) => DropdownMenuItem<String>(
+                                              value: item, child: Text(item)))
+                                          .toList(),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Pilih Poliklinik';
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        try {
+                                          final poli = dataController.poliAktif
+                                              .firstWhere((poli) => poli.namaPoli == value);
+                                          setState(() {
+                                            idPoli = poli.idPoli;
+                                          });
+                                        } catch (e) {
+                                          print("Error setting idPoli: $e");
+                                        }
+                                      },
+                                      onSaved: (newValue) {
+                                        selectedValue = newValue.toString();
+                                      },
+                                      buttonStyleData:
+                                          ButtonStyleData(padding: EdgeInsets.only(right: 8)),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.black45,
+                                        ),
+                                        iconSize: 24,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: screenHeight * 0.04,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: InkWell(
+                                    onTap: () {
+                                      doLogin();
+                                    },
+                                    child: TheButton(
+                                      text: 'Login',
+                                      color: AppStyles.accentColor,
+                                      textColor: Colors.black,
+                                      hoverable: false,
+                                    ),
+                                  )),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -345,8 +348,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -397,10 +397,6 @@ class DataController {
         umur: 0);
   }
 
-  Future<void> fetchAllAntrian() async {
-    fetchAntrianToday();
-  }
-
   Future<void> fetchAllBilling() async {
     fetchBilling();
     fetchBillingBelum();

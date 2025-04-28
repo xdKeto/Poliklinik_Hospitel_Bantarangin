@@ -1,13 +1,17 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:poli_admin/base/backend/class/data_printing.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
+import 'package:poli_admin/base/backend/pdf_api.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
 import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
-import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/base/utils/config.dart';
+import 'package:printing/printing.dart';
 
 class IconDropdown extends StatefulWidget {
   final String status;
@@ -73,11 +77,7 @@ class _IconDropdownState extends State<IconDropdown> {
   List<MenuItem> dropdownItems() {
     List<MenuItem> items = privItems();
     if (widget.status.toLowerCase() == 'menunggu') {
-      return [
-        MenuItems.dataPasien,
-        MenuItems.tundaPasien,
-        MenuItems.batalAntrian
-      ];
+      return [MenuItems.dataPasien, MenuItems.tundaPasien, MenuItems.batalAntrian];
     } else if (widget.status.toLowerCase() == 'screening' ||
         widget.status.toLowerCase() == 'pra-konsultasi') {
       return [MenuItems.dataPasien, MenuItems.tundaPasien];
@@ -96,16 +96,14 @@ class _IconDropdownState extends State<IconDropdown> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return LoadingAnimationWidget.horizontalRotatingDots(
-          color: Colors.black, size: 20);
+      return LoadingAnimationWidget.horizontalRotatingDots(color: Colors.black, size: 20);
     }
 
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: Icon(Icons.more_horiz),
         items: dropdownItems()
-            .map((item) =>
-                DropdownMenuItem(value: item, child: MenuItems.buildItem(item)))
+            .map((item) => DropdownMenuItem(value: item, child: MenuItems.buildItem(item)))
             .toList(),
         onChanged: (value) {
           MenuItems.onChanged(context, value as MenuItem, widget.id);
@@ -132,18 +130,14 @@ class MenuItem {
 }
 
 class MenuItems {
-  static const dataPasien = MenuItem(
-      text: 'Cetak Data', icon: FluentIcons.document_one_page_16_regular);
-  static const gelangPasien =
-      MenuItem(text: 'Cetak Gelang', icon: FluentIcons.patient_20_regular);
-  static const labelPasien =
-      MenuItem(text: 'Cetak Label', icon: FluentIcons.bookmark_16_regular);
-  static const tundaPasien =
-      MenuItem(text: 'Tunda Antrian', icon: FluentIcons.previous_16_regular);
-  static const masukAntrian = MenuItem(
-      text: 'Masuk Antrian', icon: FluentIcons.people_queue_20_regular);
-  static const batalAntrian =
-      MenuItem(text: "Batalkan Antrian", icon: Icons.close);
+  static const dataPasien =
+      MenuItem(text: 'Cetak Data', icon: FluentIcons.document_one_page_16_regular);
+  static const gelangPasien = MenuItem(text: 'Cetak Gelang', icon: FluentIcons.patient_20_regular);
+  static const labelPasien = MenuItem(text: 'Cetak Label', icon: FluentIcons.bookmark_16_regular);
+  static const tundaPasien = MenuItem(text: 'Tunda Antrian', icon: FluentIcons.previous_16_regular);
+  static const masukAntrian =
+      MenuItem(text: 'Masuk Antrian', icon: FluentIcons.people_queue_20_regular);
+  static const batalAntrian = MenuItem(text: "Batalkan Antrian", icon: Icons.close);
 
   static Widget buildItem(MenuItem item) {
     return Row(
@@ -172,9 +166,67 @@ class MenuItems {
         break;
       case MenuItems.gelangPasien:
         print('print gelang');
+        showDialog(
+            context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
+
+        DataPrinting dataPrinting = await DataController().fetchDataPrinting(id.toString());
+        final String tanggal = DateFormat('dd/mm/yyyy').format(DateTime.now());
+        final String jam = DateFormat('HH:mm').format(DateTime.now());
+
+        try {
+          final pdfData = await PdfApi.cetakGelang(dataPrinting.namaPasien,
+              dataPrinting.namaDokter ?? '', dataPrinting.tanggalLahir, tanggal, jam);
+
+          if (!context.mounted) return;
+          Navigator.pop(context);
+
+          await Printing.layoutPdf(onLayout: (format) => pdfData).catchError((error) {
+            throw Exception("Failed to print: $error");
+          });
+        } catch (e) {
+          if (!context.mounted) return;
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (context) => SucfailAlert(
+                  isSuccess: false, boldText: "Gagal", italicText: "Gagal membuat gelang: $e"));
+        }
+
         break;
       case MenuItems.labelPasien:
         print('print label');
+        showDialog(
+            context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
+
+        DataPrinting dataPrinting = await DataController().fetchDataPrinting(id.toString());
+        final String tanggal = DateFormat('dd/mm/yyyy').format(DateTime.now());
+        final String jam = DateFormat('HH:mm').format(DateTime.now());
+
+        // generate pdf
+        try {
+          final pdfData = await PdfApi.cetakLabel(
+              dataPrinting.namaDokter ?? '',
+              dataPrinting.namaPasien,
+              dataPrinting.jenisKelamin,
+              dataPrinting.tanggalLahir,
+              tanggal,
+              jam,
+              dataPrinting.umur);
+
+          if (!context.mounted) return;
+          Navigator.pop(context);
+
+          await Printing.layoutPdf(onLayout: (format) => pdfData).catchError((error) {
+            throw Exception("Failed to print: $error");
+          });
+        } catch (e) {
+          if (!context.mounted) return;
+          showDialog(
+              context: context,
+              builder: (context) => SucfailAlert(
+                  isSuccess: false, boldText: "Gagal", italicText: "Gagal membuat label: $e"));
+        }
+
         break;
       case MenuItems.tundaPasien:
         print('$id ditunda');
@@ -185,11 +237,8 @@ class MenuItems {
                   boldText: "Tunda Antrian?",
                   yesText: "tunda",
                   yesFunc: () async {
-                    ResponseRequestAPI response = await DataController()
-                        .apiConnector(
-                            Config.apiEndpoints["tundaAntrian"]!(id.toString()),
-                            "put",
-                            "");
+                    ResponseRequestAPI response = await DataController().apiConnector(
+                        Config.apiEndpoints["tundaAntrian"]!(id.toString()), "put", "");
 
                     if (!context.mounted) return;
                     Navigator.pop(context);
@@ -237,10 +286,7 @@ class MenuItems {
                   yesText: "masukkan",
                   yesFunc: () async {
                     ResponseRequestAPI response = await DataController()
-                        .apiConnector(
-                            Config.apiEndpoints["putAntrian"]!(id.toString()),
-                            "put",
-                            "");
+                        .apiConnector(Config.apiEndpoints["putAntrian"]!(id.toString()), "put", "");
 
                     if (!context.mounted) return;
                     Navigator.pop(context);
@@ -288,11 +334,8 @@ class MenuItems {
                   boldText: "Batalkan Antrian?",
                   yesText: "batal",
                   yesFunc: () async {
-                    ResponseRequestAPI response = await DataController()
-                        .apiConnector(
-                            Config.apiEndpoints["batalAntrian"]!(id.toString()),
-                            "put",
-                            "");
+                    ResponseRequestAPI response = await DataController().apiConnector(
+                        Config.apiEndpoints["batalAntrian"]!(id.toString()), "put", "");
 
                     if (!context.mounted) return;
                     Navigator.pop(context);

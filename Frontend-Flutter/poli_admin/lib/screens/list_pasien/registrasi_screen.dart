@@ -117,8 +117,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
     setState(() {
       isPost = false;
       tempatLahirController.text = pasien.tempatLahir;
-      tanggalcontroller.text =
-          DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
+      tanggalcontroller.text = DateFormat('yyyy-MM-dd').format(pasien.tanggalLahir);
       nikController.text = pasien.nik;
       noTelpController.text = pasien.noTelp;
       alamatController.text = pasien.alamat;
@@ -165,7 +164,6 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       kelurahan = "";
       kecamatan = "";
       tempatTinggal = "";
-      idPoli = 0;
       keluhanUtama = "";
 
       isPost = true;
@@ -177,18 +175,15 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
       _formKey.currentState!.save();
 
       Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (context) => LoadingAlert(),
-          barrierDismissible: false);
+      showDialog(context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
 
       DataController dataController = DataController();
       ResponseRequestAPI response;
 
       try {
         if (isPost) {
-          response = await dataController
-              .apiConnector(Config.apiEndpoints['registerPasien']!(), "post", {
+          response =
+              await dataController.apiConnector(Config.apiEndpoints['registerPasien']!(), "post", {
             "nama": nama,
             "jenis_kelamin": jenisKelamin!.toLowerCase(),
             "tempat_lahir": tempatLahir,
@@ -216,8 +211,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
           // print(kecamatan);
           // print(keluhanUtama);
           // print(tempatTinggal);
-          response = await dataController
-              .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
+          response = await dataController.apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
             "id_poli": idPoli,
             "nama": nama,
             "jenis_kelamin": jenisKelamin!.toLowerCase(),
@@ -245,13 +239,11 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             Navigator.pop(context);
 
             showDialog(
-                context: context,
-                builder: (context) => LoadingAlert(),
-                barrierDismissible: false);
+                context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
 
             // POST
-            response = await dataController.apiConnector(
-                Config.apiEndpoints['registerPasien']!(), "post", {
+            response = await dataController
+                .apiConnector(Config.apiEndpoints['registerPasien']!(), "post", {
               "nama": nama,
               "jenis_kelamin": jenisKelamin!.toLowerCase(),
               "tempat_lahir": tempatLahir,
@@ -279,8 +271,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
         final now = DateTime.now();
         final String tanggal = DateFormat('dd MMMM yyyy').format(now);
         final String jam = DateFormat('HH:mm').format(now);
-        final poli = dataController.poliAktif
-            .firstWhere((poli) => poli.idPoli == idPoli);
+        final poli = dataController.poliAktif.firstWhere((poli) => poli.idPoli == idPoli);
 
         // save data
         final String pdfNama = nama!;
@@ -290,8 +281,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
 
         // generate  pdf
         try {
-          final pdfData = await PdfApi.cetakAntrian(noAntrian, pdfNama,
-              pdfJenisKelamin, pdfTanggalLahir, tanggal, jam, pdfPoli);
+          final pdfData = await PdfApi.cetakAntrian(
+              noAntrian, pdfNama, pdfJenisKelamin, pdfTanggalLahir, tanggal, jam, pdfPoli);
 
           // pop up buat print
           if (!mounted) return;
@@ -386,8 +377,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                       children: [
                         LabelRequired(
                             text: 'Pilih Poliklinik',
-                            style: AppStyles.contentText
-                                .copyWith(fontWeight: FontWeight.bold)),
+                            style: AppStyles.contentText.copyWith(fontWeight: FontWeight.bold)),
                         SizedBox(
                           height: 12,
                         ),
@@ -395,12 +385,11 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                           width: 650,
                           child: DropdownButtonFormField2<String>(
                             isExpanded: true,
-                            decoration: AppStyles.formBox
-                                .copyWith(contentPadding: EdgeInsets.zero),
+                            decoration: AppStyles.formBox.copyWith(contentPadding: EdgeInsets.zero),
                             hint: Text('-- Pilih Poliklinik --'),
                             items: listPoli
-                                .map((item) => DropdownMenuItem<String>(
-                                    value: item, child: Text(item)))
+                                .map((item) =>
+                                    DropdownMenuItem<String>(value: item, child: Text(item)))
                                 .toList(),
                             validator: (value) {
                               if (value == null) {
@@ -411,8 +400,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                             onChanged: (value) {
                               // idPoli = 1;
                               try {
-                                final poli =
-                                    dataController.poliAktif.firstWhere(
+                                final poli = dataController.poliAktif.firstWhere(
                                   (poli) => poli.namaPoli == value,
                                 );
                                 setState(() {
@@ -425,8 +413,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                             onSaved: (newValue) {
                               selectedValue = newValue.toString();
                             },
-                            buttonStyleData: ButtonStyleData(
-                                padding: EdgeInsets.only(right: 8)),
+                            buttonStyleData: ButtonStyleData(padding: EdgeInsets.only(right: 8)),
                             iconStyleData: const IconStyleData(
                               icon: Icon(
                                 Icons.arrow_drop_down,
@@ -449,8 +436,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(left: 27, right: 27, top: 8, bottom: 24),
+                  padding: EdgeInsets.only(left: 27, right: 27, top: 8, bottom: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -459,8 +445,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                         children: [
                           Text(
                             'Data Pasien',
-                            style: AppStyles.tambahanText
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: AppStyles.tambahanText.copyWith(fontWeight: FontWeight.bold),
                           ),
                           InkWell(
                             onTap: () {
@@ -481,8 +466,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                         height: 8,
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                         decoration: AppStyles.whiteBox,
                         child: Column(
                           children: [
@@ -493,40 +477,32 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Nama Lengkap',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TypeAheadField<Pasien>(
-                                        builder:
-                                            (context, controller, focusNode) {
+                                        builder: (context, controller, focusNode) {
                                           namaController = controller;
                                           return TextField(
                                             controller: controller,
                                             focusNode: focusNode,
                                             cursorColor: Colors.black,
-                                            decoration: AppStyles.formBox
-                                                .copyWith(
-                                                    hintText: 'Nama Lengkap',
-                                                    hintStyle: TextStyle(
-                                                        color: AppStyles
-                                                            .greyColor2)),
+                                            decoration: AppStyles.formBox.copyWith(
+                                                hintText: 'Nama Lengkap',
+                                                hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                             onChanged: (value) {
                                               nama = value;
                                             },
                                           );
                                         },
-                                        itemBuilder:
-                                            (context, Pasien suggestions) {
+                                        itemBuilder: (context, Pasien suggestions) {
                                           return ListTile(
                                             title: Text(
                                               suggestions.nama,
                                               overflow: TextOverflow.ellipsis,
                                               style: AppStyles.sidebarText
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                  .copyWith(fontWeight: FontWeight.bold),
                                             ),
-                                            subtitle: Text(
-                                                "NIK - ${suggestions.nik}"),
+                                            subtitle: Text("NIK - ${suggestions.nik}"),
                                           );
                                         },
                                         onSelected: (value) {
@@ -536,20 +512,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                         suggestionsCallback: (search) async {
                                           if (search.length < 2) return [];
 
-                                          final completer =
-                                              Completer<List<Pasien>>();
+                                          final completer = Completer<List<Pasien>>();
 
-                                          if (debouncer?.isActive ?? false)
-                                            debouncer!.cancel();
+                                          if (debouncer?.isActive ?? false) debouncer!.cancel();
 
-                                          debouncer =
-                                              Timer(Duration(milliseconds: 500),
-                                                  () async {
+                                          debouncer = Timer(Duration(milliseconds: 500), () async {
                                             try {
                                               final results =
-                                                  await dataController
-                                                      .fetchAllPasien(
-                                                          search, "1");
+                                                  await dataController.fetchAllPasien(search, "1");
                                               completer.complete(results);
                                             } catch (e) {
                                               print('error fetching query: $e');
@@ -562,13 +532,10 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                         loadingBuilder: (context) => Padding(
                                           padding: EdgeInsets.all(8),
                                           child: Center(
-                                              child: LoadingAnimationWidget
-                                                  .waveDots(
-                                                      color: Colors.black,
-                                                      size: 48)),
+                                              child: LoadingAnimationWidget.waveDots(
+                                                  color: Colors.black, size: 48)),
                                         ),
-                                        errorBuilder: (context, error) =>
-                                            Padding(
+                                        errorBuilder: (context, error) => Padding(
                                           padding: EdgeInsets.all(8),
                                           child: Center(child: Text('Error!')),
                                         ),
@@ -576,19 +543,12 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           padding: EdgeInsets.all(8),
                                           child: Text('No Data'),
                                         ),
-                                        constraints:
-                                            BoxConstraints(maxHeight: 350),
+                                        constraints: BoxConstraints(maxHeight: 350),
                                         decorationBuilder: (context, child) {
                                           return Container(
-                                            decoration: AppStyles.whiteBox
-                                                .copyWith(
-                                                    border:
-                                                        Border.all(
-                                                            color: Colors.black,
-                                                            width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                            decoration: AppStyles.whiteBox.copyWith(
+                                                border: Border.all(color: Colors.black, width: 1),
+                                                borderRadius: BorderRadius.circular(10)),
                                             child: child,
                                           );
                                         },
@@ -604,22 +564,19 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Jenis Kelamin',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       DropdownButtonFormField2<String>(
                                         isExpanded: true,
-                                        decoration: AppStyles.formBox.copyWith(
-                                            contentPadding: EdgeInsets.zero),
+                                        decoration: AppStyles.formBox
+                                            .copyWith(contentPadding: EdgeInsets.zero),
                                         hint: Text('-- Pilih jenis kelamin --'),
-                                        value: jenisKelamin != null &&
-                                                jenisKelamin!.isNotEmpty
+                                        value: jenisKelamin != null && jenisKelamin!.isNotEmpty
                                             ? jenisKelamin
                                             : null,
                                         items: listGender
-                                            .map((item) =>
-                                                DropdownMenuItem<String>(
-                                                    value: item,
-                                                    child: Text(item)))
+                                            .map((item) => DropdownMenuItem<String>(
+                                                value: item, child: Text(item)))
                                             .toList(),
                                         validator: (value) {
                                           if (value == null) {
@@ -633,8 +590,8 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                         onSaved: (newValue) {
                                           selectedValue = newValue.toString();
                                         },
-                                        buttonStyleData: ButtonStyleData(
-                                            padding: EdgeInsets.only(right: 8)),
+                                        buttonStyleData:
+                                            ButtonStyleData(padding: EdgeInsets.only(right: 8)),
                                         iconStyleData: const IconStyleData(
                                           icon: Icon(
                                             Icons.arrow_drop_down,
@@ -644,14 +601,11 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
+                                            borderRadius: BorderRadius.circular(15),
                                           ),
                                         ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          padding: EdgeInsets.symmetric(horizontal: 16),
                                         ),
                                       )
                                     ],
@@ -669,15 +623,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Tempat Lahir',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: tempatLahirController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'e.g: Surabaya',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         validator: (value) {
                                           if (value!.isEmpty) {
                                             return "Field tempat lahir pasien harus terisi";
@@ -700,16 +653,15 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Tanggal Lahir',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: tanggalcontroller,
                                         readOnly: true,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                           hintText: 'DD/MM/YY',
-                                          hintStyle: TextStyle(
-                                              color: AppStyles.greyColor2),
+                                          hintStyle: TextStyle(color: AppStyles.greyColor2),
                                           suffixIcon: Icon(Icons.date_range),
                                         ),
                                         validator: (value) {
@@ -723,26 +675,17 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                           tanggalLahir = value;
                                         },
                                         onTap: () async {
-                                          DateTime? pickedDate =
-                                              await showDatePicker(
+                                          DateTime? pickedDate = await showDatePicker(
                                             builder: (context, child) {
                                               return Theme(
-                                                data:
-                                                    Theme.of(context).copyWith(
-                                                  colorScheme:
-                                                      ColorScheme.light(
-                                                          primary: AppStyles
-                                                              .primaryColor,
-                                                          onPrimary:
-                                                              Colors.white,
-                                                          onSurface: AppStyles
-                                                              .primaryColor),
-                                                  textButtonTheme:
-                                                      TextButtonThemeData(
+                                                data: Theme.of(context).copyWith(
+                                                  colorScheme: ColorScheme.light(
+                                                      primary: AppStyles.primaryColor,
+                                                      onPrimary: Colors.white,
+                                                      onSurface: AppStyles.primaryColor),
+                                                  textButtonTheme: TextButtonThemeData(
                                                     style: TextButton.styleFrom(
-                                                        foregroundColor:
-                                                            AppStyles
-                                                                .primaryColor),
+                                                        foregroundColor: AppStyles.primaryColor),
                                                   ),
                                                 ),
                                                 child: child!,
@@ -754,16 +697,13 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                             lastDate: DateTime.now(),
                                           );
 
-                                          if (pickedDate != null &&
-                                              pickedDate != selectedDate) {
+                                          if (pickedDate != null && pickedDate != selectedDate) {
                                             setState(() {
                                               selectedDate = pickedDate;
 
                                               tanggalcontroller.text =
-                                                  DateFormat('yyyy-MM-dd')
-                                                      .format(selectedDate);
-                                              tanggalLahir =
-                                                  tanggalcontroller.text;
+                                                  DateFormat('yyyy-MM-dd').format(selectedDate);
+                                              tanggalLahir = tanggalcontroller.text;
                                             });
                                           }
                                         },
@@ -783,15 +723,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Nomor NIK / KTP',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: nikController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Nomor NIK / KTP',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         validator: (value) {
                                           if (value!.isEmpty) {
                                             return "Field NIK pasien harus terisi";
@@ -819,22 +758,20 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Nomor HP',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: noTelpController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Nomor HP',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         validator: (value) {
                                           if (value!.isEmpty) {
                                             return "Field no. HP pasien harus terisi";
                                           }
 
-                                          if (!RegExp(r'^\d{10,13}$')
-                                              .hasMatch(value)) {
+                                          if (!RegExp(r'^\d{10,13}$').hasMatch(value)) {
                                             return "Nomor HP tidak valid (10-13 digit)";
                                           }
 
@@ -859,15 +796,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Alamat Rumah',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: alamatController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Alamat Rumah',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         validator: (value) {
                                           if (value!.isEmpty) {
                                             return "Field alamat pasien harus terisi";
@@ -894,15 +830,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Kelurahan',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: kelurahanController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Keluarahan',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         onChanged: (value) {
                                           kelurahan = value;
                                         },
@@ -925,15 +860,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Kecamatan',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: kecamatanController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Kecamatan',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         onChanged: (value) {
                                           kecamatan = value;
                                         },
@@ -960,15 +894,14 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Kota Tempat Tinggal',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         controller: tempatTinggalController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Kota Tempat Tinggal',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         onChanged: (value) {
                                           tempatTinggal = value;
                                         },
@@ -995,16 +928,15 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
                                     children: [
                                       LabelRequired(
                                           text: 'Keluhan Utama',
-                                          style: AppStyles.contentText.copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                          style: AppStyles.contentText
+                                              .copyWith(fontWeight: FontWeight.bold)),
                                       TextFormField(
                                         // maxLines: 2,
                                         controller: keluhanUtamaController,
                                         cursorColor: Colors.black,
                                         decoration: AppStyles.formBox.copyWith(
                                             hintText: 'Keluhan Utama',
-                                            hintStyle: TextStyle(
-                                                color: AppStyles.greyColor2)),
+                                            hintStyle: TextStyle(color: AppStyles.greyColor2)),
                                         onChanged: (value) {
                                           keluhanUtama = value;
                                         },

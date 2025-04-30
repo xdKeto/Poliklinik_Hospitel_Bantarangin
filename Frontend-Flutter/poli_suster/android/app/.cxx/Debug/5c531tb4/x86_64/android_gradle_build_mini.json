@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/yestoya-minggus/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/yestoya-minggus/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/yestoya-minggus/Yesto/Code/Poliklinik_Hospitel_Bantarangin/Frontend-Flutter/poli_suster/android/app/.cxx/Debug/5c531tb4/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/yestoya-minggus/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/yestoya-minggus/Yesto/Code/Poliklinik_Hospitel_Bantarangin/Frontend-Flutter/poli_suster/android/app/.cxx/Debug/5c531tb4/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

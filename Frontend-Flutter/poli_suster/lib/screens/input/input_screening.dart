@@ -65,26 +65,36 @@ class _InputScreeningState extends State<InputScreening> {
   }
 
   void doScreening() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      showDialog(
-          context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
-
+    if (validateRequiredFields()) {
       try {
+        systolic = int.parse(systolicController.text);
+        diatolic = int.parse(diatolicController.text);
+        beratBadan = int.parse(beratBadanController.text);
+        tinggiBadan = int.parse(tinggiBadanController.text);
+        suhuTubuh = int.parse(suhuTubuhController.text);
+        detakNadi = int.parse(detakNadiController.text);
+        respRate = int.parse(respRateController.text);
+        catatan = catatanController.text; // Catatan can be empty
+
+        showDialog(
+            context: context,
+            builder: (context) => const LoadingAlert(),
+            barrierDismissible: false);
         DataController dataController = DataController();
         ResponseRequestAPI response = await dataController.apiConnector(
-            Config.apiEndpoints["inputScreening"]!(dataController.antrianNow?.idAntrian.toString()),
-            "post", {
-          "systolic": systolic,
-          "diatolic": diatolic,
-          "berat_badan": beratBadan,
-          "suhu_tubuh": suhuTubuh,
-          "tinggi_badan": tinggiBadan,
-          "detak_nadi": detakNadi,
-          "laju_respirasi": respRate,
-          "keterangan": catatan
-        });
+            Config.apiEndpoints["inputScreening"]!(
+                dataController.antrianNow?.idAntrian.toString()),
+            "post",
+            {
+              "systolic": systolic,
+              "diatolic": diatolic,
+              "berat_badan": beratBadan,
+              "suhu_tubuh": suhuTubuh,
+              "tinggi_badan": tinggiBadan,
+              "detak_nadi": detakNadi,
+              "laju_respirasi": respRate,
+              "keterangan": catatan
+            });
 
         if (!mounted) return;
         Navigator.pop(context);
@@ -101,6 +111,7 @@ class _InputScreeningState extends State<InputScreening> {
           await prefs.remove('current_id_antrian');
 
           dataController.antrianNow = null;
+          dataController.detailPasien = null;
 
           widget.onScreeningComplete();
 
@@ -120,11 +131,14 @@ class _InputScreeningState extends State<InputScreening> {
           Navigator.pop(context);
         } else {
           if (!mounted) return;
+          Navigator.pop(context);
           await showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) => SucfailAlert(
-                  isSuccess: false, boldText: "Input Gagal", italicText: response.message));
+                  isSuccess: false,
+                  boldText: "Input Gagal",
+                  italicText: response.message));
         }
       } catch (e) {
         if (!mounted) return;
@@ -132,20 +146,25 @@ class _InputScreeningState extends State<InputScreening> {
         await showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) =>
-                SucfailAlert(isSuccess: false, boldText: "Input Gagal", italicText: e.toString()));
+            builder: (context) => SucfailAlert(
+                isSuccess: false,
+                boldText: "Input Gagal",
+                italicText: e.toString()));
       }
     }
   }
 
   void doAlihkan() async {
     showDialog(
-        context: context, builder: (context) => const LoadingAlert(), barrierDismissible: false);
+        context: context,
+        builder: (context) => const LoadingAlert(),
+        barrierDismissible: false);
 
     try {
       DataController dataController = DataController();
       ResponseRequestAPI response = await dataController.apiConnector(
-          Config.apiEndpoints["alihkanScreening"]!(dataController.antrianNow?.idAntrian.toString()),
+          Config.apiEndpoints["alihkanScreening"]!(
+              dataController.antrianNow?.idAntrian.toString()),
           "put",
           "");
 
@@ -159,6 +178,8 @@ class _InputScreeningState extends State<InputScreening> {
         await prefs.remove('current_id_antrian');
 
         dataController.antrianNow = null;
+        dataController.detailPasien = null;
+
         widget.onScreeningComplete();
 
         if (!mounted) return;
@@ -179,7 +200,9 @@ class _InputScreeningState extends State<InputScreening> {
             context: context,
             barrierDismissible: false,
             builder: (context) => SucfailAlert(
-                isSuccess: false, boldText: "Gagal mengalihkan", italicText: response.message));
+                isSuccess: false,
+                boldText: "Gagal mengalihkan",
+                italicText: response.message));
       }
     } catch (e) {
       if (!mounted) return;
@@ -187,7 +210,9 @@ class _InputScreeningState extends State<InputScreening> {
       await showDialog(
           context: context,
           builder: (context) => SucfailAlert(
-              isSuccess: false, boldText: "Gagal mengalihkan", italicText: e.toString()));
+              isSuccess: false,
+              boldText: "Gagal mengalihkan",
+              italicText: e.toString()));
     }
   }
 
@@ -204,6 +229,45 @@ class _InputScreeningState extends State<InputScreening> {
     });
 
     Navigator.pop(context);
+  }
+
+  bool validateRequiredFields() {
+    bool isValid = true;
+    String errorMessage = "";
+
+    if (systolicController.text.isEmpty) {
+      errorMessage = "Tensi Darah (Systolic) wajib diisi";
+      isValid = false;
+    } else if (diatolicController.text.isEmpty) {
+      errorMessage = "Tensi Darah (Diatolic) wajib diisi";
+      isValid = false;
+    } else if (beratBadanController.text.isEmpty) {
+      errorMessage = "Berat Badan wajib diisi";
+      isValid = false;
+    } else if (tinggiBadanController.text.isEmpty) {
+      errorMessage = "Tinggi Badan wajib diisi";
+      isValid = false;
+    } else if (suhuTubuhController.text.isEmpty) {
+      errorMessage = "Suhu Tubuh wajib diisi";
+      isValid = false;
+    } else if (detakNadiController.text.isEmpty) {
+      errorMessage = "Detak Nadi wajib diisi";
+      isValid = false;
+    } else if (respRateController.text.isEmpty) {
+      errorMessage = "Resp. Rate wajib diisi";
+      isValid = false;
+    }
+
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: AppStyles.redColor,
+        ),
+      );
+    }
+
+    return isValid;
   }
 
   @override
@@ -230,7 +294,8 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Tensi Darah",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -241,7 +306,8 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: systolicController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -255,7 +321,8 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             '/',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
                             width: 8,
@@ -265,7 +332,8 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: diatolicController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -279,7 +347,8 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'mmHG',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       )
@@ -294,7 +363,8 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Berat Badan",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -305,7 +375,8 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: beratBadanController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
@@ -319,7 +390,8 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'kg',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -334,7 +406,8 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Tinggi Badan",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -345,17 +418,12 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: tinggiBadanController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
                                 tinggiBadan = int.parse(value);
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field ini wajib diisi';
-                                }
-                                return null;
                               },
                             ),
                           ),
@@ -365,7 +433,8 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             'cm',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -380,7 +449,8 @@ class _InputScreeningState extends State<InputScreening> {
                       LabelRequired(
                           text: "Suhu Tubuh",
                           style: AppStyles.contentText.copyWith(
-                              color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold)),
                       SizedBox(
                         height: 8,
                       ),
@@ -391,17 +461,12 @@ class _InputScreeningState extends State<InputScreening> {
                             height: 40,
                             child: TextFormField(
                               controller: suhuTubuhController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               cursorColor: Colors.black,
                               decoration: AppStyles.formBox.copyWith(),
                               onChanged: (value) {
                                 suhuTubuh = int.parse(value);
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field ini wajib diisi';
-                                }
-                                return null;
                               },
                             ),
                           ),
@@ -411,7 +476,8 @@ class _InputScreeningState extends State<InputScreening> {
                           Text(
                             '°C',
                             style: AppStyles.contentText.copyWith(
-                                color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                                color: AppStyles.primaryColor,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -437,8 +503,9 @@ class _InputScreeningState extends State<InputScreening> {
                   children: [
                     LabelRequired(
                         text: "Detak / Nadi",
-                        style: AppStyles.contentText
-                            .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 8,
                     ),
@@ -450,18 +517,13 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             controller: detakNadiController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {
                               detakNadi = int.parse(value);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Field ini wajib diisi';
-                              }
-
-                              return null;
                             },
                           ),
                         ),
@@ -470,8 +532,9 @@ class _InputScreeningState extends State<InputScreening> {
                         ),
                         Text(
                           'hbpm',
-                          style: AppStyles.contentText
-                              .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold),
                         )
                       ],
                     )
@@ -485,8 +548,9 @@ class _InputScreeningState extends State<InputScreening> {
                   children: [
                     LabelRequired(
                         text: "Resp. Rate",
-                        style: AppStyles.contentText
-                            .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold)),
+                        style: AppStyles.contentText.copyWith(
+                            color: AppStyles.primaryColor,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 8,
                     ),
@@ -498,17 +562,13 @@ class _InputScreeningState extends State<InputScreening> {
                           child: TextFormField(
                             controller: respRateController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             cursorColor: Colors.black,
                             decoration: AppStyles.formBox.copyWith(),
                             onChanged: (value) {
                               respRate = int.parse(value);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Field ini wajib diisi';
-                              }
-                              return null;
                             },
                           ),
                         ),
@@ -517,8 +577,9 @@ class _InputScreeningState extends State<InputScreening> {
                         ),
                         Text(
                           'menit',
-                          style: AppStyles.contentText
-                              .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText.copyWith(
+                              color: AppStyles.primaryColor,
+                              fontWeight: FontWeight.bold),
                         )
                       ],
                     )
@@ -538,8 +599,9 @@ class _InputScreeningState extends State<InputScreening> {
                   children: [
                     Text(
                       'Catatan Tambahan',
-                      style: AppStyles.contentText
-                          .copyWith(color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
+                      style: AppStyles.contentText.copyWith(
+                          color: AppStyles.primaryColor,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 8,
@@ -551,12 +613,6 @@ class _InputScreeningState extends State<InputScreening> {
                       decoration: AppStyles.formBox.copyWith(),
                       onChanged: (value) {
                         catatan = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Field ini wajib diisi';
-                        }
-                        return null;
                       },
                     )
                   ],
@@ -589,7 +645,8 @@ class _InputScreeningState extends State<InputScreening> {
                             context: context,
                             builder: (context) => ConfirmAlert(
                                   icon: FluentIcons.error_circle_12_regular,
-                                  boldText: 'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                                  boldText:
+                                      'Apakah anda ingin menyimpan\ndata poliklinik baru?',
                                   yesText: 'simpan',
                                   yesFunc: () {
                                     doAlihkan();
@@ -652,7 +709,8 @@ class _InputScreeningState extends State<InputScreening> {
                             context: context,
                             builder: (context) => ConfirmAlert(
                                   icon: FluentIcons.error_circle_12_regular,
-                                  boldText: 'Apakah anda ingin menyimpan\ndata poliklinik baru?',
+                                  boldText:
+                                      'Apakah anda ingin menyimpan\ndata poliklinik baru?',
                                   yesText: 'simpan',
                                   yesFunc: () {
                                     doScreening();

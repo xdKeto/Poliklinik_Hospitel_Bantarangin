@@ -50,6 +50,7 @@ class _RincianPasienState extends State<RincianPasien> {
         await prefs.remove('current_id_antrian');
 
         dataController.antrianNow = null;
+        dataController.detailPasien = null;
 
         widget.onScreeningComplete();
 

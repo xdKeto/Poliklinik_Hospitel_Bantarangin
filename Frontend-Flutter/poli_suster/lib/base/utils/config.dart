@@ -8,11 +8,12 @@ class Config {
     'inputScreening': (String id) => '$apiURL/input?id_antrian=$id',
     'riwayatScreening': (String id) => '$apiURL?id_pasien=$id',
     'antrianScreening': (int id) => '$apiURL/antrian?id_poli=$id',
-    'dataAntrian': (String id) => '$apiURL/masukkan?id_poli=$id',
+    'dataAntrian': (String id) => '$apiURL/masukkan?id_poli=$id', //status tunggu -> screening
     'alihkanScreening': (String id) => '$apiURL/alihkan-pasien?id_antrian=$id',
     'tundaAntrian': (String id) =>
         'http://leap.crossnet.co.id:8080/api/administrasi/antrian/tunda?id_antrian=$id',
     'detailScreening': (String id) => '$apiURL/detail-antrian?id_antrian=$id',
+    'rincianAsesmen': (String id) => '$apiURL/rincian/asesmen?id_antrian=$id',
   };
 }
 

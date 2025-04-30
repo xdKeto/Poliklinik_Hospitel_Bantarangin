@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:poli_suster/base/backend/class/antrian.dart';
-import 'package:poli_suster/base/backend/class/antrian_tunggu.dart';
-import 'package:poli_suster/base/backend/class/health_record.dart';
+import 'package:poli_suster/base/backend/class/detail_pasien.dart';
 import 'package:poli_suster/base/backend/class/poliklinik.dart';
 import 'package:poli_suster/base/backend/class/riwayat_pasien.dart';
 import 'package:poli_suster/base/utils/config.dart';
@@ -28,7 +27,7 @@ class DataController {
   List user = [];
   List<Poliklinik> poliAktif = [];
   Antrian? antrianNow;
-  AntrianTunggu? antrianTunggu;
+  DetailPasien? detailPasien;
   String nama = "";
   int? idPoli;
   List<RiwayatPasien> riwayatPasien = [];
@@ -259,7 +258,6 @@ class DataController {
       // cek ada antrian screening atau ndak
       ResponseRequestAPI response1 = await apiConnector(
           Config.apiEndpoints["antrianScreening"]!(id), "get", "");
-      // TODO: di antrian, tambah priority order, biar ambil yang paling atas
 
       if (response1.data != null) {
         // kalo ada fetch detail pake id paling atas
@@ -275,6 +273,8 @@ class DataController {
             final prefs = await SharedPreferences.getInstance();
             await prefs.setInt('current_id_antrian', antrianNow!.idAntrian);
 
+            // print(antrianNow!.idAntrian);
+            await fetchDetailPasien(antrianNow!.idAntrian.toString());
             await fetchRiwayatScreening(antrianNow!.idPasien);
           }
           return antrianNow;
@@ -295,6 +295,7 @@ class DataController {
             final prefs = await SharedPreferences.getInstance();
             await prefs.setInt('current_id_antrian', antrianNow!.idAntrian);
 
+            await fetchDetailPasien(antrianNow!.idAntrian.toString());
             await fetchRiwayatScreening(antrianNow!.idPasien);
           }
           return antrianNow;
@@ -308,5 +309,20 @@ class DataController {
     }
 
     return antrianNow;
+  }
+
+  Future<DetailPasien?> fetchDetailPasien(String id) async {
+    try {
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["rincianAsesmen"]!(id), "get", "");
+
+      if (response.data != null) {
+        detailPasien = DetailPasien.fromJson(response.data);
+      }
+    } catch (e) {
+      throw Exception("failed to fetch detail pasien: $e");
+    }
+
+    return detailPasien;
   }
 }

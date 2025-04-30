@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:poli_suster/base/backend/data_controller.dart';
 import 'package:poli_suster/base/global_widgets/confirm_alert.dart';
 import 'package:poli_suster/base/global_widgets/home_tabs.dart';
+import 'package:poli_suster/base/global_widgets/loading_alert.dart';
 import 'package:poli_suster/base/global_widgets/the_button.dart';
 import 'package:poli_suster/base/utils/app_routes.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
@@ -42,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (mounted) {
         setState(() {
+          print(dataController.antrianNow?.idAntrian);
+
           if (dataController.antrianNow?.nomorAntrian == 0 ||
               dataController.antrianNow?.nomorAntrian == null) {
             antrianStr = "000";
@@ -63,6 +66,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> doGetAntrian() async {
     try {
+      if(!mounted)return;
+      Navigator.pop(context);
+
+      showDialog(
+          context: context,
+          builder: (context) => const LoadingAlert(),
+          barrierDismissible: false);
+
+
       final idPoli = await dataController.getLoggedInPoli();
       final tokenValid = await dataController.isTokenValid();
       final result = await dataController.nextPatient(idPoli);

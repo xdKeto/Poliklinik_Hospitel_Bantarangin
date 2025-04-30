@@ -1,12 +1,12 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poli_suster/base/backend/class/health_record.dart';
+import 'package:poli_suster/base/backend/class/riwayat_pasien.dart';
 import 'package:poli_suster/base/global_widgets/bold_n_reg_text.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 
 class ContainerData extends StatelessWidget {
-  final HealthRecord data;
+  final RiwayatPasien data;
   const ContainerData({super.key, required this.data});
 
   @override
@@ -21,7 +21,7 @@ class ContainerData extends StatelessWidget {
             children: [
               Text(
                 DateFormat('dd MMMM yyyy', "id_ID")
-                    .format(DateTime.parse(data.tanggal))
+                    .format(DateTime.parse(data.createdAt.toString().substring(0, 10)))
                     .toString(),
                 style: AppStyles.subheadingText.copyWith(
                     color: AppStyles.primaryColor, fontWeight: FontWeight.bold),
@@ -38,7 +38,7 @@ class ContainerData extends StatelessWidget {
           BoldNRegText(
               label: "Catatan",
               data:
-                  "${data.catatan} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur lacus quam, viverra eget lorem nec, facilisis. ",
+                  data.keterangan,
               type: ""),
         ],
       ),

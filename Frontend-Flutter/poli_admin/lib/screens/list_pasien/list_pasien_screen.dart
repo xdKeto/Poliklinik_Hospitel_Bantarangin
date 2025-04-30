@@ -41,31 +41,33 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   final TextEditingController controller = TextEditingController();
   final DataController dataController = DataController();
   bool isLoading = true;
-
   bool firstLoad = true;
 
   @override
   void initState() {
     super.initState();
     listPriv();
+
+    urutan();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (firstLoad) {
-      fetchData();
-      firstLoad = false;
-
-      refreshData =
-          Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-    }
+    // if (firstLoad) {
+    //   refreshData =
+    //       Timer.periodic(Duration(seconds: 5), (timer) => fetchData());
+    // }
   }
 
   @override
   void dispose() {
-    refreshData?.cancel();
     super.dispose();
+  }
+
+  Future<void> urutan() async {
+    await fetchData();
+    await applyFilters();
   }
 
   Future<void> fetchData() async {
@@ -77,15 +79,17 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       if (dataController.statusAntrian.isEmpty) {
         await dataController.fetchListStatus();
       }
-      await dataController.fetchAllAntrian();
+
+      if (firstLoad) {
+        await dataController.fetchAntrianToday();
+        firstLoad = false;
+      }
 
       setState(() {
         listStatus = ['-- Semua Status --'];
         for (var status in dataController.statusAntrian) {
           listStatus.add(status.status);
         }
-
-        applyFilters();
 
         isLoading = false;
       });
@@ -104,7 +108,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
     });
   }
 
-  void applyFilters() {
+  Future<void> applyFilters() async {
     setState(() {
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
         filteredList = List.from(dataController.antrianToday);
@@ -115,6 +119,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       }
 
       filteredList.sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
+      // print(filteredList);
       if (controller.text.isNotEmpty) {
         onSearch(controller.text);
       }
@@ -252,86 +257,89 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ),
               SizedBox(height: 12),
               Expanded(
-                child: (isLoading)
-                    ? Center(
-                        child: CircularProgressIndicator(
-                        color: AppStyles.primaryColor,
-                      ))
-                    : PaginatedDataTable2(
-                        sortColumnIndex: sortColumnIndex,
-                        sortAscending: sortAscending,
-                        headingTextStyle: AppStyles.sidebarText.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppStyles.textColor),
-                        headingRowColor: WidgetStateProperty.resolveWith(
-                            (states) => AppStyles.greyColor),
-                        headingRowDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12))),
-                        dataTextStyle: AppStyles.contentText
-                            .copyWith(color: AppStyles.textColor),
-                        minWidth: 768,
-                        empty: Center(
-                          child: Text(
-                            'Tidak ada Data',
-                            style: AppStyles.subheadingText
-                                .copyWith(fontWeight: FontWeight.bold),
+                  child: StreamBuilder<List<AntrianPasien>>(
+                stream: dataController.antrianStream,
+                initialData: dataController.antrianToday,
+                builder: (context, snapshot) {
+                  return PaginatedDataTable2(
+                    sortColumnIndex: sortColumnIndex,
+                    sortAscending: sortAscending,
+                    headingTextStyle: AppStyles.sidebarText.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppStyles.textColor),
+                    headingRowColor: WidgetStateProperty.resolveWith(
+                        (states) => AppStyles.greyColor),
+                    headingRowDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12))),
+                    dataTextStyle: AppStyles.contentText
+                        .copyWith(color: AppStyles.textColor),
+                    minWidth: 768,
+                    empty: (isLoading && dataController.antrianToday.isEmpty)
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            color: AppStyles.primaryColor,
+                          ))
+                        : Center(
+                            child: Text(
+                              'Tidak ada Data',
+                              style: AppStyles.subheadingText
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        dividerThickness: 0,
-                        horizontalMargin: 12,
-                        dataRowHeight: 56,
-                        columnSpacing: 12,
-                        showFirstLastButtons: true,
-                        renderEmptyRowsInTheEnd: false,
-                        rowsPerPage: rowsPerPage,
-                        availableRowsPerPage: [10, 25, 50, 100],
-                        onRowsPerPageChanged: (value) {
-                          if (value != null &&
-                              [10, 25, 50, 100].contains(value)) {
-                            setState(() {
-                              rowsPerPage = value;
-                            });
-                          }
-                        },
-                        sortArrowAlwaysVisible: true,
-                        sortArrowBuilder: (bool ascending, bool sorted) {
-                          if (sorted) {
-                            return Icon(
-                              ascending
-                                  ? FluentIcons.arrow_sort_up_16_regular
-                                  : FluentIcons.arrow_sort_down_16_regular,
-                              size: 12,
-                            );
-                          } else {
-                            return Icon(
-                              FluentIcons.arrow_sort_16_regular,
-                              size: 12,
-                            );
-                          }
-                        },
-                        columns: [
-                          DataColumn(
-                            label: Text('Poli Tujuan'),
-                          ),
-                          DataColumn(
-                            label: Text('No. Antrian'),
-                          ),
-                          DataColumn(
-                            label: Text('No. Rekam Medis'),
-                          ),
-                          DataColumn(
-                            label: Text('Nama Pasien'),
-                          ),
-                          DataColumn(label: Center(child: Text('Status'))),
-                          DataColumn(label: Center(child: Text('Aksi'))),
-                        ],
-                        source: AntrianRowSource(
-                            antrianData: filteredList,
-                            count: filteredList.length),
+                    dividerThickness: 0,
+                    horizontalMargin: 12,
+                    dataRowHeight: 56,
+                    columnSpacing: 12,
+                    showFirstLastButtons: true,
+                    renderEmptyRowsInTheEnd: false,
+                    rowsPerPage: rowsPerPage,
+                    availableRowsPerPage: [10, 25, 50, 100],
+                    onRowsPerPageChanged: (value) {
+                      if (value != null && [10, 25, 50, 100].contains(value)) {
+                        setState(() {
+                          rowsPerPage = value;
+                        });
+                      }
+                    },
+                    sortArrowAlwaysVisible: true,
+                    sortArrowBuilder: (bool ascending, bool sorted) {
+                      if (sorted) {
+                        return Icon(
+                          ascending
+                              ? FluentIcons.arrow_sort_up_16_regular
+                              : FluentIcons.arrow_sort_down_16_regular,
+                          size: 12,
+                        );
+                      } else {
+                        return Icon(
+                          FluentIcons.arrow_sort_16_regular,
+                          size: 12,
+                        );
+                      }
+                    },
+                    columns: [
+                      DataColumn(
+                        label: Text('Poli Tujuan'),
                       ),
-              ),
+                      DataColumn(
+                        label: Text('No. Antrian'),
+                      ),
+                      DataColumn(
+                        label: Text('No. Rekam Medis'),
+                      ),
+                      DataColumn(
+                        label: Text('Nama Pasien'),
+                      ),
+                      DataColumn(label: Center(child: Text('Status'))),
+                      DataColumn(label: Center(child: Text('Aksi'))),
+                    ],
+                    source: AntrianRowSource(
+                        antrianData: filteredList, count: filteredList.length),
+                  );
+                },
+              )),
             ],
           ),
         ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poli_suster/base/backend/class/health_record.dart';
+import 'package:poli_suster/base/backend/class/riwayat_pasien.dart';
 import 'package:poli_suster/base/global_widgets/grey_divider.dart';
 import 'package:poli_suster/base/utils/app_styles.dart';
 import 'package:poli_suster/screens/riwayat/data_field.dart';
 
 class DetailRiwayat extends StatelessWidget {
-  final HealthRecord data;
+  final RiwayatPasien data;
   const DetailRiwayat({super.key, required this.data});
 
   @override
@@ -29,7 +29,7 @@ class DetailRiwayat extends StatelessWidget {
               children: [
                 Text(
                   DateFormat('dd MMMM yyyy', "id_ID")
-                      .format(DateTime.parse(data.tanggal))
+                      .format(DateTime.parse(data.createdAt.toString().substring(0, 10)))
                       .toString(),
                   style: AppStyles.subheadingText
                       .copyWith(fontWeight: FontWeight.bold),
@@ -58,7 +58,7 @@ class DetailRiwayat extends StatelessWidget {
                     children: [
                       DataField(
                           title: "Tensi Darah",
-                          data: data.tensiDarah, 
+                          data: "${data.systolic}/${data.diastolic}",
                           type: "mmHg"),
                       SizedBox(
                         width: 32,
@@ -115,7 +115,7 @@ class DetailRiwayat extends StatelessWidget {
                     children: [
                       DataField(
                           title: "Resp. Rate",
-                          data: data.respRate.toString(),
+                          data: data.lajuRespirasi.toString(),
                           type: "menit"),
                     ],
                   ),
@@ -128,7 +128,7 @@ class DetailRiwayat extends StatelessWidget {
                       Expanded(
                         child: DataField(
                           title: "Catatan Tambahan",
-                          data: data.catatan,
+                          data: data.keterangan,
                           type: "",
                           isLong: true,
                         ),

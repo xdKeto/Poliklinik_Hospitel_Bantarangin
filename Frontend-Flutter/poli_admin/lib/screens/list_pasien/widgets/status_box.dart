@@ -32,10 +32,15 @@ class StatusBox extends StatelessWidget {
           border: Border.all(color: color, width: 2),
           borderRadius: BorderRadius.circular(12)),
       child: Center(
-        child: Text(
-          status.toUpperCase(),
-          style: AppStyles.contentText
-              .copyWith(color: color, fontWeight: FontWeight.bold),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            status.toUpperCase(),
+            style: AppStyles.contentText.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );

@@ -1,14 +1,14 @@
 class AntrianPasien {
-  final int idAntrian;
-  final int idPasien;
-  final int idPoli;
-  final String idRm;
-  final int idStatus;
-  final String nama;
-  final String namaPoli;
-  final int nomorAntrian;
-  final int priorityOrder;
-  final String status;
+  int idAntrian;
+  int idPasien;
+  int idPoli;
+  String idRm;
+  int idStatus;
+  String nama;
+  String namaPoli;
+  int nomorAntrian;
+  int priorityOrder;
+  String status;
 
   AntrianPasien({
     required this.idAntrian,

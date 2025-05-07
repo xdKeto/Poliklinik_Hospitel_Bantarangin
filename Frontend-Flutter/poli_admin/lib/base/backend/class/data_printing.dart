@@ -16,6 +16,10 @@ class DataPrinting {
   final String tanggalLahir;
   final String tempatLahir;
   final int umur;
+  final String agama;
+  final String statusKawin;
+  final String penanggungJawab;
+  final String pekerjaan;
 
   DataPrinting({
     required this.alamat,
@@ -35,6 +39,10 @@ class DataPrinting {
     required this.tanggalLahir,
     required this.tempatLahir,
     required this.umur,
+    required this.agama,
+    required this.penanggungJawab,
+    required this.statusKawin,
+    required this.pekerjaan
   });
 
   factory DataPrinting.fromJson(Map<String, dynamic> json) {
@@ -56,6 +64,10 @@ class DataPrinting {
       tanggalLahir: json['tanggal_lahir'] ?? '',
       tempatLahir: json['tempat_lahir'] ?? '',
       umur: json['umur'] ?? 0,
+      agama: json['agama'] ?? '',
+      penanggungJawab: json['penanggung_jawab'] ?? '',
+      statusKawin: json['status_perkawinan'] ?? '',
+      pekerjaan: json['pekerjaan'] ?? ''
     );
   }
 
@@ -78,6 +90,10 @@ class DataPrinting {
       'tanggal_lahir': tanggalLahir,
       'tempat_lahir': tempatLahir,
       'umur': umur,
+      'agama': agama,
+      'penanggung_jawab': penanggungJawab,
+      'status_perkawinan': statusKawin,
+      'pekerjaan': pekerjaan
     };
   }
 }

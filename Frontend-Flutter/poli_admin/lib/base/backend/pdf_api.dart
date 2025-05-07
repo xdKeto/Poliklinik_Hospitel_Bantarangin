@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:poli_admin/base/backend/class/data_printing.dart';
 
 String calculateAge(int hari) {
   if (hari < 0) {
@@ -261,6 +262,73 @@ class PdfApi {
                     ]))
                   ]));
         }));
+
+    return pdf.save();
+  }
+
+  static Future<Uint8List> cetakData(
+      DataPrinting data, String tanggal, String jam) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(pw.Page(build: (_) {
+      return pw.Column(children: [
+        pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+          pw.Text('RM.RJ.01',
+              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold))
+        ]),
+        pw.SizedBox(height: 4),
+        pw.Container(
+            decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
+            child: pw.Column(children: [
+              pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
+                pw.Container(
+                  padding:
+                      pw.EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border(
+                          right: pw.BorderSide(
+                              width: 1, color: PdfColor.fromInt(0xFF000000)))),
+                  child: pw.Column(children: [
+                    pw.Center(
+                      child: pw.Text('REKAM MEDIS PASIEN RAWAT JALAN',
+                          style: pw.TextStyle(
+                              fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                    )
+                  ]),
+                ),
+                pw.Container(
+                  padding:
+                      pw.EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: pw.BoxDecoration(
+                      border: pw.Border(
+                          left: pw.BorderSide(
+                              width: 1, color: PdfColor.fromInt(0xFF000000)))),
+                  child: pw.Column(children: [
+                    pw.Center(
+                        child: pw.Row(children: [
+                      pw.Text('Nomor Rekan Medis: ',
+                          style: pw.TextStyle(
+                              fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                      pw.Text(data.idRm,
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                          )),
+                    ]))
+                  ]),
+                ),
+              ]),
+              pw.Row(
+                children: [
+                  pw.Container(
+                    padding: pw.EdgeInsets.all(12),
+                  )
+                ]
+              ),
+              // pw.Row()
+            ]))
+      ]);
+    }));
 
     return pdf.save();
   }

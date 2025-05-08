@@ -11,6 +11,9 @@ class Pasien {
   final DateTime tanggalLahir;
   final DateTime tanggalRegist;
   final String tempatLahir;
+  final String statusKawin;
+  final String agama;
+  final String pekerjaan;
 
   Pasien({
     required this.alamat,
@@ -25,6 +28,9 @@ class Pasien {
     required this.tanggalLahir,
     required this.tanggalRegist,
     required this.tempatLahir,
+    required this.statusKawin,
+    required this.agama,
+    required this.pekerjaan
   });
 
   factory Pasien.fromJson(Map<String, dynamic> json) {
@@ -41,6 +47,9 @@ class Pasien {
       tanggalLahir: DateTime.parse(json['Tanggal_Lahir']),
       tanggalRegist: DateTime.parse(json['Tanggal_Regist']),
       tempatLahir: json['Tempat_Lahir'],
+      agama: json['Agama'],
+      statusKawin: json['Status_Perkawinan'],
+      pekerjaan: json['Pekerjaan']
     );
   }
 
@@ -58,6 +67,9 @@ class Pasien {
       'Tanggal_Lahir': tanggalLahir.toIso8601String(),
       'Tanggal_Regist': tanggalRegist.toIso8601String(),
       'Tempat_Lahir': tempatLahir,
+      'Agama': agama,
+      'Status_Perkawinan': statusKawin,
+      'Pekerjaan': pekerjaan
     };
   }
 }

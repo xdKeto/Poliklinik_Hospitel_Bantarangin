@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:poli_admin/base/backend/class/data_printing.dart';
@@ -17,6 +18,16 @@ String calculateAge(int hari) {
 
     return "$tahun tahun";
   }
+}
+
+String formatDays(int totalDays) {
+  int years = totalDays ~/ 365;
+  int remainingDays = totalDays % 365;
+
+  int months = remainingDays ~/ 30;
+  int days = remainingDays % 30;
+
+  return '$years thn $months bln $days hr';
 }
 
 class PdfApi {
@@ -270,6 +281,9 @@ class PdfApi {
       DataPrinting data, String tanggal, String jam) async {
     final pdf = pw.Document();
 
+    DateTime parse = DateTime.parse(data.tanggalLahir);
+    String format = DateFormat('dd MMMM yyyy').format(parse);
+
     pdf.addPage(pw.Page(build: (_) {
       return pw.Column(children: [
         pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
@@ -278,6 +292,8 @@ class PdfApi {
         ]),
         pw.SizedBox(height: 4),
         pw.Container(
+            width: 475,
+            height: 680,
             decoration: pw.BoxDecoration(
                 border: pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
             child: pw.Column(children: [
@@ -286,9 +302,8 @@ class PdfApi {
                   padding:
                       pw.EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                   decoration: pw.BoxDecoration(
-                      border: pw.Border(
-                          right: pw.BorderSide(
-                              width: 1, color: PdfColor.fromInt(0xFF000000)))),
+                      border:
+                          pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
                   child: pw.Column(children: [
                     pw.Center(
                       child: pw.Text('REKAM MEDIS PASIEN RAWAT JALAN',
@@ -301,9 +316,8 @@ class PdfApi {
                   padding:
                       pw.EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                   decoration: pw.BoxDecoration(
-                      border: pw.Border(
-                          left: pw.BorderSide(
-                              width: 1, color: PdfColor.fromInt(0xFF000000)))),
+                      border:
+                          pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
                   child: pw.Column(children: [
                     pw.Center(
                         child: pw.Row(children: [
@@ -318,14 +332,493 @@ class PdfApi {
                   ]),
                 ),
               ]),
-              pw.Row(
-                children: [
-                  pw.Container(
-                    padding: pw.EdgeInsets.all(12),
-                  )
-                ]
-              ),
-              // pw.Row()
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Tanggal/Jam',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 12),
+                                decoration: pw.BoxDecoration(
+                                    border: pw.Border(
+                                        right: pw.BorderSide(
+                                            color:
+                                                PdfColor.fromInt(0xFF000000)))),
+                                child: pw.Text(tanggal)),
+                          ),
+                          pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(12),
+                                child: pw.Center(
+                                  child: pw.Row(children: [
+                                    pw.Text('Jam: ',
+                                        style: pw.TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: pw.FontWeight.bold)),
+                                    pw.Text(jam)
+                                  ]),
+                                )),
+                          )
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('NIK',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.nik),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Nama Pasien',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.namaPasien),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Tanggal Lahir',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(12),
+                                decoration: pw.BoxDecoration(
+                                    border: pw.Border(
+                                        right: pw.BorderSide(
+                                            color:
+                                                PdfColor.fromInt(0xFF000000)))),
+                                child: pw.Text(format)),
+                          ),
+                          pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(12),
+                                child: pw.Center(
+                                  child: pw.Row(children: [
+                                    pw.Text('Umur: ',
+                                        style: pw.TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: pw.FontWeight.bold)),
+                                    pw.Text(formatDays(data.umur))
+                                  ]),
+                                )),
+                          )
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Agama',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.agama),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Jenis Kelamin',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.jenisKelamin),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Profesi',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.pekerjaan),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Alamat Rumah',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.alamat),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('No. Telepon',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.noTelp),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Status Perkawinan',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.statusKawin),
+                            ),
+                          ),
+                        ])))
+              ]),
+              pw.Row(children: [
+                pw.Expanded(
+                    child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                              color: PdfColor.fromInt(0xFF000000)),
+                        ),
+                        child: pw.Row(children: [
+                          pw.Container(
+                              width: 140,
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Center(
+                                child: pw.Text('Penanggung Jawab',
+                                    style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: pw.FontWeight.bold)),
+                              )),
+                          pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              decoration: pw.BoxDecoration(
+                                  border: pw.Border(
+                                      left: pw.BorderSide(
+                                          color: PdfColor.fromInt(0xFF000000)),
+                                      right: pw.BorderSide(
+                                          color:
+                                              PdfColor.fromInt(0xFF000000)))),
+                              child: pw.Center(
+                                child: pw.Text(':',
+                                    style: pw.TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: pw.FontWeight.bold,
+                                    )),
+                              )),
+                          pw.Expanded(
+                            child: pw.Container(
+                              padding: pw.EdgeInsets.all(12),
+                              child: pw.Text(data.penanggungJawab),
+                            ),
+                          ),
+                        ])))
+              ]),
             ]))
       ]);
     }));

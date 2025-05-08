@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:poli_admin/base/backend/class/antrian_pasien.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
@@ -45,6 +46,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting();
     listPriv();
 
     urutan();

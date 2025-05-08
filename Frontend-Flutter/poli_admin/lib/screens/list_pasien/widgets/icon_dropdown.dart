@@ -180,7 +180,12 @@ class MenuItems {
 
         DataPrinting dataPrinting =
             await DataController().fetchDataPrinting(id.toString());
-        final String tanggal = DateFormat('dd/mm/yyyy').format(DateTime.now());
+        print(dataPrinting.agama);
+        print(dataPrinting.pekerjaan);
+        print(dataPrinting.statusKawin);
+        print(dataPrinting.penanggungJawab);
+        final String tanggal =
+            DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now());
         final String jam = DateFormat('HH:mm').format(DateTime.now());
 
         try {
@@ -192,7 +197,7 @@ class MenuItems {
             throw Exception("Failed to print: $error");
           });
         } catch (e) {
-        if (!context.mounted) return;
+          if (!context.mounted) return;
           Navigator.pop(context);
           showDialog(
               context: context,
@@ -200,7 +205,6 @@ class MenuItems {
                   isSuccess: false,
                   boldText: "Gagal",
                   italicText: "Gagal membuat data: $e"));
-
         }
 
         break;

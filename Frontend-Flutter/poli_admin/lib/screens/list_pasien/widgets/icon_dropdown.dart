@@ -180,10 +180,7 @@ class MenuItems {
 
         DataPrinting dataPrinting =
             await DataController().fetchDataPrinting(id.toString());
-        print(dataPrinting.agama);
-        print(dataPrinting.pekerjaan);
-        print(dataPrinting.statusKawin);
-        print(dataPrinting.penanggungJawab);
+
         final String tanggal =
             DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now());
         final String jam = DateFormat('HH:mm').format(DateTime.now());

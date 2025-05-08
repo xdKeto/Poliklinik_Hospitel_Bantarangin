@@ -568,7 +568,8 @@ class PdfApi {
                           pw.Expanded(
                             child: pw.Container(
                               padding: pw.EdgeInsets.all(12),
-                              child: pw.Text(data.agama),
+                              child: pw.Text(
+                                  '${data.agama[0].toUpperCase()}${data.agama.substring(1).toLowerCase()}'),
                             ),
                           ),
                         ])))
@@ -609,7 +610,8 @@ class PdfApi {
                           pw.Expanded(
                             child: pw.Container(
                               padding: pw.EdgeInsets.all(12),
-                              child: pw.Text(data.jenisKelamin),
+                              child: pw.Text(
+                                  '${data.jenisKelamin[0].toUpperCase()}${data.jenisKelamin.substring(1).toLowerCase()}'),
                             ),
                           ),
                         ])))

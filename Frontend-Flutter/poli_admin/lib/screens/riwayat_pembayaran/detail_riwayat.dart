@@ -6,7 +6,6 @@ import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
-import 'package:poli_admin/dummy/data.dart';
 
 class DetailRiwayat extends StatefulWidget {
   const DetailRiwayat({
@@ -24,7 +23,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   @override
   void initState() {
     super.initState();
-    filteredList = List.from(listobat);
   }
 
   @override

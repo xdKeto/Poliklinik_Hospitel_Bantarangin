@@ -112,15 +112,11 @@ class _BillingScreenState extends State<BillingScreen> {
       List<Billing> baseList = List.from(dataController.billing);
 
       if (selectedPoli != null && selectedPoli != '-- Semua Poliklinik --') {
-        baseList = baseList
-            .where((billing) => billing.namaPoli == selectedPoli)
-            .toList();
+        baseList = baseList.where((billing) => billing.namaPoli == selectedPoli).toList();
       }
 
       if (selectedStatus != null && selectedStatus != '-- Semua Status --') {
-        baseList = baseList
-            .where((billing) => billing.status == selectedStatus)
-            .toList();
+        baseList = baseList.where((billing) => billing.status == selectedStatus).toList();
       }
 
       if (controller.text.isNotEmpty) {
@@ -138,9 +134,8 @@ class _BillingScreenState extends State<BillingScreen> {
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
         baseList = List.from(dataController.billing);
       } else {
-        baseList = dataController.billing
-            .where((billing) => billing.status == selectedStatus)
-            .toList();
+        baseList =
+            dataController.billing.where((billing) => billing.status == selectedStatus).toList();
       }
 
       String searchQuery = query.toLowerCase();
@@ -198,8 +193,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Poliklinik --'),
                         items: listPoli
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -220,8 +214,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Status --'),
                         items: listStatus
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -270,17 +263,14 @@ class _BillingScreenState extends State<BillingScreen> {
                       sortAscending: sortAscending,
 
                       // style
-                      headingTextStyle: AppStyles.sidebarText.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppStyles.textColor),
-                      headingRowColor: WidgetStateProperty.resolveWith(
-                          (states) => AppStyles.greyColor),
+                      headingTextStyle: AppStyles.sidebarText
+                          .copyWith(fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                      headingRowColor:
+                          WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
                       headingRowDecoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12))),
-                      dataTextStyle: AppStyles.contentText
-                          .copyWith(color: AppStyles.textColor),
+                              topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                      dataTextStyle: AppStyles.contentText.copyWith(color: AppStyles.textColor),
                       minWidth: 768,
                       dividerThickness: 0,
                       horizontalMargin: 12,
@@ -293,8 +283,7 @@ class _BillingScreenState extends State<BillingScreen> {
                       rowsPerPage: rowsPerPage,
                       availableRowsPerPage: [10, 25, 50, 100],
                       onRowsPerPageChanged: (value) {
-                        if (value != null &&
-                            [10, 25, 50, 100].contains(value)) {
+                        if (value != null && [10, 25, 50, 100].contains(value)) {
                           setState(() {
                             rowsPerPage = value;
                           });
@@ -326,8 +315,8 @@ class _BillingScreenState extends State<BillingScreen> {
                           : Center(
                               child: Text(
                                 'Tidak ada Data',
-                                style: AppStyles.subheadingText
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                style:
+                                    AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                       columns: [
@@ -341,9 +330,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         DataColumn(label: Center(child: Text('Rincian'))),
                       ],
                       source: RowSource(widget.navigateToPage,
-                          myData: filteredList,
-                          count: filteredList.length,
-                          context: context));
+                          myData: filteredList, count: filteredList.length, context: context));
                 },
               )),
             ],
@@ -389,12 +376,28 @@ class RowSource extends DataTableSource {
                   builder: (context) => LoadingAlert(),
                   barrierDismissible: false);
 
-              await dataController
-                  .fetchDetailTransaksi(data.idKunjungan.toString());
-
-              if (!context.mounted) return;
-              Navigator.pop(context);
-              navigateToPage(4);
+              try {
+                final detail =
+                    await dataController.fetchDetailTransaksi(data.idKunjungan.toString());
+                if (detail != null) {
+                  dataController.detailTransaksi = detail; 
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  navigateToPage(4);
+                } else {
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to load billing details')),
+                  );
+                }
+              } catch (e) {
+                if (!context.mounted) return;
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
             child: TheButton(
               text: "Lihat Rincian",

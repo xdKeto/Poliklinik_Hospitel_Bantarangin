@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
-import 'package:poli_admin/dummy/data.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
 
 class RiwayatScreen extends StatefulWidget {
@@ -43,7 +42,6 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   @override
   void initState() {
     super.initState();
-    filteredList = List.from(riwayat);
   }
 
   void onSort(int columnIndex, bool ascending) {
@@ -81,25 +79,25 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   }
 
   void applyFilters() {
-    setState(() {
-      filteredList = riwayat.where((pasien) {
-        bool poliMatch = selectedPoli == "-- Semua Poli --" ||
-            selectedPoli == null ||
-            pasien['poli'] == selectedPoli;
-        return poliMatch;
-      }).toList();
-    });
+    // setState(() {
+    //   filteredList = riwayat.where((pasien) {
+    //     bool poliMatch = selectedPoli == "-- Semua Poli --" ||
+    //         selectedPoli == null ||
+    //         pasien['poli'] == selectedPoli;
+    //     return poliMatch;
+    //   }).toList();
+    // });
   }
 
   void onSearch(String query) {
-    setState(() {
-      filteredList = riwayat.where((pasien) {
-        String namaPasien = pasien['nama'].toLowerCase();
-        String searchQuery = query.toLowerCase();
+    // setState(() {
+    //   filteredList = riwayat.where((pasien) {
+    //     String namaPasien = pasien['nama'].toLowerCase();
+    //     String searchQuery = query.toLowerCase();
 
-        return namaPasien.toString().contains(searchQuery);
-      }).toList();
-    });
+    //     return namaPasien.toString().contains(searchQuery);
+    //   }).toList();
+    // });
   }
 
   @override

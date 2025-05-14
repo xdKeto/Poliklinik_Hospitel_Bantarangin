@@ -8,7 +8,7 @@ class DetailTransaksi {
   final String namaAdministrasi;
   final List<Obat> obat;
   final List<Tindakan> tindakan;
-  final DateTime? waktuDibayar;
+  final String? waktuDibayar;
 
   DetailTransaksi({
     required this.namaPasien,
@@ -25,28 +25,24 @@ class DetailTransaksi {
 
   factory DetailTransaksi.fromJson(Map<String, dynamic> json) {
     return DetailTransaksi(
-      namaPasien: json['nama_pasien'],
-      idRm: json['id_rm'],
-      namaPoli: json['nama_poli'],
-      namaDokter: json['nama_dokter'],
-      biayaDokter: json['biaya_dokter'],
-      karyawanYangDitugaskan: json['karyawan_yang_ditugaskan'],
-      namaAdministrasi: json['nama_administrasi'],
-      obat: (json['obat'] as List).map((e) => Obat.fromJson(e)).toList(),
-      tindakan:
-          (json['tindakan'] as List).map((e) => Tindakan.fromJson(e)).toList(),
-      waktuDibayar: json['waktu_dibayar'] != null
-          ? DateTime.tryParse(json['waktu_dibayar'])
-          : null,
-    );
+        namaPasien: json['nama_pasien'],
+        idRm: json['id_rm'],
+        namaPoli: json['nama_poli'],
+        namaDokter: json['nama_dokter'],
+        biayaDokter: json['biaya_dokter'],
+        karyawanYangDitugaskan: json['karyawan_yang_ditugaskan'],
+        namaAdministrasi: json['nama_administrasi'],
+        obat: (json['obat'] as List).map((e) => Obat.fromJson(e)).toList(),
+        tindakan: (json['tindakan'] as List).map((e) => Tindakan.fromJson(e)).toList(),
+        waktuDibayar: json['waktu_dibayar'] ?? '');
   }
 }
 
 class Obat {
-  final String namaObat;
+  final String? namaObat;
   final String keterangan;
   final int jumlah;
-  final String satuan;
+  final String? satuan;
   final int? hargaSatuan;
   final int hargaTotal;
   final String instruksi;
@@ -55,10 +51,10 @@ class Obat {
   final List<Komposisi>? komposisi;
 
   Obat({
-    required this.namaObat,
+    this.namaObat,
     required this.keterangan,
     required this.jumlah,
-    required this.satuan,
+    this.satuan,
     this.hargaSatuan,
     required this.hargaTotal,
     required this.instruksi,
@@ -79,9 +75,7 @@ class Obat {
       namaRacikan: json['nama_racikan'],
       kemasan: json['kemasan'],
       komposisi: json['komposisi'] != null
-          ? (json['komposisi'] as List)
-              .map((e) => Komposisi.fromJson(e))
-              .toList()
+          ? (json['komposisi'] as List).map((e) => Komposisi.fromJson(e)).toList()
           : null,
     );
   }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:poli_admin/base/global_widgets/side_navbar.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/screens/login/login_screen.dart';
 
 void main() async{
   // debugPaintSizeEnabled = true;
-  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

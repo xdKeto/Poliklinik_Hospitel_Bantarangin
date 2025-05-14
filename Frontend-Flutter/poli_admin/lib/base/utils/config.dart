@@ -1,7 +1,6 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class Config {
-  static String get apiURL => Env.apiUrl;
+  static const String apiURL =
+      'http://leap.crossnet.co.id:8080/api/administrasi';
 
   // API ENDPOINTS
 
@@ -39,7 +38,7 @@ class Config {
     // detail riwayat pake detail billing
 
     // WEBSOCKET
-    'wsUrl': () => Env.wsUrl
+    'wsUrl': () => 'ws://leap.crossnet.co.id:8080/api/ws'
   };
 }
 
@@ -52,12 +51,4 @@ class ResponseRequestAPI {
     required this.message,
     required this.data,
   });
-}
-
-class Env {
-  static String get apiUrl =>
-      dotenv.env['API_URL'] ??
-      'http://leap.crossnet.co.id:8080/api/administrasi';
-  static String get wsUrl =>
-      dotenv.env['WS_URL'] ?? 'ws://leap.crossnet.co.id:8080/api/ws';
 }

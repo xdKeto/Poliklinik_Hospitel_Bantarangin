@@ -25,10 +25,13 @@ class Config {
     'putPasien': () => '$apiURL/kunjungan', //PUT
 
     // BILLING
-    'billingStatusBelum': () => '$apiURL/billing?status=1',
-    'billingStatusProses': () => '$apiURL/billing?status=2',
-    'billingStatusSudah': () => '$apiURL/billing?status=3',
     'allBilling': () => '$apiURL/billing',
+    'detailBilling': (String id) => '$apiURL/billing/detail?id_kunjungan=$id',
+
+    // RIWAYAT
+    'allRiwayat': () => '$apiURL/billing?status=2',
+    // detail riwayat pake detail billing
+    
 
     // WEBSOCKET
     'wsUrl': () => 'ws://leap.crossnet.co.id:8080/api/ws'

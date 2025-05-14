@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:poli_admin/base/backend/class/billing.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
 import 'package:poli_admin/screens/billing/widgets/status_box.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
@@ -31,8 +32,8 @@ class _BillingScreenState extends State<BillingScreen> {
   final List<String> listStatus = [
     '-- Semua Status --',
     'Belum',
-    'Proses',
-    'Sudah'
+    'Selesai',
+    'Dibatalkan',
   ];
 
   String? selectedPoli;
@@ -47,14 +48,12 @@ class _BillingScreenState extends State<BillingScreen> {
   final TextEditingController controller = TextEditingController();
   DataController dataController = DataController();
   bool isLoading = true;
-  Timer? refreshData;
   bool firstLoad = true;
-
-  StreamSubscription? billingSubscription;
 
   @override
   void initState() {
     super.initState();
+    urutan();
   }
 
   Future<void> urutan() async {
@@ -62,63 +61,45 @@ class _BillingScreenState extends State<BillingScreen> {
     await applyFilters();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-
-  //   if (_firstLoad) {
-  //     fetchData();
-  //     _firstLoad = false;
-
-  //     refreshData =
-  //         Timer.periodic(Duration(seconds: 10), (timer) => fetchData());
-  //   }
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+//
+  }
 
   @override
   void dispose() {
-    // refreshData?.cancel();
     super.dispose();
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
 
     try {
-      String? currentPoli = selectedPoli;
-      String? currentStatus = selectedStatus;
-      String currentQuery = searchQuery;
-
       if (dataController.poliAktif.isEmpty) {
         await dataController.fetchPoliAktif();
       }
 
       if (firstLoad) {
-        await dataController.fetchAllBilling();
+        await dataController.fetchBilling();
         firstLoad = false;
       }
 
+      if (!mounted) return;
       setState(() {
-        if (dataController.poliAktif.isNotEmpty) {
-          listPoli.clear();
-          listPoli = ["-- Semua Poliklinik --"];
-          for (var poli in dataController.poliAktif) {
-            listPoli.add(poli.namaPoli);
-          }
+        listPoli = ['-- Semua Poliklinik --'];
+        for (var poli in dataController.poliAktif) {
+          listPoli.add(poli.namaPoli);
         }
-
-        selectedPoli = currentPoli;
-        selectedStatus = currentStatus;
-        searchQuery = currentQuery;
-
-        applyFilters();
 
         isLoading = false;
       });
     } catch (e) {
       print('error fetching billing data: $e');
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
@@ -126,52 +107,49 @@ class _BillingScreenState extends State<BillingScreen> {
   }
 
   Future<void> applyFilters() async {
+    if (!mounted) return;
     setState(() {
-      List<Billing> tempList = List.from(dataController.billing);
+      List<Billing> baseList = List.from(dataController.billing);
 
-      if (selectedStatus != null && selectedStatus != "-- Semua Status --") {
-        if (selectedStatus == "Belum") {
-          tempList = List.from(dataController.billingStatusBelum);
-        } else if (selectedStatus == "Proses") {
-          tempList = List.from(dataController.billingStatusProses);
-        } else if (selectedStatus == "Sudah") {
-          tempList = List.from(dataController.billingStatusSelesai);
-        } else {
-          tempList = tempList
-              .where((billing) => billing.status == selectedStatus)
-              .toList();
-        }
-      }
-
-      if (selectedPoli != null && selectedPoli != "-- Semua Poliklinik --") {
-        tempList = tempList
+      if (selectedPoli != null && selectedPoli != '-- Semua Poliklinik --') {
+        baseList = baseList
             .where((billing) => billing.namaPoli == selectedPoli)
             .toList();
       }
 
-      if (searchQuery.isNotEmpty) {
-        tempList = tempList
-            .where((billing) =>
-                billing.idRm
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                billing.namaPasien
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                billing.namaPoli
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()))
+      if (selectedStatus != null && selectedStatus != '-- Semua Status --') {
+        baseList = baseList
+            .where((billing) => billing.status == selectedStatus)
             .toList();
       }
 
-      filteredList = tempList;
+      if (controller.text.isNotEmpty) {
+        onSearch(controller.text);
+      }
+
+      filteredList = baseList;
     });
   }
 
   void onSearch(String query) {
+    if (!mounted) return;
     setState(() {
-      searchQuery = query;
-      applyFilters();
+      List<Billing> baseList;
+      if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
+        baseList = List.from(dataController.billing);
+      } else {
+        baseList = dataController.billing
+            .where((billing) => billing.status == selectedStatus)
+            .toList();
+      }
+
+      String searchQuery = query.toLowerCase();
+      filteredList = baseList.where((billing) {
+        String namaPasien = billing.namaPasien.toLowerCase();
+        String idRm = billing.idRm.toString().toLowerCase();
+
+        return namaPasien.contains(searchQuery) || idRm.contains(searchQuery);
+      }).toList();
     });
   }
 
@@ -214,7 +192,7 @@ class _BillingScreenState extends State<BillingScreen> {
                     ),
                     // filter by poliklinik
                     SizedBox(
-                      width: 300,
+                      width: 350,
                       child: DropdownButtonFormField2<String>(
                         // isExpanded: true,
                         decoration: AppStyles.formBox,
@@ -363,7 +341,9 @@ class _BillingScreenState extends State<BillingScreen> {
                         DataColumn(label: Center(child: Text('Rincian'))),
                       ],
                       source: RowSource(widget.navigateToPage,
-                          myData: filteredList, count: filteredList.length));
+                          myData: filteredList,
+                          count: filteredList.length,
+                          context: context));
                 },
               )),
             ],
@@ -378,13 +358,17 @@ class RowSource extends DataTableSource {
   final List<Billing> myData;
   final int count;
   final Function(int) navigateToPage;
+  final BuildContext context;
 
-  RowSource(this.navigateToPage, {required this.myData, required this.count});
+  RowSource(this.navigateToPage,
+      {required this.myData, required this.count, required this.context});
 
   @override
   DataRow? getRow(int index) {
     if (index >= myData.length) return null;
     var data = myData[index];
+
+    DataController dataController = DataController();
     return DataRow(
         color: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {
@@ -399,7 +383,17 @@ class RowSource extends DataTableSource {
           DataCell(Center(child: StatusBox(status: data.status))),
           DataCell(Center(
               child: InkWell(
-            onTap: () {
+            onTap: () async {
+              showDialog(
+                  context: context,
+                  builder: (context) => LoadingAlert(),
+                  barrierDismissible: false);
+
+              await dataController
+                  .fetchDetailTransaksi(data.idKunjungan.toString());
+
+              if (!context.mounted) return;
+              Navigator.pop(context);
               navigateToPage(4);
             },
             child: TheButton(

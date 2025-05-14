@@ -1,10 +1,10 @@
 class Billing {
-  final int idKunjungan;
-  final int idPasien;
-  final String idRm;
-  final String namaPasien;
-  final String namaPoli;
-  final String status;
+  int idKunjungan;
+  int idPasien;
+  String idRm;
+  String namaPasien;
+  String namaPoli;
+  String status;
 
   Billing({
     required this.idKunjungan,

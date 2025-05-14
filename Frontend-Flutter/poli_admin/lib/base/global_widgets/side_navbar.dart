@@ -58,6 +58,7 @@ class _SideNavbarState extends State<SideNavbar> {
           isExpand: _isExpanded,
           toggleSidebar: toggleSidebar,
           navigateToPage: (index) => navigateToPage(index),
+          id: "",
         ),
       ];
     });
@@ -107,6 +108,7 @@ class _SideNavbarState extends State<SideNavbar> {
         isExpand: _isExpanded,
         toggleSidebar: toggleSidebar,
         navigateToPage: (index) => navigateToPage(index),
+        id: "",
       ),
     ];
   }

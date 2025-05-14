@@ -34,7 +34,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
-  Timer? refreshData;
 
   late List<String> listStatus = [];
   List<AntrianPasien> filteredList = [];
@@ -55,10 +54,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // if (firstLoad) {
-    //   refreshData =
-    //       Timer.periodic(Duration(seconds: 5), (timer) => fetchData());
-    // }
   }
 
   @override
@@ -72,6 +67,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
@@ -86,6 +82,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
         firstLoad = false;
       }
 
+      if (!mounted) return;
       setState(() {
         listStatus = ['-- Semua Status --'];
         for (var status in dataController.statusAntrian) {
@@ -96,6 +93,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       });
     } catch (e) {
       print('error di fetching data: $e');
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
@@ -104,16 +102,18 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
 
   void listPriv() async {
     var temp = await DataController().cekPriv(1);
+    if (!mounted) return;
     setState(() {
       priv = temp;
     });
   }
 
   Future<void> applyFilters() async {
+    if (!mounted) return;
     setState(() {
-      if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
-        filteredList = List.from(dataController.antrianToday);
-      } else {
+      List<AntrianPasien> baseList = List.from(dataController.antrianToday);
+
+      if (selectedStatus != "-- Semua Status --" && selectedStatus != null) {
         filteredList = dataController.antrianToday
             .where((antrian) => antrian.status == selectedStatus)
             .toList();
@@ -124,10 +124,13 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       if (controller.text.isNotEmpty) {
         onSearch(controller.text);
       }
+
+      filteredList = baseList;
     });
   }
 
   void onSearch(String query) {
+    if (!mounted) return;
     setState(() {
       List<AntrianPasien> baseList;
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {

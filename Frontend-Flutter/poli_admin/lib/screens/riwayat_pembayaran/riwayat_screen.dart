@@ -2,7 +2,10 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:poli_admin/base/backend/class/billing.dart';
+import 'package:poli_admin/base/backend/data_controller.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/screens/riwayat_pembayaran/detail_riwayat.dart';
@@ -21,83 +24,115 @@ class RiwayatScreen extends StatefulWidget {
 }
 
 class _RiwayatScreenState extends State<RiwayatScreen> {
-  final List<String> listPoli = [
-    "-- Semua Poli --",
-    "Poli Gigi",
-    "Poli Anak",
-    "Poli Umum",
-    "Poli Saraf",
-    "Poli Mata",
-    "Poli Kulit",
-  ];
-
+  List<String> listPoli = [];
   String? selectedPoli;
 
   bool sortAscending = true;
   int sortColumnIndex = 0;
   int rowsPerPage = 10;
-  List<Map<String, dynamic>> filteredList = [];
+
+  List<Billing> filteredList = [];
   final TextEditingController controller = TextEditingController();
+  DataController dataController = DataController();
+  bool isLoading = true;
+  bool firstLoad = true;
 
   @override
   void initState() {
     super.initState();
+    urutan();
   }
 
-  void onSort(int columnIndex, bool ascending) {
+  Future<void> urutan() async {
+    await fetchData();
+    await applyFilters();
+
+    print(filteredList);
+  }
+
+  Future<void> fetchData() async {
+    if (!mounted) return;
     setState(() {
-      sortColumnIndex = columnIndex;
-      sortAscending = ascending;
+      isLoading = true;
+    });
 
-      filteredList.sort((a, b) {
-        var valueA, valueB;
+    try {
+      if (dataController.poliAktif.isEmpty) {
+        await dataController.fetchPoliAktif();
+      }
 
-        switch (columnIndex) {
-          case 0:
-            valueA = filteredList.indexOf(a);
-            valueB = filteredList.indexOf(b);
-            break;
-          case 1:
-            valueA = a['nama'];
-            valueB = b['nama'];
-            break;
-          case 2:
-            valueA = DateTime.parse(a['tanggal']);
-            valueB = DateTime.parse(b['tanggal']);
-            break;
-          case 3:
-            valueA = a['poli'];
-            valueB = b['poli'];
-            break;
-          default:
-            return 0;
+      if (firstLoad) {
+        await dataController.fetchRiwayatTransaksi();
+        // print(dataController.riwayatTransaksi);
+        firstLoad = false;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        listPoli = ['-- Semua Poliklinik --'];
+        for (var poli in dataController.poliAktif) {
+          listPoli.add(poli.namaPoli);
         }
 
-        return ascending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+        isLoading = false;
       });
+    } catch (e) {
+      print('error di fetching data: $e');
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> applyFilters() async {
+    if (!mounted) return;
+    setState(() {
+      List<Billing> baseList = List.from(dataController.riwayatTransaksi);
+
+      if (selectedPoli != null && selectedPoli != '-- Semua Poliklinik --') {
+        baseList = baseList
+            .where((riwayat) => riwayat.namaPoli == selectedPoli)
+            .toList();
+      }
+
+      if (controller.text.isNotEmpty) {
+        onSearch(controller.text);
+      }
+
+      filteredList = baseList;
     });
   }
 
-  void applyFilters() {
-    // setState(() {
-    //   filteredList = riwayat.where((pasien) {
-    //     bool poliMatch = selectedPoli == "-- Semua Poli --" ||
-    //         selectedPoli == null ||
-    //         pasien['poli'] == selectedPoli;
-    //     return poliMatch;
-    //   }).toList();
-    // });
+  void onSearch(String query) {
+    if (!mounted) return;
+    setState(() {
+      List<Billing> baseList;
+      if (selectedPoli == '-- Semua Poliklinik --' || selectedPoli == null) {
+        baseList = List.from(dataController.riwayatTransaksi);
+      } else {
+        baseList = dataController.riwayatTransaksi
+            .where((riwayat) => riwayat.namaPoli == selectedPoli)
+            .toList();
+      }
+      String searchQuery = query.toLowerCase();
+      filteredList = baseList.where((riwayat) {
+        String namaPasien = riwayat.namaPasien.toLowerCase();
+
+        return namaPasien.contains(searchQuery);
+      }).toList();
+    });
   }
 
-  void onSearch(String query) {
-    // setState(() {
-    //   filteredList = riwayat.where((pasien) {
-    //     String namaPasien = pasien['nama'].toLowerCase();
-    //     String searchQuery = query.toLowerCase();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
 
-    //     return namaPasien.toString().contains(searchQuery);
-    //   }).toList();
-    // });
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -135,7 +170,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     ),
                     // filter by poliklinik
                     SizedBox(
-                      width: 300,
+                      width: 450,
                       child: DropdownButtonFormField2<String>(
                         // isExpanded: true,
                         decoration: AppStyles.formBox,
@@ -212,16 +247,22 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                         );
                       }
                     },
-                    empty: Center(
-                      child: Text(
-                        'Tidak ada Data',
-                        style: AppStyles.subheadingText
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    empty:
+                        (isLoading && dataController.riwayatTransaksi.isEmpty)
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                color: AppStyles.primaryColor,
+                              ))
+                            : Center(
+                                child: Text(
+                                  'Tidak ada Data',
+                                  style: AppStyles.subheadingText
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                     columns: [
                       DataColumn(label: Text('No.')),
-                      DataColumn(label: Text('Nama Pasien'), onSort: onSort),
+                      DataColumn(label: Text('Nama Pasien')),
                       DataColumn(label: Text('Tanggal Pembayaran')),
                       DataColumn(label: Text('Poli Tujuan')),
                       DataColumn(label: Center(child: Text('Rincian'))),
@@ -240,7 +281,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 }
 
 class RowSource extends DataTableSource {
-  final List<Map<String, dynamic>> myData;
+  final List<Billing> myData;
   final int count;
   final BuildContext context;
 
@@ -250,6 +291,7 @@ class RowSource extends DataTableSource {
   DataRow? getRow(int index) {
     if (index >= myData.length) return null;
     var data = myData[index];
+    DataController dataController = DataController();
     return DataRow(
         color: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {
@@ -258,16 +300,43 @@ class RowSource extends DataTableSource {
         ),
         cells: [
           DataCell(Text((index + 1).toString())),
-          DataCell(Text(data['nama'])),
-          DataCell(Text(data['tanggal'])),
-          DataCell(Text(data['poli'])),
+          DataCell(Text(data.namaPasien)),
+          DataCell(Text(data.tanggalPembayaran?.substring(0, 10) ?? '')),
+          DataCell(Text(data.namaPoli)),
           DataCell(Center(
               child: InkWell(
-            onTap: () {
+            onTap: () async {
               showDialog(
-                  barrierDismissible: true,
                   context: context,
-                  builder: (context) => DetailRiwayat());
+                  builder: (context) => LoadingAlert(),
+                  barrierDismissible: false);
+
+              try {
+                final riwayat = await dataController
+                    .fetchDetailTransaksi(data.idKunjungan.toString());
+
+                if (riwayat != null) {
+                  dataController.detailTransaksi = riwayat;
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  showDialog(
+                      barrierDismissible: true,
+                      context: context,
+                      builder: (context) => DetailRiwayat(id: data.idKunjungan.toString()));
+                } else {
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to load billing details')),
+                  );
+                }
+              } catch (e) {
+                if (!context.mounted) return;
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
             },
             child: TheButton(
               text: "Lihat Rincian",

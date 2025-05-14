@@ -58,6 +58,7 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 

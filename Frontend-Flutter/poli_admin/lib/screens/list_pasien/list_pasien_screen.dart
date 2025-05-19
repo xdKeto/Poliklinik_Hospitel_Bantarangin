@@ -68,7 +68,6 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
   }
 
   Future<void> fetchData() async {
-    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
@@ -262,7 +261,14 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
               ),
               SizedBox(height: 12),
               Expanded(
-                  child: StreamBuilder<List<AntrianPasien>>(
+                  child:
+                      // (isLoading && dataController.antrianToday.isEmpty)
+                      //     ? Center(
+                      //         child: CircularProgressIndicator(
+                      //         color: AppStyles.primaryColor,
+                      //       ))
+                      //     :
+                      StreamBuilder<List<AntrianPasien>>(
                 stream: dataController.antrianStream,
                 initialData: dataController.antrianToday,
                 builder: (context, snapshot) {

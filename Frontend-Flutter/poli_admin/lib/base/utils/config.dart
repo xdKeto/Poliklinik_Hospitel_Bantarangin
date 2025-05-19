@@ -27,6 +27,7 @@ class Config {
     // BILLING
     'allBilling': () => '$apiURL/billing',
     'detailBilling': (String id) => '$apiURL/billing/detail?id_kunjungan=$id',
+    'assignBilling': (String id) => '$apiURL/billing/bayar?id_billing=$id',
 
     // RIWAYAT
     'allRiwayat': () => '$apiURL/billing?status=2',

@@ -73,7 +73,6 @@ class _BillingScreenState extends State<BillingScreen> {
   }
 
   Future<void> fetchData() async {
-    if (!mounted) return;
     setState(() {
       isLoading = true;
     });

@@ -76,7 +76,10 @@ class _DetailBillingState extends State<DetailBilling> {
           title: 'Detail Billing',
         ),
         body: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(
+                child: CircularProgressIndicator(
+                color: AppStyles.primaryColor,
+              ))
             : Center(
                 child: ListView(
                   children: [

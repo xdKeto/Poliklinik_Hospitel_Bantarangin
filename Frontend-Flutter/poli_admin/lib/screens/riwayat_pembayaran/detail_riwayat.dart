@@ -67,8 +67,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 children: [
                   Text(
                     'Rincian Transaksi',
-                    style: AppStyles.subheadingText
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () => Navigator.pop(context),
@@ -79,198 +78,197 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ],
               ),
               GreyDivider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            btrbText(
-                                topText: 'Nama Pasien',
-                                botText: detail?.namaPasien ?? ''),
-                            SizedBox(
-                              width: 32,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    btrbText(
+                                        topText: 'Nama Pasien', botText: detail?.namaPasien ?? ''),
+                                    SizedBox(
+                                      width: 32,
+                                    ),
+                                    btrbText(
+                                        topText: 'Tujuan Poliklinik',
+                                        botText: detail?.namaPoli ?? ''),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                btrbText(topText: 'Nomor RM', botText: detail?.idRm ?? '')
+                              ],
                             ),
-                            btrbText(
-                                topText: 'Tujuan Poliklinik',
-                                botText: detail?.namaPoli ?? ''),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                btrbText(topText: 'Nama Dokter', botText: detail?.namaDokter ?? ''),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                btrbText(
+                                    topText: 'Biaya Jasa Dokter',
+                                    botText: detail?.biayaDokter.toString() ?? ''),
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  detail?.waktuDibayar?.substring(0, 10) ?? '',
+                                  style: AppStyles.contentText,
+                                ),
+                                Text(
+                                  'Admin: ${detail?.namaAdministrasi ?? ''}',
+                                  style: AppStyles.contentText,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        btrbText(
-                            topText: 'Nomor RM', botText: detail?.idRm ?? '')
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        btrbText(
-                            topText: 'Nama Dokter',
-                            botText: detail?.namaDokter ?? ''),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        btrbText(
-                            topText: 'Biaya Jasa Dokter',
-                            botText: detail?.biayaDokter.toString() ?? ''),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          detail?.waktuDibayar?.substring(0, 10) ?? '',
-                          style: AppStyles.contentText,
-                        ),
-                        Text(
-                          'Admin: ${detail?.namaAdministrasi ?? ''}',
-                          style: AppStyles.contentText,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              GreyDivider(),
-              SizedBox(
-                height: 550,
-                child: ListView(
-                  children: [
-                    Text(
-                      'Daftar Obat',
-                      style: AppStyles.sidebarText
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    listObat.isEmpty
-                        ? Center(
-                            child: Text(
-                            'Tidak ada ada',
-                            style: AppStyles.statusText
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ))
-                        : ConstrainedBox(
-                            constraints: BoxConstraints(maxHeight: 300),
-                            child: DataTable2(
-                              // style
-                              headingTextStyle: AppStyles.sidebarText.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyles.textColor),
-                              headingRowColor: WidgetStateProperty.resolveWith(
-                                (states) => Colors.white,
-                              ),
-                              headingRowDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(6),
-                                      topRight: Radius.circular(6))),
-                              dataTextStyle: AppStyles.contentText
-                                  .copyWith(color: AppStyles.textColor),
-                              minWidth: 768,
-                              dividerThickness: 1,
-                              horizontalMargin: 12,
-                              dataRowHeight: 50,
-                              columnSpacing: 12,
+                      ),
+                      GreyDivider(),
+                      SizedBox(
+                        height: 550,
+                        child: ListView(
+                          children: [
+                            Text(
+                              'Daftar Obat',
+                              style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            listObat.isEmpty
+                                ? Center(
+                                    child: Text(
+                                    'Tidak ada ada',
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
+                                  ))
+                                : ConstrainedBox(
+                                    constraints: BoxConstraints(maxHeight: 300),
+                                    child: DataTable2(
+                                      // style
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
+                                        (states) => Colors.white,
+                                      ),
+                                      headingRowDecoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(6),
+                                              topRight: Radius.circular(6))),
+                                      dataTextStyle: AppStyles.contentText
+                                          .copyWith(color: AppStyles.textColor),
+                                      minWidth: 768,
+                                      dividerThickness: 1,
+                                      horizontalMargin: 12,
+                                      dataRowHeight: 50,
+                                      columnSpacing: 12,
 
-                              columns: [
-                                DataColumn(
-                                  label: Text('No.'),
-                                ),
-                                DataColumn(label: Text('Nama Obat')),
-                                DataColumn(label: Text('Keterangan')),
-                                DataColumn(label: Text('Jumlah')),
-                                DataColumn(label: Text('Satuan')),
-                                DataColumn(label: Text('Harga Satuan')),
-                                DataColumn(label: Text('Total')),
-                              ],
-                              rows: List.generate(listObat.length, (index) {
-                                var data = listObat[index];
-                                total += listObat[index].hargaTotal;
-                                // print(listObat[index]);
-                                return DataRow(cells: [
-                                  DataCell(Text((index + 1).toString())),
-                                  DataCell(Text(data.namaObat ?? '')),
-                                  DataCell(Text(data.keterangan)),
-                                  DataCell(Text(data.jumlah.toString())),
-                                  DataCell(Text(data.satuan ?? '')),
-                                  DataCell(Text(data.hargaSatuan.toString())),
-                                  DataCell(Text(data.hargaTotal.toString())),
-                                ]);
-                              }),
+                                      columns: [
+                                        DataColumn(
+                                          label: Text('No.'),
+                                        ),
+                                        DataColumn(label: Text('Nama Obat')),
+                                        DataColumn(label: Text('Keterangan')),
+                                        DataColumn(label: Text('Jumlah')),
+                                        DataColumn(label: Text('Satuan')),
+                                        DataColumn(label: Text('Harga Satuan')),
+                                        DataColumn(label: Text('Total')),
+                                      ],
+                                      rows: List.generate(listObat.length, (index) {
+                                        var data = listObat[index];
+                                        total += listObat[index].hargaTotal;
+                                        // print(listObat[index]);
+                                        return DataRow(cells: [
+                                          DataCell(Text((index + 1).toString())),
+                                          DataCell(Text(data.namaObat ?? '')),
+                                          DataCell(Text(data.keterangan)),
+                                          DataCell(Text(data.jumlah.toString())),
+                                          DataCell(Text(data.satuan ?? '')),
+                                          DataCell(Text(data.hargaSatuan.toString())),
+                                          DataCell(Text(data.hargaTotal.toString())),
+                                        ]);
+                                      }),
+                                    ),
+                                  ),
+                            GreyDivider(),
+                            Text(
+                              'Daftar Tindakan',
+                              style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                    GreyDivider(),
-                    Text(
-                      'Daftar Tindakan',
-                      style: AppStyles.sidebarText
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    listTindakan.isEmpty
-                        ? Center(
-                            child: Text(
-                            'Tidak ada data',
-                            style: AppStyles.statusText
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ))
-                        : ConstrainedBox(
-                            constraints: BoxConstraints(maxHeight: 300),
-                            child: DataTable2(
-                              // style
-                              headingTextStyle: AppStyles.sidebarText.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyles.textColor),
-                              headingRowColor: WidgetStateProperty.resolveWith(
-                                (states) => Colors.white,
-                              ),
-                              headingRowDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(6),
-                                      topRight: Radius.circular(6))),
-                              dataTextStyle: AppStyles.contentText
-                                  .copyWith(color: AppStyles.textColor),
-                              minWidth: 768,
-                              dividerThickness: 1,
-                              horizontalMargin: 12,
-                              dataRowHeight: 50,
-                              columnSpacing: 12,
-                              // empty: Center(
-                              //   child: Text(
-                              //     'Tidak ada Data',
-                              //     style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
-                              //   ),
-                              // ),
-                              columns: [
-                                DataColumn(
-                                  label: Text('No.'),
-                                ),
-                                DataColumn(label: Text('Nama Tindakan')),
-                                DataColumn(label: Text('Jumlah')),
-                                DataColumn(label: Text('Harga Tindakan')),
-                                DataColumn(label: Text('Harga Total')),
-                              ],
-                              rows: List.generate(listTindakan.length, (index) {
-                                var data = listTindakan[index];
-                                total += listTindakan[index].totalHargaTindakan;
-                                // print(listTindakan[index]);
-                                return DataRow(cells: [
-                                  DataCell(Text((index + 1).toString())),
-                                  DataCell(Text(data.namaTindakan)),
-                                  DataCell(Text(data.jumlah.toString())),
-                                  DataCell(Text(data.hargaTindakan.toString())),
-                                  DataCell(
-                                      Text(data.totalHargaTindakan.toString())),
-                                ]);
-                              }),
-                            ),
-                          ),
-                  ],
+                            listTindakan.isEmpty
+                                ? Center(
+                                    child: Text(
+                                    'Tidak ada data',
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
+                                  ))
+                                : ConstrainedBox(
+                                    constraints: BoxConstraints(maxHeight: 300),
+                                    child: DataTable2(
+                                      // style
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
+                                        (states) => Colors.white,
+                                      ),
+                                      headingRowDecoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(6),
+                                              topRight: Radius.circular(6))),
+                                      dataTextStyle: AppStyles.contentText
+                                          .copyWith(color: AppStyles.textColor),
+                                      minWidth: 768,
+                                      dividerThickness: 1,
+                                      horizontalMargin: 12,
+                                      dataRowHeight: 50,
+                                      columnSpacing: 12,
+                                      // empty: Center(
+                                      //   child: Text(
+                                      //     'Tidak ada Data',
+                                      //     style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
+                                      //   ),
+                                      // ),
+                                      columns: [
+                                        DataColumn(
+                                          label: Text('No.'),
+                                        ),
+                                        DataColumn(label: Text('Nama Tindakan')),
+                                        DataColumn(label: Text('Jumlah')),
+                                        DataColumn(label: Text('Harga Tindakan')),
+                                        DataColumn(label: Text('Harga Total')),
+                                      ],
+                                      rows: List.generate(listTindakan.length, (index) {
+                                        var data = listTindakan[index];
+                                        total += listTindakan[index].totalHargaTindakan;
+                                        // print(listTindakan[index]);
+                                        return DataRow(cells: [
+                                          DataCell(Text((index + 1).toString())),
+                                          DataCell(Text(data.namaTindakan)),
+                                          DataCell(Text(data.jumlah.toString())),
+                                          DataCell(Text(data.hargaTindakan.toString())),
+                                          DataCell(Text(data.totalHargaTindakan.toString())),
+                                        ]);
+                                      }),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               GreyDivider(),
@@ -283,8 +281,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                       children: [
                         Text(
                           'TOTAL JUMLAH BAYAR: \tRp${total.toString()},00',
-                          style: AppStyles.contentText
-                              .copyWith(fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText.copyWith(fontWeight: FontWeight.bold),
                         )
                       ],
                     ),

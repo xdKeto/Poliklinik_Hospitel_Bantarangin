@@ -3,7 +3,7 @@ import 'package:poli_admin/base/global_widgets/side_navbar.dart';
 import 'package:poli_admin/base/utils/app_routes.dart';
 import 'package:poli_admin/screens/login/login_screen.dart';
 
-void main() {
+void main() async{
   // debugPaintSizeEnabled = true;
   runApp(const MyApp());
 }

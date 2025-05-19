@@ -22,6 +22,7 @@ class ListPasienScreen extends StatefulWidget {
     this.toggleSidebar,
     required this.isExpand,
     required this.navigateToPage,
+    
   });
 
   @override

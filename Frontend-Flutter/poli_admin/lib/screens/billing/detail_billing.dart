@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elegant_notification/elegant_notification.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,8 +10,11 @@ import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 import 'package:poli_admin/base/global_widgets/label_required.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:poli_admin/base/utils/config.dart';
 
 class DetailBilling extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -44,6 +48,7 @@ class _DetailBillingState extends State<DetailBilling> {
   bool isLoading = true;
 
   final DataController dataController = DataController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -60,6 +65,72 @@ class _DetailBillingState extends State<DetailBilling> {
         listTindakan = List.from(detail!.tindakan);
         isLoading = false;
       });
+    }
+  }
+
+  void doBayar() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      Navigator.pop(context);
+      showDialog(context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
+
+      DataController dataController = DataController();
+      // print('ini billing id = ${widget.id}');
+      try {
+        ResponseRequestAPI response = await dataController
+            .apiConnector(Config.apiEndpoints['assignBilling']!(detail!.idKunjungan), "post", {
+          "tipe_pembayaran": selectedValue,
+        });
+
+        if (!mounted) return;
+        Navigator.pop(context);
+        if (response.status == 200) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                Future.delayed(Duration(seconds: 1), () {
+                  if (context.mounted) Navigator.pop(context);
+                });
+
+                return SucfailAlert(
+                    isSuccess: true,
+                    boldText: "Assign Pembayaran Sukses",
+                    italicText: "pembayaran berhasil");
+              });
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => SucfailAlert(
+              isSuccess: false,
+              boldText: "Pembayaran Gagal",
+              italicText: response.message,
+            ),
+          );
+        }
+      } catch (e) {
+        throw Exception(e);
+      }
+    } else {
+      Navigator.pop(context);
+      ElegantNotification.error(
+        title: Text(
+          'Form Error',
+          style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
+        ),
+        description: Text(
+          'Pastikan semua field telah terisi',
+          style: AppStyles.contentText,
+        ),
+        icon: Icon(
+          FluentIcons.error_circle_16_regular,
+          color: AppStyles.redColor,
+          size: 48,
+        ),
+        width: 400,
+        height: 75,
+        toastDuration: Duration(seconds: 5),
+      ).show(context);
     }
   }
 
@@ -84,19 +155,16 @@ class _DetailBillingState extends State<DetailBilling> {
                 child: ListView(
                   children: [
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 22, horizontal: 27),
+                      padding: EdgeInsets.symmetric(vertical: 22, horizontal: 27),
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                         decoration: AppStyles.whiteBox,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Hospitel Bantarangin',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Jl. Ponorogo - Wonogiri, Tengah, Kauman',
@@ -163,8 +231,7 @@ class _DetailBillingState extends State<DetailBilling> {
                             ),
                             Text(
                               'Daftar Obat',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 6,
@@ -173,19 +240,16 @@ class _DetailBillingState extends State<DetailBilling> {
                                 ? Center(
                                     child: Text(
                                     'Tidak ada ada',
-                                    style: AppStyles.statusText
-                                        .copyWith(fontWeight: FontWeight.bold),
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppStyles.textColor),
-                                      headingRowColor:
-                                          WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -211,23 +275,18 @@ class _DetailBillingState extends State<DetailBilling> {
                                         DataColumn(label: Text('Harga Satuan')),
                                         DataColumn(label: Text('Total')),
                                       ],
-                                      rows: List.generate(listObat.length,
-                                          (index) {
+                                      rows: List.generate(listObat.length, (index) {
                                         var data = listObat[index];
                                         total += listObat[index].hargaTotal;
-                                        print(listObat[index]);
+                                        // print(listObat[index]);
                                         return DataRow(cells: [
-                                          DataCell(
-                                              Text((index + 1).toString())),
+                                          DataCell(Text((index + 1).toString())),
                                           DataCell(Text(data.namaObat ?? '')),
                                           DataCell(Text(data.keterangan)),
-                                          DataCell(
-                                              Text(data.jumlah.toString())),
+                                          DataCell(Text(data.jumlah.toString())),
                                           DataCell(Text(data.satuan ?? '')),
-                                          DataCell(Text(
-                                              data.hargaSatuan.toString())),
-                                          DataCell(
-                                              Text(data.hargaTotal.toString())),
+                                          DataCell(Text(data.hargaSatuan.toString())),
+                                          DataCell(Text(data.hargaTotal.toString())),
                                         ]);
                                       }),
                                     ),
@@ -241,8 +300,7 @@ class _DetailBillingState extends State<DetailBilling> {
                             ),
                             Text(
                               'Daftar Tindakan',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 6,
@@ -251,19 +309,16 @@ class _DetailBillingState extends State<DetailBilling> {
                                 ? Center(
                                     child: Text(
                                     'Tidak ada data',
-                                    style: AppStyles.statusText
-                                        .copyWith(fontWeight: FontWeight.bold),
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppStyles.textColor),
-                                      headingRowColor:
-                                          WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -287,29 +342,21 @@ class _DetailBillingState extends State<DetailBilling> {
                                         DataColumn(
                                           label: Text('No.'),
                                         ),
-                                        DataColumn(
-                                            label: Text('Nama Tindakan')),
+                                        DataColumn(label: Text('Nama Tindakan')),
                                         DataColumn(label: Text('Jumlah')),
-                                        DataColumn(
-                                            label: Text('Harga Tindakan')),
+                                        DataColumn(label: Text('Harga Tindakan')),
                                         DataColumn(label: Text('Harga Total')),
                                       ],
-                                      rows: List.generate(listTindakan.length,
-                                          (index) {
+                                      rows: List.generate(listTindakan.length, (index) {
                                         var data = listTindakan[index];
-                                        total += listTindakan[index]
-                                            .totalHargaTindakan;
-                                        print(listTindakan[index]);
+                                        total += listTindakan[index].totalHargaTindakan;
+                                        // print(listTindakan[index]);
                                         return DataRow(cells: [
-                                          DataCell(
-                                              Text((index + 1).toString())),
+                                          DataCell(Text((index + 1).toString())),
                                           DataCell(Text(data.namaTindakan)),
-                                          DataCell(
-                                              Text(data.jumlah.toString())),
-                                          DataCell(Text(
-                                              data.hargaTindakan.toString())),
-                                          DataCell(Text(data.totalHargaTindakan
-                                              .toString())),
+                                          DataCell(Text(data.jumlah.toString())),
+                                          DataCell(Text(data.hargaTindakan.toString())),
+                                          DataCell(Text(data.totalHargaTindakan.toString())),
                                         ]);
                                       }),
                                     ),
@@ -322,8 +369,8 @@ class _DetailBillingState extends State<DetailBilling> {
                               children: [
                                 Text(
                                   'TOTAL JUMLAH BAYAR',
-                                  style: AppStyles.contentText
-                                      .copyWith(fontWeight: FontWeight.bold),
+                                  style:
+                                      AppStyles.contentText.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   width: screenWidth * 0.1,
@@ -341,141 +388,133 @@ class _DetailBillingState extends State<DetailBilling> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 27, right: 27, bottom: 22),
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 20, right: 20, top: 12, bottom: 24),
-                        decoration: AppStyles.whiteBox,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  LabelRequired(
-                                      text: 'Pilih Pembayaran',
-                                      style: AppStyles.contentText.copyWith(
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  DropdownButtonFormField2<String>(
-                                    isExpanded: true,
-                                    decoration: AppStyles.formBox.copyWith(
-                                        contentPadding: EdgeInsets.zero),
-                                    hint: Text('-- Pilih jenis pembayaran --'),
-                                    items: listBayar
-                                        .map((item) => DropdownMenuItem<String>(
-                                            value: item, child: Text(item)))
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return 'Pilih jenis pembayaran';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {},
-                                    onSaved: (newValue) {
-                                      selectedValue = newValue.toString();
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                        padding: EdgeInsets.only(right: 8)),
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 27, right: 27, bottom: 22),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 24),
+                          decoration: AppStyles.whiteBox,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    LabelRequired(
+                                        text: 'Pilih Pembayaran',
+                                        style: AppStyles.contentText
+                                            .copyWith(fontWeight: FontWeight.bold)),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    DropdownButtonFormField2<String>(
+                                      isExpanded: true,
+                                      decoration: AppStyles.formBox
+                                          .copyWith(contentPadding: EdgeInsets.zero),
+                                      hint: Text('-- Pilih jenis pembayaran --'),
+                                      items: listBayar
+                                          .map((item) => DropdownMenuItem<String>(
+                                              value: item, child: Text(item)))
+                                          .toList(),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Pilih jenis pembayaran';
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {},
+                                      onSaved: (newValue) {
+                                        selectedValue = newValue.toString();
+                                      },
+                                      buttonStyleData:
+                                          ButtonStyleData(padding: EdgeInsets.only(right: 8)),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.black45,
+                                        ),
+                                        iconSize: 24,
                                       ),
-                                      iconSize: 24,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
                                       ),
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                    ),
-                                  )
-                                ],
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  LabelRequired(
-                                      text: 'Tanggal Pembayaran',
-                                      style: AppStyles.contentText.copyWith(
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  TextFormField(
-                                    controller: tanggalcontroller,
-                                    readOnly: true,
-                                    cursorColor: Colors.black,
-                                    decoration: AppStyles.formBox.copyWith(
-                                      hintText: 'DD/MM/YY',
-                                      hintStyle: TextStyle(
-                                          color: AppStyles.greyColor2),
-                                      suffixIcon: Icon(Icons.date_range),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    LabelRequired(
+                                        text: 'Tanggal Pembayaran',
+                                        style: AppStyles.contentText
+                                            .copyWith(fontWeight: FontWeight.bold)),
+                                    SizedBox(
+                                      height: 12,
                                     ),
-                                    onChanged: (value) {},
-                                    onTap: () async {
-                                      DateTime? pickedDate =
-                                          await showDatePicker(
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: Theme.of(context).copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                  primary:
-                                                      AppStyles.primaryColor,
-                                                  onPrimary: Colors.white,
-                                                  onSurface:
-                                                      AppStyles.primaryColor),
-                                              textButtonTheme:
-                                                  TextButtonThemeData(
-                                                style: TextButton.styleFrom(
-                                                    foregroundColor:
-                                                        AppStyles.primaryColor),
+                                    TextFormField(
+                                      controller: tanggalcontroller,
+                                      readOnly: true,
+                                      cursorColor: Colors.black,
+                                      decoration: AppStyles.formBox.copyWith(
+                                        hintText: 'DD/MM/YY',
+                                        hintStyle: TextStyle(color: AppStyles.greyColor2),
+                                        suffixIcon: Icon(Icons.date_range),
+                                      ),
+                                      onChanged: (value) {},
+                                      onTap: () async {
+                                        DateTime? pickedDate = await showDatePicker(
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                    primary: AppStyles.primaryColor,
+                                                    onPrimary: Colors.white,
+                                                    onSurface: AppStyles.primaryColor),
+                                                textButtonTheme: TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                      foregroundColor: AppStyles.primaryColor),
+                                                ),
                                               ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2100),
-                                      );
+                                              child: child!,
+                                            );
+                                          },
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2100),
+                                        );
 
-                                      if (pickedDate != null &&
-                                          pickedDate != selectedDate) {
-                                        setState(() {
-                                          selectedDate = pickedDate;
+                                        if (pickedDate != null && pickedDate != selectedDate) {
+                                          setState(() {
+                                            selectedDate = pickedDate;
 
-                                          tanggalcontroller.text =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(selectedDate);
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ],
+                                            tanggalcontroller.text =
+                                                DateFormat('yyyy-MM-dd').format(selectedDate);
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 27, right: 27, bottom: 22),
+                      padding: const EdgeInsets.only(left: 27, right: 27, bottom: 22),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -503,10 +542,11 @@ class _DetailBillingState extends State<DetailBilling> {
                                   builder: (context) => ConfirmAlert(
                                         icon: FluentIcons.info_12_regular,
                                         boldText: 'Assign Pembayaran?',
-                                        italicText:
-                                            'Tagihan akan dicatat lunas oleh sistem',
+                                        italicText: 'Tagihan akan dicatat lunas oleh sistem',
                                         yesText: 'assign',
-                                        yesFunc: () {},
+                                        yesFunc: () {
+                                          doBayar();
+                                        },
                                       ));
                             },
                             child: TheButton(

@@ -1,4 +1,5 @@
 class DetailTransaksi {
+  final int idKunjungan;
   final String namaPasien;
   final String idRm;
   final String namaPoli;
@@ -11,6 +12,7 @@ class DetailTransaksi {
   final String? waktuDibayar;
 
   DetailTransaksi({
+    required this.idKunjungan,
     required this.namaPasien,
     required this.idRm,
     required this.namaPoli,
@@ -25,6 +27,7 @@ class DetailTransaksi {
 
   factory DetailTransaksi.fromJson(Map<String, dynamic> json) {
     return DetailTransaksi(
+        idKunjungan: json['id_kunjungan'],
         namaPasien: json['nama_pasien'],
         idRm: json['id_rm'],
         namaPoli: json['nama_poli'],

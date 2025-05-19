@@ -185,70 +185,85 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                 height: 12,
               ),
               Expanded(
-                child: PaginatedDataTable2(
-                    sortColumnIndex: sortColumnIndex,
-                    sortAscending: sortAscending,
+                  child: (isLoading)
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: AppStyles.primaryColor,
+                          ),
+                        )
+                      : StreamBuilder<List<Billing>>(
+                          stream: dataController.riwayatStream,
+                          initialData: dataController.riwayatTransaksi,
+                          builder: (context, snapshot) {
+                            return PaginatedDataTable2(
+                                sortColumnIndex: sortColumnIndex,
+                                sortAscending: sortAscending,
 
-                    // style
-                    headingTextStyle: AppStyles.sidebarText
-                        .copyWith(fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                    headingRowColor:
-                        WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
-                    headingRowDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-                    dataTextStyle: AppStyles.contentText.copyWith(color: AppStyles.textColor),
-                    minWidth: 768,
-                    dividerThickness: 0,
-                    horizontalMargin: 12,
-                    dataRowHeight: 56,
-                    columnSpacing: 12,
+                                // style
+                                headingTextStyle: AppStyles.sidebarText.copyWith(
+                                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                headingRowColor: WidgetStateProperty.resolveWith(
+                                    (states) => AppStyles.greyColor),
+                                headingRowDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12))),
+                                dataTextStyle:
+                                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
+                                minWidth: 768,
+                                dividerThickness: 0,
+                                horizontalMargin: 12,
+                                dataRowHeight: 56,
+                                columnSpacing: 12,
 
-                    // pagination
-                    showFirstLastButtons: true,
-                    renderEmptyRowsInTheEnd: false,
-                    rowsPerPage: rowsPerPage,
-                    availableRowsPerPage: [10, 25, 50, 100],
-                    onRowsPerPageChanged: (value) {
-                      if (value != null && [10, 25, 50, 100].contains(value)) {
-                        setState(() {
-                          rowsPerPage = value;
-                        });
-                      }
-                    },
+                                // pagination
+                                showFirstLastButtons: true,
+                                renderEmptyRowsInTheEnd: false,
+                                rowsPerPage: rowsPerPage,
+                                availableRowsPerPage: [10, 25, 50, 100],
+                                onRowsPerPageChanged: (value) {
+                                  if (value != null && [10, 25, 50, 100].contains(value)) {
+                                    setState(() {
+                                      rowsPerPage = value;
+                                    });
+                                  }
+                                },
 
-                    // sorting
-                    sortArrowAlwaysVisible: true,
-                    sortArrowBuilder: (bool ascending, bool sorted) {
-                      if (sorted) {
-                        return Icon(
-                          ascending
-                              ? FluentIcons.arrow_sort_up_16_regular
-                              : FluentIcons.arrow_sort_down_16_regular,
-                          size: 12,
-                        );
-                      } else {
-                        return Icon(
-                          FluentIcons.arrow_sort_16_regular,
-                          size: 12,
-                        );
-                      }
-                    },
-                    empty: Center(
-                      child: Text(
-                        'Tidak ada Data',
-                        style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    columns: [
-                      DataColumn(label: Text('No.')),
-                      DataColumn(label: Text('Nama Pasien')),
-                      DataColumn(label: Text('Tanggal Pembayaran')),
-                      DataColumn(label: Text('Poli Tujuan')),
-                      DataColumn(label: Center(child: Text('Rincian'))),
-                    ],
-                    source: RowSource(myData: filteredList, count: filteredList.length, context)),
-              ),
+                                // sorting
+                                sortArrowAlwaysVisible: true,
+                                sortArrowBuilder: (bool ascending, bool sorted) {
+                                  if (sorted) {
+                                    return Icon(
+                                      ascending
+                                          ? FluentIcons.arrow_sort_up_16_regular
+                                          : FluentIcons.arrow_sort_down_16_regular,
+                                      size: 12,
+                                    );
+                                  } else {
+                                    return Icon(
+                                      FluentIcons.arrow_sort_16_regular,
+                                      size: 12,
+                                    );
+                                  }
+                                },
+                                empty: Center(
+                                  child: Text(
+                                    'Tidak ada Data',
+                                    style: AppStyles.subheadingText
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                columns: [
+                                  DataColumn(label: Text('No.')),
+                                  DataColumn(label: Text('Nama Pasien')),
+                                  DataColumn(label: Text('Tanggal Pembayaran')),
+                                  DataColumn(label: Text('Poli Tujuan')),
+                                  DataColumn(label: Center(child: Text('Rincian'))),
+                                ],
+                                source: RowSource(
+                                    myData: filteredList, count: filteredList.length, context));
+                          },
+                        )),
             ],
           ),
         ),
@@ -289,6 +304,7 @@ class RowSource extends DataTableSource {
                   barrierDismissible: false);
 
               try {
+                // print('ini id kunjungan = ${data.idKunjungan}');
                 final riwayat =
                     await dataController.fetchDetailTransaksi(data.idKunjungan.toString());
 

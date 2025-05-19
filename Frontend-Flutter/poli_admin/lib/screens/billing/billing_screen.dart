@@ -48,7 +48,6 @@ class _BillingScreenState extends State<BillingScreen> {
   final TextEditingController controller = TextEditingController();
   DataController dataController = DataController();
   bool isLoading = true;
-  bool firstLoad = true;
 
   @override
   void initState() {
@@ -82,10 +81,7 @@ class _BillingScreenState extends State<BillingScreen> {
         await dataController.fetchPoliAktif();
       }
 
-      if (firstLoad) {
-        await dataController.fetchBilling();
-        firstLoad = false;
-      }
+      await dataController.fetchBilling();
 
       if (!mounted) return;
       setState(() {
@@ -111,15 +107,11 @@ class _BillingScreenState extends State<BillingScreen> {
       List<Billing> baseList = List.from(dataController.billing);
 
       if (selectedPoli != null && selectedPoli != '-- Semua Poliklinik --') {
-        baseList = baseList
-            .where((billing) => billing.namaPoli == selectedPoli)
-            .toList();
+        baseList = baseList.where((billing) => billing.namaPoli == selectedPoli).toList();
       }
 
       if (selectedStatus != null && selectedStatus != '-- Semua Status --') {
-        baseList = baseList
-            .where((billing) => billing.status == selectedStatus)
-            .toList();
+        baseList = baseList.where((billing) => billing.status == selectedStatus).toList();
       }
 
       if (controller.text.isNotEmpty) {
@@ -137,9 +129,8 @@ class _BillingScreenState extends State<BillingScreen> {
       if (selectedStatus == "-- Semua Status --" || selectedStatus == null) {
         baseList = List.from(dataController.billing);
       } else {
-        baseList = dataController.billing
-            .where((billing) => billing.status == selectedStatus)
-            .toList();
+        baseList =
+            dataController.billing.where((billing) => billing.status == selectedStatus).toList();
       }
 
       String searchQuery = query.toLowerCase();
@@ -197,8 +188,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Poliklinik --'),
                         items: listPoli
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -219,8 +209,7 @@ class _BillingScreenState extends State<BillingScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Status --'),
                         items: listStatus
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -260,91 +249,89 @@ class _BillingScreenState extends State<BillingScreen> {
               ),
               SizedBox(height: 12),
               Expanded(
-                  child: StreamBuilder<List<Billing>>(
-                stream: dataController.billingStream,
-                initialData: filteredList,
-                builder: (context, snapshot) {
-                  return PaginatedDataTable2(
-                      sortColumnIndex: sortColumnIndex,
-                      sortAscending: sortAscending,
+                  child: (isLoading)
+                      ? Center(
+                          child: CircularProgressIndicator(
+                          color: AppStyles.primaryColor,
+                        ))
+                      : StreamBuilder<List<Billing>>(
+                          stream: dataController.billingStream,
+                          initialData: filteredList,
+                          builder: (context, snapshot) {
+                            return PaginatedDataTable2(
+                                sortColumnIndex: sortColumnIndex,
+                                sortAscending: sortAscending,
 
-                      // style
-                      headingTextStyle: AppStyles.sidebarText.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppStyles.textColor),
-                      headingRowColor: WidgetStateProperty.resolveWith(
-                          (states) => AppStyles.greyColor),
-                      headingRowDecoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12))),
-                      dataTextStyle: AppStyles.contentText
-                          .copyWith(color: AppStyles.textColor),
-                      minWidth: 768,
-                      dividerThickness: 0,
-                      horizontalMargin: 12,
-                      dataRowHeight: 56,
-                      columnSpacing: 12,
+                                // style
+                                headingTextStyle: AppStyles.sidebarText.copyWith(
+                                    fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                headingRowColor: WidgetStateProperty.resolveWith(
+                                    (states) => AppStyles.greyColor),
+                                headingRowDecoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12))),
+                                dataTextStyle:
+                                    AppStyles.contentText.copyWith(color: AppStyles.textColor),
+                                minWidth: 768,
+                                dividerThickness: 0,
+                                horizontalMargin: 12,
+                                dataRowHeight: 56,
+                                columnSpacing: 12,
 
-                      // pagination
-                      showFirstLastButtons: true,
-                      renderEmptyRowsInTheEnd: false,
-                      rowsPerPage: rowsPerPage,
-                      availableRowsPerPage: [10, 25, 50, 100],
-                      onRowsPerPageChanged: (value) {
-                        if (value != null &&
-                            [10, 25, 50, 100].contains(value)) {
-                          setState(() {
-                            rowsPerPage = value;
-                          });
-                        }
-                      },
+                                // pagination
+                                showFirstLastButtons: true,
+                                renderEmptyRowsInTheEnd: false,
+                                rowsPerPage: rowsPerPage,
+                                availableRowsPerPage: [10, 25, 50, 100],
+                                onRowsPerPageChanged: (value) {
+                                  if (value != null && [10, 25, 50, 100].contains(value)) {
+                                    setState(() {
+                                      rowsPerPage = value;
+                                    });
+                                  }
+                                },
 
-                      // sorting
-                      sortArrowAlwaysVisible: true,
-                      sortArrowBuilder: (bool ascending, bool sorted) {
-                        if (sorted) {
-                          return Icon(
-                            ascending
-                                ? FluentIcons.arrow_sort_up_16_regular
-                                : FluentIcons.arrow_sort_down_16_regular,
-                            size: 12,
-                          );
-                        } else {
-                          return Icon(
-                            FluentIcons.arrow_sort_16_regular,
-                            size: 12,
-                          );
-                        }
-                      },
-                      empty: (isLoading && dataController.billing.isEmpty)
-                          ? Center(
-                              child: CircularProgressIndicator(
-                              color: AppStyles.primaryColor,
-                            ))
-                          : Center(
-                              child: Text(
-                                'Tidak ada Data',
-                                style: AppStyles.subheadingText
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                      columns: [
-                        DataColumn(label: Text('No.')),
-                        DataColumn(label: Text('No. Rekam Medis')),
-                        DataColumn(
-                          label: Text('Nama Pasien'),
-                        ),
-                        DataColumn(label: Text('Poli Tujuan')),
-                        DataColumn(label: Center(child: Text('Status'))),
-                        DataColumn(label: Center(child: Text('Rincian'))),
-                      ],
-                      source: RowSource(widget.navigateToPage,
-                          myData: filteredList,
-                          count: filteredList.length,
-                          context: context));
-                },
-              )),
+                                // sorting
+                                sortArrowAlwaysVisible: true,
+                                sortArrowBuilder: (bool ascending, bool sorted) {
+                                  if (sorted) {
+                                    return Icon(
+                                      ascending
+                                          ? FluentIcons.arrow_sort_up_16_regular
+                                          : FluentIcons.arrow_sort_down_16_regular,
+                                      size: 12,
+                                    );
+                                  } else {
+                                    return Icon(
+                                      FluentIcons.arrow_sort_16_regular,
+                                      size: 12,
+                                    );
+                                  }
+                                },
+                                empty: Center(
+                                  child: Text(
+                                    'Tidak ada Data',
+                                    style: AppStyles.subheadingText
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                columns: [
+                                  DataColumn(label: Text('No.')),
+                                  DataColumn(label: Text('No. Rekam Medis')),
+                                  DataColumn(
+                                    label: Text('Nama Pasien'),
+                                  ),
+                                  DataColumn(label: Text('Poli Tujuan')),
+                                  DataColumn(label: Center(child: Text('Status'))),
+                                  DataColumn(label: Center(child: Text('Rincian'))),
+                                ],
+                                source: RowSource(widget.navigateToPage,
+                                    myData: filteredList,
+                                    count: filteredList.length,
+                                    context: context));
+                          },
+                        )),
             ],
           ),
         ),
@@ -389,8 +376,8 @@ class RowSource extends DataTableSource {
                   barrierDismissible: false);
 
               try {
-                final detail = await dataController
-                    .fetchDetailTransaksi(data.idKunjungan.toString());
+                final detail =
+                    await dataController.fetchDetailTransaksi(data.idKunjungan.toString());
                 if (detail != null) {
                   dataController.detailTransaksi = detail;
                   if (!context.mounted) return;

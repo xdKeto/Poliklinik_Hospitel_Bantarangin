@@ -35,7 +35,6 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   final TextEditingController controller = TextEditingController();
   DataController dataController = DataController();
   bool isLoading = true;
-  bool firstLoad = true;
 
   @override
   void initState() {
@@ -46,8 +45,6 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   Future<void> urutan() async {
     await fetchData();
     await applyFilters();
-
-    print(filteredList);
   }
 
   Future<void> fetchData() async {
@@ -61,11 +58,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
         await dataController.fetchPoliAktif();
       }
 
-      if (firstLoad) {
-        await dataController.fetchRiwayatTransaksi();
-        // print(dataController.riwayatTransaksi);
-        firstLoad = false;
-      }
+      await dataController.fetchRiwayatTransaksi();
 
       if (!mounted) return;
       setState(() {
@@ -91,9 +84,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       List<Billing> baseList = List.from(dataController.riwayatTransaksi);
 
       if (selectedPoli != null && selectedPoli != '-- Semua Poliklinik --') {
-        baseList = baseList
-            .where((riwayat) => riwayat.namaPoli == selectedPoli)
-            .toList();
+        baseList = baseList.where((riwayat) => riwayat.namaPoli == selectedPoli).toList();
       }
 
       if (controller.text.isNotEmpty) {
@@ -176,8 +167,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Poliklinik --'),
                         items: listPoli
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -200,17 +190,14 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     sortAscending: sortAscending,
 
                     // style
-                    headingTextStyle: AppStyles.sidebarText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppStyles.textColor),
-                    headingRowColor: WidgetStateProperty.resolveWith(
-                        (states) => AppStyles.greyColor),
+                    headingTextStyle: AppStyles.sidebarText
+                        .copyWith(fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                    headingRowColor:
+                        WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
                     headingRowDecoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12))),
-                    dataTextStyle: AppStyles.contentText
-                        .copyWith(color: AppStyles.textColor),
+                            topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                    dataTextStyle: AppStyles.contentText.copyWith(color: AppStyles.textColor),
                     minWidth: 768,
                     dividerThickness: 0,
                     horizontalMargin: 12,
@@ -247,19 +234,12 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                         );
                       }
                     },
-                    empty:
-                        (isLoading && dataController.riwayatTransaksi.isEmpty)
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                color: AppStyles.primaryColor,
-                              ))
-                            : Center(
-                                child: Text(
-                                  'Tidak ada Data',
-                                  style: AppStyles.subheadingText
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                    empty: Center(
+                      child: Text(
+                        'Tidak ada Data',
+                        style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     columns: [
                       DataColumn(label: Text('No.')),
                       DataColumn(label: Text('Nama Pasien')),
@@ -267,10 +247,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                       DataColumn(label: Text('Poli Tujuan')),
                       DataColumn(label: Center(child: Text('Rincian'))),
                     ],
-                    source: RowSource(
-                        myData: filteredList,
-                        count: filteredList.length,
-                        context)),
+                    source: RowSource(myData: filteredList, count: filteredList.length, context)),
               ),
             ],
           ),
@@ -312,8 +289,8 @@ class RowSource extends DataTableSource {
                   barrierDismissible: false);
 
               try {
-                final riwayat = await dataController
-                    .fetchDetailTransaksi(data.idKunjungan.toString());
+                final riwayat =
+                    await dataController.fetchDetailTransaksi(data.idKunjungan.toString());
 
                 if (riwayat != null) {
                   dataController.detailTransaksi = riwayat;

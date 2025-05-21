@@ -29,7 +29,8 @@ class DetailRiwayat extends StatelessWidget {
               children: [
                 Text(
                   DateFormat('dd MMMM yyyy', "id_ID")
-                      .format(DateTime.parse(data.createdAt.toString().substring(0, 10)))
+                      .format(DateTime.parse(
+                          data.createdAt.toString().substring(0, 10)))
                       .toString(),
                   style: AppStyles.subheadingText
                       .copyWith(fontWeight: FontWeight.bold),
@@ -95,24 +96,12 @@ class DetailRiwayat extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       DataField(
-                          title: "Gula Darah",
-                          data: data.gulaDarah.toString(),
-                          type: "mg/dL"),
-                      SizedBox(
-                        width: 32,
-                      ),
-                      DataField(
                           title: "Detak / Nadi",
                           data: data.detakNadi.toString(),
                           type: "hbpm"),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
+                      SizedBox(
+                        width: 32,
+                      ),
                       DataField(
                           title: "Resp. Rate",
                           data: data.lajuRespirasi.toString(),

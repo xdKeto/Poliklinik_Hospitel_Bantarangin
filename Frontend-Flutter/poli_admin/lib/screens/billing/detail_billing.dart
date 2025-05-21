@@ -5,6 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/backend/class/detail_transaksi.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
+import 'package:poli_admin/base/backend/pdf_api.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
@@ -14,6 +15,7 @@ import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/base/utils/config.dart';
+import 'package:printing/printing.dart';
 
 class DetailBilling extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -39,6 +41,7 @@ class _DetailBillingState extends State<DetailBilling> {
   var parsedDate = DateTime.now();
   var tanggalcontroller = TextEditingController();
   var total = 0;
+  double satuanObat = 0;
 
   int rowsPerPage = 10;
   DetailTransaksi? detail;
@@ -72,21 +75,15 @@ class _DetailBillingState extends State<DetailBilling> {
       _formKey.currentState!.save();
 
       Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (context) => LoadingAlert(),
-          barrierDismissible: false);
+      showDialog(context: context, builder: (context) => LoadingAlert(), barrierDismissible: false);
 
       DataController dataController = DataController();
       // print('ini billing id = ${widget.id}');
       try {
         ResponseRequestAPI response = await dataController.apiConnector(
-            Config
-                .apiEndpoints['assignBilling']!(detail!.idKunjungan.toString()),
-            "post",
-            {
-              "tipe_pembayaran": selectedValue,
-            });
+            Config.apiEndpoints['assignBilling']!(detail!.idKunjungan.toString()), "post", {
+          "tipe_pembayaran": selectedValue,
+        });
 
         if (!mounted) return;
         Navigator.pop(context);
@@ -160,19 +157,16 @@ class _DetailBillingState extends State<DetailBilling> {
                 child: ListView(
                   children: [
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 22, horizontal: 27),
+                      padding: EdgeInsets.symmetric(vertical: 22, horizontal: 27),
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                         decoration: AppStyles.whiteBox,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Hospitel Bantarangin',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Jl. Ponorogo - Wonogiri, Tengah, Kauman',
@@ -239,8 +233,7 @@ class _DetailBillingState extends State<DetailBilling> {
                             ),
                             Text(
                               'Daftar Obat',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 6,
@@ -249,19 +242,16 @@ class _DetailBillingState extends State<DetailBilling> {
                                 ? Center(
                                     child: Text(
                                     'Tidak ada ada',
-                                    style: AppStyles.statusText
-                                        .copyWith(fontWeight: FontWeight.bold),
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppStyles.textColor),
-                                      headingRowColor:
-                                          WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -287,23 +277,23 @@ class _DetailBillingState extends State<DetailBilling> {
                                         DataColumn(label: Text('Harga Satuan')),
                                         DataColumn(label: Text('Total')),
                                       ],
-                                      rows: List.generate(listObat.length,
-                                          (index) {
+                                      rows: List.generate(listObat.length, (index) {
                                         var data = listObat[index];
                                         total += listObat[index].hargaTotal;
+                                        satuanObat = listObat[index].hargaTotal / listObat[index].jumlah;
                                         // print(listObat[index]);
                                         return DataRow(cells: [
-                                          DataCell(
-                                              Text((index + 1).toString())),
-                                          DataCell(Text(data.namaObat ?? '')),
+                                          DataCell(Text((index + 1).toString())),
+                                          DataCell(Text(data.namaObat?.isNotEmpty == true
+                                              ? data.namaObat!
+                                              : (data.namaRacikan ?? ''))),
                                           DataCell(Text(data.keterangan)),
-                                          DataCell(
-                                              Text(data.jumlah.toString())),
+                                          DataCell(Text(data.jumlah.toString())),
                                           DataCell(Text(data.satuan ?? '')),
-                                          DataCell(Text(
-                                              data.hargaSatuan.toString())),
-                                          DataCell(
-                                              Text(data.hargaTotal.toString())),
+                                          DataCell(Text(data.hargaSatuan.toString() == 'null'
+                                              ? satuanObat.toString()
+                                              : data.hargaSatuan.toString())),
+                                          DataCell(Text(data.hargaTotal.toString())),
                                         ]);
                                       }),
                                     ),
@@ -317,8 +307,7 @@ class _DetailBillingState extends State<DetailBilling> {
                             ),
                             Text(
                               'Daftar Tindakan',
-                              style: AppStyles.subheadingText
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 6,
@@ -327,19 +316,16 @@ class _DetailBillingState extends State<DetailBilling> {
                                 ? Center(
                                     child: Text(
                                     'Tidak ada data',
-                                    style: AppStyles.statusText
-                                        .copyWith(fontWeight: FontWeight.bold),
+                                    style:
+                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppStyles.textColor),
-                                      headingRowColor:
-                                          WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText.copyWith(
+                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
+                                      headingRowColor: WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -363,29 +349,21 @@ class _DetailBillingState extends State<DetailBilling> {
                                         DataColumn(
                                           label: Text('No.'),
                                         ),
-                                        DataColumn(
-                                            label: Text('Nama Tindakan')),
+                                        DataColumn(label: Text('Nama Tindakan')),
                                         DataColumn(label: Text('Jumlah')),
-                                        DataColumn(
-                                            label: Text('Harga Tindakan')),
+                                        DataColumn(label: Text('Harga Tindakan')),
                                         DataColumn(label: Text('Harga Total')),
                                       ],
-                                      rows: List.generate(listTindakan.length,
-                                          (index) {
+                                      rows: List.generate(listTindakan.length, (index) {
                                         var data = listTindakan[index];
-                                        total += listTindakan[index]
-                                            .totalHargaTindakan;
+                                        total += listTindakan[index].totalHargaTindakan;
                                         // print(listTindakan[index]);
                                         return DataRow(cells: [
-                                          DataCell(
-                                              Text((index + 1).toString())),
+                                          DataCell(Text((index + 1).toString())),
                                           DataCell(Text(data.namaTindakan)),
-                                          DataCell(
-                                              Text(data.jumlah.toString())),
-                                          DataCell(Text(
-                                              data.hargaTindakan.toString())),
-                                          DataCell(Text(data.totalHargaTindakan
-                                              .toString())),
+                                          DataCell(Text(data.jumlah.toString())),
+                                          DataCell(Text(data.hargaTindakan.toString())),
+                                          DataCell(Text(data.totalHargaTindakan.toString())),
                                         ]);
                                       }),
                                     ),
@@ -398,8 +376,8 @@ class _DetailBillingState extends State<DetailBilling> {
                               children: [
                                 Text(
                                   'TOTAL JUMLAH BAYAR',
-                                  style: AppStyles.contentText
-                                      .copyWith(fontWeight: FontWeight.bold),
+                                  style:
+                                      AppStyles.contentText.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   width: screenWidth * 0.1,
@@ -420,11 +398,9 @@ class _DetailBillingState extends State<DetailBilling> {
                     Form(
                       key: _formKey,
                       child: Padding(
-                        padding:
-                            EdgeInsets.only(left: 27, right: 27, bottom: 22),
+                        padding: EdgeInsets.only(left: 27, right: 27, bottom: 22),
                         child: Container(
-                          padding: EdgeInsets.only(
-                              left: 20, right: 20, top: 12, bottom: 24),
+                          padding: EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 24),
                           decoration: AppStyles.whiteBox,
                           child: Row(
                             children: [
@@ -434,22 +410,19 @@ class _DetailBillingState extends State<DetailBilling> {
                                   children: [
                                     LabelRequired(
                                         text: 'Pilih Pembayaran',
-                                        style: AppStyles.contentText.copyWith(
-                                            fontWeight: FontWeight.bold)),
+                                        style: AppStyles.contentText
+                                            .copyWith(fontWeight: FontWeight.bold)),
                                     SizedBox(
                                       height: 12,
                                     ),
                                     DropdownButtonFormField2<String>(
                                       isExpanded: true,
-                                      decoration: AppStyles.formBox.copyWith(
-                                          contentPadding: EdgeInsets.zero),
-                                      hint:
-                                          Text('-- Pilih jenis pembayaran --'),
+                                      decoration: AppStyles.formBox
+                                          .copyWith(contentPadding: EdgeInsets.zero),
+                                      hint: Text('-- Pilih jenis pembayaran --'),
                                       items: listBayar
-                                          .map((item) =>
-                                              DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Text(item)))
+                                          .map((item) => DropdownMenuItem<String>(
+                                              value: item, child: Text(item)))
                                           .toList(),
                                       validator: (value) {
                                         if (value == null) {
@@ -461,8 +434,8 @@ class _DetailBillingState extends State<DetailBilling> {
                                       onSaved: (newValue) {
                                         selectedValue = newValue.toString();
                                       },
-                                      buttonStyleData: ButtonStyleData(
-                                          padding: EdgeInsets.only(right: 8)),
+                                      buttonStyleData:
+                                          ButtonStyleData(padding: EdgeInsets.only(right: 8)),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(
                                           Icons.arrow_drop_down,
@@ -472,14 +445,11 @@ class _DetailBillingState extends State<DetailBilling> {
                                       ),
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(15),
                                         ),
                                       ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                       ),
                                     )
                                   ],
@@ -522,12 +492,9 @@ class _DetailBillingState extends State<DetailBilling> {
                                           onTap: () {
                                             showDialog(
                                                 context: context,
-                                                builder: (context) =>
-                                                    ConfirmAlert(
-                                                      icon: FluentIcons
-                                                          .info_12_regular,
-                                                      boldText:
-                                                          'Assign Pembayaran?',
+                                                builder: (context) => ConfirmAlert(
+                                                      icon: FluentIcons.info_12_regular,
+                                                      boldText: 'Assign Pembayaran?',
                                                       italicText:
                                                           'Tagihan akan dicatat lunas oleh sistem',
                                                       yesText: 'assign',
@@ -552,14 +519,40 @@ class _DetailBillingState extends State<DetailBilling> {
                                           onTap: () {
                                             showDialog(
                                                 context: context,
-                                                builder: (context) =>
-                                                    ConfirmAlert(
-                                                      icon: FluentIcons
-                                                          .print_16_filled,
-                                                      boldText:
-                                                          'Cetak Tagihan?',
+                                                builder: (context) => ConfirmAlert(
+                                                      icon: FluentIcons.print_16_filled,
+                                                      boldText: 'Cetak Tagihan?',
                                                       yesText: 'cetak',
-                                                      yesFunc: () {},
+                                                      yesFunc: () async {
+                                                        Navigator.pop(context);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) => LoadingAlert(),
+                                                            barrierDismissible: false);
+
+                                                        try {
+                                                          final pdfData = await PdfApi.cetakTagihan(
+                                                              detail!, total, satuanObat);
+                                                          if (!context.mounted) return;
+                                                          Navigator.pop(context);
+                                                          await Printing.layoutPdf(
+                                                                  onLayout: (format) => pdfData)
+                                                              .catchError((error) {
+                                                            throw Exception(
+                                                                "Failed to print: $error");
+                                                          });
+                                                        } catch (e) {
+                                                          if (!context.mounted) return;
+                                                          Navigator.pop(context);
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (context) => SucfailAlert(
+                                                                  isSuccess: false,
+                                                                  boldText: "Gagal",
+                                                                  italicText:
+                                                                      "Gagal membuat data: $e"));
+                                                        }
+                                                      },
                                                     ));
                                           },
                                           child: TheButton(

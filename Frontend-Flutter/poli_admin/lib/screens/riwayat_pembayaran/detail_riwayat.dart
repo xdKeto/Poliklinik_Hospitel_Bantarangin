@@ -3,11 +3,15 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:poli_admin/base/backend/class/detail_transaksi.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
+import 'package:poli_admin/base/backend/pdf_api.dart';
 import 'package:poli_admin/base/global_widgets/btrb_text.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
+import 'package:poli_admin/base/global_widgets/loading_alert.dart';
+import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
+import 'package:printing/printing.dart';
 
 class DetailRiwayat extends StatefulWidget {
   final String id;
@@ -27,6 +31,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   List<Tindakan> listTindakan = [];
   bool isLoading = true;
   var total = 0;
+  double satuanObat = 0;
 
   final DataController dataController = DataController();
 
@@ -190,14 +195,20 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                       rows: List.generate(listObat.length, (index) {
                                         var data = listObat[index];
                                         total += listObat[index].hargaTotal;
+                                        satuanObat =
+                                            listObat[index].hargaTotal / listObat[index].jumlah;
                                         // print(listObat[index]);
                                         return DataRow(cells: [
                                           DataCell(Text((index + 1).toString())),
-                                          DataCell(Text(data.namaObat ?? '')),
+                                          DataCell(Text(data.namaObat?.isNotEmpty == true
+                                              ? data.namaObat!
+                                              : (data.namaRacikan ?? ''))),
                                           DataCell(Text(data.keterangan)),
                                           DataCell(Text(data.jumlah.toString())),
                                           DataCell(Text(data.satuan ?? '')),
-                                          DataCell(Text(data.hargaSatuan.toString())),
+                                          DataCell(Text(data.hargaSatuan.toString() == 'null'
+                                              ? satuanObat.toString()
+                                              : data.hargaSatuan.toString())),
                                           DataCell(Text(data.hargaTotal.toString())),
                                         ]);
                                       }),
@@ -306,7 +317,33 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                       icon: FluentIcons.print_16_filled,
                                       boldText: 'Cetak Tagihan?',
                                       yesText: 'cetak',
-                                      yesFunc: () {},
+                                      yesFunc: () async {
+                                        Navigator.pop(context);
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => LoadingAlert(),
+                                            barrierDismissible: false);
+
+                                        try {
+                                          final pdfData =
+                                              await PdfApi.cetakTagihan(detail!, total, satuanObat);
+                                          if (!context.mounted) return;
+                                          Navigator.pop(context);
+                                          await Printing.layoutPdf(onLayout: (format) => pdfData)
+                                              .catchError((error) {
+                                            throw Exception("Failed to print: $error");
+                                          });
+                                        } catch (e) {
+                                          if (!context.mounted) return;
+                                          Navigator.pop(context);
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) => SucfailAlert(
+                                                  isSuccess: false,
+                                                  boldText: "Gagal",
+                                                  italicText: "Gagal membuat data: $e"));
+                                        }
+                                      },
                                     ));
                           },
                           child: TheButton(

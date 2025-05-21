@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:poli_admin/base/backend/class/data_printing.dart';
+import 'package:poli_admin/base/backend/class/detail_transaksi.dart';
+import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 
 String calculateAge(int hari) {
   if (hari < 0) {
@@ -824,6 +826,167 @@ class PdfApi {
             ]))
       ]);
     }));
+
+    return pdf.save();
+  }
+
+  static Future<Uint8List> cetakTagihan(DetailTransaksi data) {
+    final pdf = pw.Document();
+
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat(16 * PdfPageFormat.cm, 21 * PdfPageFormat.cm),
+        build: (_) {
+          return pw.Container(
+              decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: PdfColor.fromInt(0xFF000000))),
+              child: pw.Column(children: [
+                pw.Center(
+                    child: pw.Text('Tagihan Transaksi',
+                        style: pw.TextStyle(
+                            fontSize: 12, fontWeight: pw.FontWeight.bold))),
+                pw.Divider(color: PdfColor.fromInt(0xFF000000), thickness: 1),
+                pw.Expanded(
+                    child: pw.Column(children: [
+                  pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(horizontal: 8),
+                      child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Row(
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.start,
+                                      children: [
+                                        pw.Column(
+                                            crossAxisAlignment:
+                                                pw.CrossAxisAlignment.start,
+                                            children: [
+                                              pw.Text('Nama Pasien',
+                                                  style: pw.TextStyle(
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          pw.FontWeight.bold)),
+                                              pw.Text(data.namaPasien,
+                                                  style: pw.TextStyle(
+                                                    fontSize: 10,
+                                                  )),
+                                            ]),
+                                        pw.SizedBox(width: 8),
+                                        pw.Column(
+                                            crossAxisAlignment:
+                                                pw.CrossAxisAlignment.start,
+                                            children: [
+                                              pw.Text('Tujuan Poliklinik',
+                                                  style: pw.TextStyle(
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          pw.FontWeight.bold)),
+                                              pw.Text(data.namaPoli,
+                                                  style: pw.TextStyle(
+                                                    fontSize: 10,
+                                                  )),
+                                            ]),
+                                      ]),
+                                  pw.SizedBox(height: 4),
+                                  pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text('Nomor RM',
+                                            style: pw.TextStyle(
+                                                fontSize: 8,
+                                                fontWeight:
+                                                    pw.FontWeight.bold)),
+                                        pw.Text(data.idRm,
+                                            style: pw.TextStyle(
+                                              fontSize: 10,
+                                            )),
+                                      ]),
+                                ]),
+                            pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text('Nama Dokter',
+                                            style: pw.TextStyle(
+                                                fontSize: 8,
+                                                fontWeight:
+                                                    pw.FontWeight.bold)),
+                                        pw.Text(data.namaDokter,
+                                            style: pw.TextStyle(
+                                              fontSize: 10,
+                                            )),
+                                      ]),
+                                  pw.SizedBox(height: 4),
+                                  pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text('Biaya Jasa Dokter',
+                                            style: pw.TextStyle(
+                                                fontSize: 8,
+                                                fontWeight:
+                                                    pw.FontWeight.bold)),
+                                        pw.Text(data.biayaDokter.toString(),
+                                            style: pw.TextStyle(
+                                              fontSize: 10,
+                                            )),
+                                      ]),
+                                ]),
+                            pw.Column(
+                                mainAxisAlignment:
+                                    pw.MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Text(
+                                      data.waktuDibayar?.substring(0, 10) ?? '',
+                                      style: pw.TextStyle(
+                                        fontSize: 8,
+                                      )),
+                                  pw.Text('Admin: ${data.namaAdministrasi}',
+                                      style: pw.TextStyle(
+                                        fontSize: 8,
+                                      )),
+                                ])
+                          ])),
+                  pw.Divider(color: PdfColor.fromInt(0xFF000000), thickness: 1),
+                  pw.Table(
+                      border: pw.TableBorder.all(
+                          color: PdfColor.fromInt(0xFF000000)),
+                      children: [
+                        pw.TableRow(children: [
+                          pw.Text('No',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Nama Obat',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Keterangan',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Jumlah',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Satuan',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Harga',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Total',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold)),
+                        ]),
+                      ])
+                ]))
+              ]));
+        }));
 
     return pdf.save();
   }

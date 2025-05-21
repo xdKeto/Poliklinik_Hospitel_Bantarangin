@@ -15,7 +15,7 @@ class Antrian {
   final String kelurahan;
   final String kecamatan;
   final String kota;
-  final String noTelp;
+final String noTelp;
 
   Antrian({
     required this.idAntrian,

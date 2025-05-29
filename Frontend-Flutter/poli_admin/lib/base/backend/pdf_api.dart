@@ -5,7 +5,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:poli_admin/base/backend/class/data_printing.dart';
 import 'package:poli_admin/base/backend/class/detail_transaksi.dart';
-import 'package:poli_admin/base/global_widgets/grey_divider.dart';
 
 String calculateAge(int hari) {
   if (hari < 0) {

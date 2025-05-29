@@ -340,7 +340,6 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
           final pdfData = await PdfApi.cetakAntrian(noAntrian, pdfNama,
               pdfJenisKelamin, pdfTanggalLahir, tanggal, jam, pdfPoli);
 
-          // pop up buat print
           if (!mounted) return;
           await Printing.layoutPdf(
             onLayout: (format) => pdfData,

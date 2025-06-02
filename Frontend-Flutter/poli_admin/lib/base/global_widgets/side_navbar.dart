@@ -115,7 +115,7 @@ class _SideNavbarState extends State<SideNavbar> {
 
   void cekSession() async {
     bool session = await DataController().cekToken();
-    print('session checked');
+    // print('session checked');
     if (!session) {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     }

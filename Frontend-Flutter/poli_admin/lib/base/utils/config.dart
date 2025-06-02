@@ -3,7 +3,6 @@ class Config {
    static const String apiURL = 'http://leap.crossnet.co.id:8080/api/administrasi';
 
   // API ENDPOINTS
-
   static final apiEndpoints = {
     'login': () => '$apiURL/login',
 
@@ -32,8 +31,6 @@ class Config {
 
     // RIWAYAT
     'allRiwayat': () => '$apiURL/billing?status=2',
-    // detail riwayat pake detail billing
-
 
     // WEBSOCKET
     'wsUrl': () => 'ws://leap.crossnet.co.id:8080/api/ws'
@@ -50,3 +47,4 @@ class ResponseRequestAPI {
     required this.data,
   });
 }
+

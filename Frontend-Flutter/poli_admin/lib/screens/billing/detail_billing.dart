@@ -3,9 +3,9 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:poli_admin/base/backend/class/detail_transaksi.dart';
 import 'package:poli_admin/base/backend/data_controller.dart';
+import 'package:poli_admin/base/backend/pdf_api.dart';
 import 'package:poli_admin/base/global_widgets/confirm_alert.dart';
 import 'package:poli_admin/base/global_widgets/global_top_bar.dart';
 import 'package:poli_admin/base/global_widgets/grey_divider.dart';
@@ -15,6 +15,7 @@ import 'package:poli_admin/base/global_widgets/sucfail_alert.dart';
 import 'package:poli_admin/base/global_widgets/the_button.dart';
 import 'package:poli_admin/base/utils/app_styles.dart';
 import 'package:poli_admin/base/utils/config.dart';
+import 'package:printing/printing.dart';
 
 class DetailBilling extends StatefulWidget {
   final VoidCallback? toggleSidebar;
@@ -40,6 +41,7 @@ class _DetailBillingState extends State<DetailBilling> {
   var parsedDate = DateTime.now();
   var tanggalcontroller = TextEditingController();
   var total = 0;
+  double satuanObat = 0;
 
   int rowsPerPage = 10;
   DetailTransaksi? detail;
@@ -78,8 +80,8 @@ class _DetailBillingState extends State<DetailBilling> {
       DataController dataController = DataController();
       // print('ini billing id = ${widget.id}');
       try {
-        ResponseRequestAPI response = await dataController
-            .apiConnector(Config.apiEndpoints['assignBilling']!(detail!.idKunjungan), "post", {
+        ResponseRequestAPI response = await dataController.apiConnector(
+            Config.apiEndpoints['assignBilling']!(detail!.idKunjungan.toString()), "post", {
           "tipe_pembayaran": selectedValue,
         });
 
@@ -278,14 +280,19 @@ class _DetailBillingState extends State<DetailBilling> {
                                       rows: List.generate(listObat.length, (index) {
                                         var data = listObat[index];
                                         total += listObat[index].hargaTotal;
+                                        satuanObat = listObat[index].hargaTotal / listObat[index].jumlah;
                                         // print(listObat[index]);
                                         return DataRow(cells: [
                                           DataCell(Text((index + 1).toString())),
-                                          DataCell(Text(data.namaObat ?? '')),
+                                          DataCell(Text(data.namaObat?.isNotEmpty == true
+                                              ? data.namaObat!
+                                              : (data.namaRacikan ?? ''))),
                                           DataCell(Text(data.keterangan)),
                                           DataCell(Text(data.jumlah.toString())),
                                           DataCell(Text(data.satuan ?? '')),
-                                          DataCell(Text(data.hargaSatuan.toString())),
+                                          DataCell(Text(data.hargaSatuan.toString() == 'null'
+                                              ? satuanObat.toString()
+                                              : data.hargaSatuan.toString())),
                                           DataCell(Text(data.hargaTotal.toString())),
                                         ]);
                                       }),
@@ -453,57 +460,112 @@ class _DetailBillingState extends State<DetailBilling> {
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    LabelRequired(
-                                        text: 'Tanggal Pembayaran',
-                                        style: AppStyles.contentText
-                                            .copyWith(fontWeight: FontWeight.bold)),
+                                    Text(
+                                      '',
+                                    ),
                                     SizedBox(
                                       height: 12,
                                     ),
-                                    TextFormField(
-                                      controller: tanggalcontroller,
-                                      readOnly: true,
-                                      cursorColor: Colors.black,
-                                      decoration: AppStyles.formBox.copyWith(
-                                        hintText: 'DD/MM/YY',
-                                        hintStyle: TextStyle(color: AppStyles.greyColor2),
-                                        suffixIcon: Icon(Icons.date_range),
-                                      ),
-                                      onChanged: (value) {},
-                                      onTap: () async {
-                                        DateTime? pickedDate = await showDatePicker(
-                                          builder: (context, child) {
-                                            return Theme(
-                                              data: Theme.of(context).copyWith(
-                                                colorScheme: ColorScheme.light(
-                                                    primary: AppStyles.primaryColor,
-                                                    onPrimary: Colors.white,
-                                                    onSurface: AppStyles.primaryColor),
-                                                textButtonTheme: TextButtonThemeData(
-                                                  style: TextButton.styleFrom(
-                                                      foregroundColor: AppStyles.primaryColor),
-                                                ),
-                                              ),
-                                              child: child!,
-                                            );
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        InkWell(
+                                          onTap: () async {
+                                            widget.navigateToPage(1);
                                           },
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(2000),
-                                          lastDate: DateTime(2100),
-                                        );
+                                          child: TheButton(
+                                            text: 'Kembali',
+                                            color: AppStyles.greyBtnColor,
+                                            iconColor: AppStyles.greyBtnColor,
+                                            textColor: AppStyles.greyBtnColor,
+                                            border: true,
+                                            isIcon: true,
+                                            icon: Icons.arrow_back,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => ConfirmAlert(
+                                                      icon: FluentIcons.info_12_regular,
+                                                      boldText: 'Assign Pembayaran?',
+                                                      italicText:
+                                                          'Tagihan akan dicatat lunas oleh sistem',
+                                                      yesText: 'assign',
+                                                      yesFunc: () {
+                                                        doBayar();
+                                                      },
+                                                    ));
+                                          },
+                                          child: TheButton(
+                                            text: 'Assign Pembayaran',
+                                            color: AppStyles.primaryColor,
+                                            textColor: AppStyles.primaryColor,
+                                            border: true,
+                                            // horiPadding: 16,
+                                            vertPadding: 10,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => ConfirmAlert(
+                                                      icon: FluentIcons.print_16_filled,
+                                                      boldText: 'Cetak Tagihan?',
+                                                      yesText: 'cetak',
+                                                      yesFunc: () async {
+                                                        Navigator.pop(context);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) => LoadingAlert(),
+                                                            barrierDismissible: false);
 
-                                        if (pickedDate != null && pickedDate != selectedDate) {
-                                          setState(() {
-                                            selectedDate = pickedDate;
-
-                                            tanggalcontroller.text =
-                                                DateFormat('yyyy-MM-dd').format(selectedDate);
-                                          });
-                                        }
-                                      },
+                                                        try {
+                                                          final pdfData = await PdfApi.cetakTagihan(
+                                                              detail!, total, satuanObat);
+                                                          if (!context.mounted) return;
+                                                          Navigator.pop(context);
+                                                          await Printing.layoutPdf(
+                                                                  onLayout: (format) => pdfData)
+                                                              .catchError((error) {
+                                                            throw Exception(
+                                                                "Failed to print: $error");
+                                                          });
+                                                        } catch (e) {
+                                                          if (!context.mounted) return;
+                                                          Navigator.pop(context);
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (context) => SucfailAlert(
+                                                                  isSuccess: false,
+                                                                  boldText: "Gagal",
+                                                                  italicText:
+                                                                      "Gagal membuat data: $e"));
+                                                        }
+                                                      },
+                                                    ));
+                                          },
+                                          child: TheButton(
+                                            text: 'Cetak Tagihan',
+                                            color: AppStyles.accentColor,
+                                            iconColor: AppStyles.accentColor,
+                                            textColor: AppStyles.accentColor,
+                                            border: true,
+                                            isIcon: true,
+                                            icon: Icons.print,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -513,78 +575,80 @@ class _DetailBillingState extends State<DetailBilling> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 27, right: 27, bottom: 22),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              widget.navigateToPage(1);
-                            },
-                            child: TheButton(
-                              text: 'Kembali',
-                              color: AppStyles.greyBtnColor,
-                              iconColor: AppStyles.greyBtnColor,
-                              textColor: AppStyles.greyBtnColor,
-                              border: true,
-                              isIcon: true,
-                              icon: Icons.arrow_back,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => ConfirmAlert(
-                                        icon: FluentIcons.info_12_regular,
-                                        boldText: 'Assign Pembayaran?',
-                                        italicText: 'Tagihan akan dicatat lunas oleh sistem',
-                                        yesText: 'assign',
-                                        yesFunc: () {
-                                          doBayar();
-                                        },
-                                      ));
-                            },
-                            child: TheButton(
-                              text: 'Assign Pembayaran',
-                              color: AppStyles.primaryColor,
-                              textColor: AppStyles.primaryColor,
-                              border: true,
-                              // horiPadding: 16,
-                              vertPadding: 10,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => ConfirmAlert(
-                                        icon: FluentIcons.print_16_filled,
-                                        boldText: 'Cetak Tagihan?',
-                                        yesText: 'cetak',
-                                        yesFunc: () {},
-                                      ));
-                            },
-                            child: TheButton(
-                              text: 'Cetak Tagihan',
-                              color: AppStyles.accentColor,
-                              iconColor: AppStyles.accentColor,
-                              textColor: AppStyles.accentColor,
-                              border: true,
-                              isIcon: true,
-                              icon: Icons.print,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                    // Padding(
+                    //   padding: const EdgeInsets.only(
+                    //       left: 27, right: 27, bottom: 22),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       InkWell(
+                    //         onTap: () async {
+                    //           widget.navigateToPage(1);
+                    //         },
+                    //         child: TheButton(
+                    //           text: 'Kembali',
+                    //           color: AppStyles.greyBtnColor,
+                    //           iconColor: AppStyles.greyBtnColor,
+                    //           textColor: AppStyles.greyBtnColor,
+                    //           border: true,
+                    //           isIcon: true,
+                    //           icon: Icons.arrow_back,
+                    //         ),
+                    //       ),
+                    //       SizedBox(
+                    //         width: 8,
+                    //       ),
+                    //       InkWell(
+                    //         onTap: () {
+                    //           showDialog(
+                    //               context: context,
+                    //               builder: (context) => ConfirmAlert(
+                    //                     icon: FluentIcons.info_12_regular,
+                    //                     boldText: 'Assign Pembayaran?',
+                    //                     italicText:
+                    //                         'Tagihan akan dicatat lunas oleh sistem',
+                    //                     yesText: 'assign',
+                    //                     yesFunc: () {
+                    //                       doBayar();
+                    //                     },
+                    //                   ));
+                    //         },
+                    //         child: TheButton(
+                    //           text: 'Assign Pembayaran',
+                    //           color: AppStyles.primaryColor,
+                    //           textColor: AppStyles.primaryColor,
+                    //           border: true,
+                    //           // horiPadding: 16,
+                    //           vertPadding: 10,
+                    //         ),
+                    //       ),
+                    //       SizedBox(
+                    //         width: 8,
+                    //       ),
+                    //       InkWell(
+                    //         onTap: () {
+                    //           showDialog(
+                    //               context: context,
+                    //               builder: (context) => ConfirmAlert(
+                    //                     icon: FluentIcons.print_16_filled,
+                    //                     boldText: 'Cetak Tagihan?',
+                    //                     yesText: 'cetak',
+                    //                     yesFunc: () {},
+                    //                   ));
+                    //         },
+                    //         child: TheButton(
+                    //           text: 'Cetak Tagihan',
+                    //           color: AppStyles.accentColor,
+                    //           iconColor: AppStyles.accentColor,
+                    //           textColor: AppStyles.accentColor,
+                    //           border: true,
+                    //           isIcon: true,
+                    //           icon: Icons.print,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
               ),

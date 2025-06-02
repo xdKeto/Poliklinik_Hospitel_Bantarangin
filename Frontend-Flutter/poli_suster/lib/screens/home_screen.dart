@@ -43,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (mounted) {
         setState(() {
-          print(dataController.antrianNow?.idAntrian);
+          print(
+              'no antrian: ${dataController.antrianNow?.nomorAntrian}, id antrian: ${dataController.antrianNow?.idAntrian}');
 
           if (dataController.antrianNow?.nomorAntrian == 0 ||
               dataController.antrianNow?.nomorAntrian == null) {
@@ -66,14 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> doGetAntrian() async {
     try {
-      if(!mounted)return;
+      if (!mounted) return;
       Navigator.pop(context);
 
       showDialog(
           context: context,
           builder: (context) => const LoadingAlert(),
           barrierDismissible: false);
-
 
       final idPoli = await dataController.getLoggedInPoli();
       final tokenValid = await dataController.isTokenValid();
@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
+      print(dataController.antrianNow);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Gagal memuat antrian berikutnya: $e')),

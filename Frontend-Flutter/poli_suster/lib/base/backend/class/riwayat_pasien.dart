@@ -7,7 +7,6 @@ class RiwayatPasien {
   final int beratBadan;
   final int suhuTubuh;
   final int tinggiBadan;
-  final int gulaDarah;
   final int detakNadi;
   final int lajuRespirasi;
   final String keterangan;
@@ -22,7 +21,6 @@ class RiwayatPasien {
     required this.beratBadan,
     required this.suhuTubuh,
     required this.tinggiBadan,
-    required this.gulaDarah,
     required this.detakNadi,
     required this.lajuRespirasi,
     required this.keterangan,
@@ -39,7 +37,6 @@ class RiwayatPasien {
       beratBadan: json['berat_badan'],
       suhuTubuh: json['suhu_tubuh'],
       tinggiBadan: json['tinggi_badan'],
-      gulaDarah: json['gula_darah'],
       detakNadi: json['detak_nadi'],
       lajuRespirasi: json['laju_respirasi'],
       keterangan: json['keterangan'],
@@ -57,7 +54,6 @@ class RiwayatPasien {
       'berat_badan': beratBadan,
       'suhu_tubuh': suhuTubuh,
       'tinggi_badan': tinggiBadan,
-      'gula_darah': gulaDarah,
       'detak_nadi': detakNadi,
       'laju_respirasi': lajuRespirasi,
       'keterangan': keterangan,

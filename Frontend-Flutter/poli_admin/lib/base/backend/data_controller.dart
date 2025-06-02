@@ -71,7 +71,8 @@ class DataController {
     } else if (data.length == 2 && data.containsKey('status')) {
       //status update
       if (index != -1) {
-        var statusNew = statusAntrian.firstWhere((s) => s.status == data['status'],
+        var statusNew = statusAntrian.firstWhere(
+            (s) => s.status == data['status'],
             orElse: () => StatusAntrian(idStatus: 0, status: ""));
 
         antrianToday[index].status = data['status'];
@@ -133,7 +134,8 @@ class DataController {
   /* 
     MAIN API CALLERRRR 💪
   */
-  Future<ResponseRequestAPI> apiConnector(String url, String method, dynamic body) async {
+  Future<ResponseRequestAPI> apiConnector(
+      String url, String method, dynamic body) async {
     try {
       http.Response response;
       String? token = await getToken();
@@ -156,25 +158,31 @@ class DataController {
       } else if (method == "get") {
         response = await http.get(Uri.parse(url), headers: headers);
       } else if (method == "put") {
-        response = await http.put(Uri.parse(url), body: json.encode(body), headers: headers);
+        response = await http.put(Uri.parse(url),
+            body: json.encode(body), headers: headers);
       } else {
-        response = await http.delete(Uri.parse(url), body: json.encode(body), headers: headers);
+        response = await http.delete(Uri.parse(url),
+            body: json.encode(body), headers: headers);
       }
 
       if (response.body.isEmpty) {
-        return ResponseRequestAPI(status: response.statusCode, message: "Empty response", data: []);
+        return ResponseRequestAPI(
+            status: response.statusCode, message: "Empty response", data: []);
       }
 
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       return ResponseRequestAPI(
         status: response.statusCode,
-        message: jsonResponse.containsKey('message') ? jsonResponse['message'] : "No message",
+        message: jsonResponse.containsKey('message')
+            ? jsonResponse['message']
+            : "No message",
         data: jsonResponse.containsKey('data') ? jsonResponse['data'] : "",
       );
     } catch (e) {
-      print(e);
-      return ResponseRequestAPI(status: 500, message: "Error: ${e.toString()}", data: []);
+      print('error di api connector:$e ');
+      return ResponseRequestAPI(
+          status: 500, message: "Error: ${e.toString()}", data: []);
     }
   }
 
@@ -253,8 +261,9 @@ class DataController {
           await apiConnector(Config.apiEndpoints['listStatus']!(), "get", "");
       // print('list status: ${response.status}');
       if (response.data != null) {
-        statusAntrian =
-            (response.data as List).map((item) => StatusAntrian.fromJson(item)).toList();
+        statusAntrian = (response.data as List)
+            .map((item) => StatusAntrian.fromJson(item))
+            .toList();
         // print(statusAntrian);
       }
     } catch (e) {
@@ -270,8 +279,9 @@ class DataController {
           await apiConnector(Config.apiEndpoints["antrianToday"]!(), "get", "");
       // print('antrian today: ${response.status}');
       if (response.data != null) {
-        antrianToday = (response.data as List).map((item) => AntrianPasien.fromJson(item)).toList();
-        // print(antrianToday);
+        antrianToday = (response.data as List)
+            .map((item) => AntrianPasien.fromJson(item))
+            .toList();
       }
     } catch (e) {
       throw Exception("failed to fetch antrian today: $e");
@@ -286,7 +296,9 @@ class DataController {
           await apiConnector(Config.apiEndpoints["poliAktif"]!(), "get", "");
       // print('poli aktif: ${response.status}');
       if (response.data != null) {
-        poliAktif = (response.data as List).map((item) => Poliklinik.fromJson(item)).toList();
+        poliAktif = (response.data as List)
+            .map((item) => Poliklinik.fromJson(item))
+            .toList();
         // print(poliAktif);
       }
     } catch (e) {
@@ -299,11 +311,13 @@ class DataController {
   Future<List<Pasien>> fetchAllPasien(String nama, String page) async {
     // print("seraching for: $nama");
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints["allPasien"]!(nama, page), "get", "");
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints["allPasien"]!(nama, page), "get", "");
       // print("all pasien: ${response.status}");
       if (response.data != null) {
-        allPasien = (response.data as List).map((item) => Pasien.fromJson(item)).toList();
+        allPasien = (response.data as List)
+            .map((item) => Pasien.fromJson(item))
+            .toList();
 
         // print(allPasien);
       } else {
@@ -323,7 +337,9 @@ class DataController {
           await apiConnector(Config.apiEndpoints["allBilling"]!(), "get", "");
       // print('billing: ${response.status}');
       if (response.data != null) {
-        billing = (response.data as List).map((item) => Billing.fromJson(item)).toList();
+        billing = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
         // print("billing: $billing");
       }
     } catch (e) {
@@ -335,8 +351,8 @@ class DataController {
 
   Future<DataPrinting> fetchDataPrinting(String id) async {
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints['detailAntrian']!(id), "get", "");
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints['detailAntrian']!(id), "get", "");
       if (response.data != null) {
         return DataPrinting.fromJson(response.data);
       }
@@ -370,8 +386,8 @@ class DataController {
 
   Future<DetailTransaksi?> fetchDetailTransaksi(String id) async {
     try {
-      ResponseRequestAPI response =
-          await apiConnector(Config.apiEndpoints['detailBilling']!(id), "get", "");
+      ResponseRequestAPI response = await apiConnector(
+          Config.apiEndpoints['detailBilling']!(id), "get", "");
       if (response.data != null) {
         print(response.data);
         return DetailTransaksi.fromJson(response.data);
@@ -388,7 +404,9 @@ class DataController {
       ResponseRequestAPI response =
           await apiConnector(Config.apiEndpoints['allRiwayat']!(), "get", "");
       if (response.data != null) {
-        riwayatTransaksi = (response.data as List).map((item) => Billing.fromJson(item)).toList();
+        riwayatTransaksi = (response.data as List)
+            .map((item) => Billing.fromJson(item))
+            .toList();
       }
     } catch (e) {
       throw Exception("failed to fetch riwayat transaksi: $e");

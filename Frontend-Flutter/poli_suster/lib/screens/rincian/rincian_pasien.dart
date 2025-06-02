@@ -51,6 +51,7 @@ class _RincianPasienState extends State<RincianPasien> {
 
         dataController.antrianNow = null;
         dataController.detailPasien = null;
+        dataController.riwayatPasien.clear();
 
         widget.onScreeningComplete();
 

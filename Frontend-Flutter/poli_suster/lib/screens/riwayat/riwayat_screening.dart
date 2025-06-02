@@ -28,7 +28,7 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
 
     riwayatPasien = riwayatPasien.reversed.toList();
 
-    // print(riwayatPasien);
+    print(riwayatPasien.length);
   }
 
   @override
@@ -66,11 +66,12 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
                       child: GridView.builder(
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                              childAspectRatio: 8 / 6),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                  childAspectRatio: 8 / 6),
                           itemCount: riwayatPasien.length,
                           itemBuilder: (context, index) {
                             return InkWell(
@@ -78,10 +79,11 @@ class _RiwayatScreeningState extends State<RiwayatScreening> {
                                   showDialog(
                                       barrierDismissible: true,
                                       context: context,
-                                      builder: (context) =>
-                                          DetailRiwayat(data: riwayatPasien[index]));
+                                      builder: (context) => DetailRiwayat(
+                                          data: riwayatPasien[index]));
                                 },
-                                child: ContainerData(data: riwayatPasien[index]));
+                                child:
+                                    ContainerData(data: riwayatPasien[index]));
                           }),
                     )),
                   ],

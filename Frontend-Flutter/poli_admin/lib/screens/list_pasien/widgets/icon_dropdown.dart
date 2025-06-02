@@ -256,6 +256,9 @@ class MenuItems {
         final String tanggal = DateFormat('dd/mm/yyyy').format(DateTime.now());
         final String jam = DateFormat('HH:mm').format(DateTime.now());
 
+        print(id.toString());
+        print(dataPrinting.namaDokter);
+
         // generate pdf
         try {
           final pdfData = await PdfApi.cetakLabel(
@@ -294,14 +297,25 @@ class MenuItems {
                   boldText: "Tunda Antrian?",
                   yesText: "tunda",
                   yesFunc: () async {
+                    // Navigator.pop(context);
+
+                    showDialog(
+                        context: context,
+                        builder: (context) => LoadingAlert(),
+                        barrierDismissible: false);
+
                     ResponseRequestAPI response = await DataController()
                         .apiConnector(
                             Config.apiEndpoints["tundaAntrian"]!(id.toString()),
                             "put",
                             "");
 
+                    print('tunda status: ${response.status}');
+                    print('tunda message: ${response.message}');
+
                     if (!context.mounted) return;
                     Navigator.pop(context);
+Navigator.pop(context);
                     if (response.status == 200) {
                       showDialog(
                           context: context,
@@ -345,13 +359,23 @@ class MenuItems {
                   boldText: "Masukkan ke Antrian?",
                   yesText: "masukkan",
                   yesFunc: () async {
+                    // Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (context) => LoadingAlert(),
+                        barrierDismissible: false);
+
                     ResponseRequestAPI response = await DataController()
                         .apiConnector(
                             Config.apiEndpoints["putAntrian"]!(id.toString()),
                             "put",
                             "");
 
+                    print('masuk message: ${response.message}');
+                    print('masuk status: ${response.status}');
+                    
                     if (!context.mounted) return;
+                    Navigator.pop(context);
                     Navigator.pop(context);
                     if (response.status == 200) {
                       showDialog(
@@ -397,6 +421,12 @@ class MenuItems {
                   boldText: "Batalkan Antrian?",
                   yesText: "batal",
                   yesFunc: () async {
+                    // Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (context) => LoadingAlert(),
+                        barrierDismissible: false);
+
                     ResponseRequestAPI response = await DataController()
                         .apiConnector(
                             Config.apiEndpoints["batalAntrian"]!(id.toString()),
@@ -404,6 +434,7 @@ class MenuItems {
                             "");
 
                     if (!context.mounted) return;
+                    Navigator.pop(context);
                     Navigator.pop(context);
                     if (response.status == 200) {
                       showDialog(

@@ -47,3 +47,4 @@ class ResponseRequestAPI {
     required this.data,
   });
 }
+

@@ -180,7 +180,7 @@ class DataController {
         data: jsonResponse.containsKey('data') ? jsonResponse['data'] : "",
       );
     } catch (e) {
-      print(e);
+      print('error di api connector:$e ');
       return ResponseRequestAPI(
           status: 500, message: "Error: ${e.toString()}", data: []);
     }

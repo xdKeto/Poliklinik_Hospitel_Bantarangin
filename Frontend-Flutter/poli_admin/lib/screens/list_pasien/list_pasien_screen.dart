@@ -22,7 +22,6 @@ class ListPasienScreen extends StatefulWidget {
     this.toggleSidebar,
     required this.isExpand,
     required this.navigateToPage,
-    
   });
 
   @override
@@ -111,12 +110,12 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
       List<AntrianPasien> baseList = List.from(dataController.antrianToday);
 
       if (selectedStatus != "-- Semua Status --" && selectedStatus != null) {
-        filteredList = dataController.antrianToday
+        baseList = dataController.antrianToday
             .where((antrian) => antrian.status == selectedStatus)
             .toList();
       }
 
-      filteredList.sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
+      baseList.sort((a, b) => a.priorityOrder.compareTo(b.priorityOrder));
       // print(filteredList);
       if (controller.text.isNotEmpty) {
         onSearch(controller.text);
@@ -190,7 +189,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                                   iconColor: AppStyles.accentColor,
                                   textColor: AppStyles.accentColor,
                                   borderRad: 10,
-                                  hoverIcon: FluentIcons.clipboard_edit_20_filled,
+                                  hoverIcon:
+                                      FluentIcons.clipboard_edit_20_filled,
                                 ),
                               ),
                               SizedBox(
@@ -219,7 +219,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                         decoration: AppStyles.formBox,
                         hint: Text('-- Pilih Status --'),
                         items: listStatus
-                            .map((item) => DropdownMenuItem<String>(value: item, child: Text(item)))
+                            .map((item) => DropdownMenuItem<String>(
+                                value: item, child: Text(item)))
                             .toList(),
                         onChanged: (value) {
                           setState(() {
@@ -269,14 +270,16 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                               sortColumnIndex: sortColumnIndex,
                               sortAscending: sortAscending,
                               headingTextStyle: AppStyles.sidebarText.copyWith(
-                                  fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                              headingRowColor:
-                                  WidgetStateProperty.resolveWith((states) => AppStyles.greyColor),
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyles.textColor),
+                              headingRowColor: WidgetStateProperty.resolveWith(
+                                  (states) => AppStyles.greyColor),
                               headingRowDecoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-                              dataTextStyle:
-                                  AppStyles.contentText.copyWith(color: AppStyles.textColor),
+                                      topLeft: Radius.circular(12),
+                                      topRight: Radius.circular(12))),
+                              dataTextStyle: AppStyles.contentText
+                                  .copyWith(color: AppStyles.textColor),
                               minWidth: 768,
                               empty: Center(
                                 child: Text(
@@ -294,7 +297,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                               rowsPerPage: rowsPerPage,
                               availableRowsPerPage: [10, 25, 50, 100],
                               onRowsPerPageChanged: (value) {
-                                if (value != null && [10, 25, 50, 100].contains(value)) {
+                                if (value != null &&
+                                    [10, 25, 50, 100].contains(value)) {
                                   setState(() {
                                     rowsPerPage = value;
                                   });
@@ -306,7 +310,8 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                                   return Icon(
                                     ascending
                                         ? FluentIcons.arrow_sort_up_16_regular
-                                        : FluentIcons.arrow_sort_down_16_regular,
+                                        : FluentIcons
+                                            .arrow_sort_down_16_regular,
                                     size: 12,
                                   );
                                 } else {
@@ -329,11 +334,13 @@ class _ListPasienScreenState extends State<ListPasienScreen> {
                                 DataColumn(
                                   label: Text('Nama Pasien'),
                                 ),
-                                DataColumn(label: Center(child: Text('Status'))),
+                                DataColumn(
+                                    label: Center(child: Text('Status'))),
                                 DataColumn(label: Center(child: Text('Aksi'))),
                               ],
                               source: AntrianRowSource(
-                                  antrianData: filteredList, count: filteredList.length),
+                                  antrianData: filteredList,
+                                  count: filteredList.length),
                             );
                           },
                         )),
@@ -367,7 +374,8 @@ class AntrianRowSource extends DataTableSource {
           DataCell(Text(data.idRm)),
           DataCell(Text(data.nama)),
           DataCell(Center(child: StatusBox(status: data.status))),
-          DataCell(Center(child: IconDropdown(status: data.status, id: data.idAntrian))),
+          DataCell(Center(
+              child: IconDropdown(status: data.status, id: data.idAntrian))),
         ]);
   }
 

@@ -1,4 +1,4 @@
-class Billing {
+class   Billing {
   int idKunjungan;
   int idPasien;
   String idRm;

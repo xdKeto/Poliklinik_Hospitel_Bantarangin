@@ -248,13 +248,16 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
           // print(jenisKelamin);
           // print(tempatLahir);
           // print(tanggalLahir);
+          // print(agama);
+          // print(statusKawin);
           // print(nik);
           // print(noTelp);
           // print(alamat);
           // print(kelurahan);
           // print(kecamatan);
-          // print(keluhanUtama);
+          // print(penanggungJawab);
           // print(tempatTinggal);
+          // print(pekerjaan);
           response = await dataController
               .apiConnector(Config.apiEndpoints['putPasien']!(), "put", {
             "id_poli": idPoli,
@@ -357,7 +360,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
             ),
           );
         }
-
+        // print('===== GENERATING PDF DONE =====');
         if (!mounted) return;
         showDialog(
             context: context,
@@ -405,6 +408,7 @@ class _RegistrasiScreenState extends State<RegistrasiScreen> {
         toastDuration: Duration(seconds: 5),
       ).show(context);
     }
+    
   }
 
   @override

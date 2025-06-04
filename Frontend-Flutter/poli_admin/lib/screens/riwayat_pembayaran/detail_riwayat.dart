@@ -32,6 +32,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   bool isLoading = true;
   var total = 0;
   double satuanObat = 0;
+  String? namaAdmin;
 
   final DataController dataController = DataController();
 
@@ -43,6 +44,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Future<void> urutan() async {
     detail = await dataController.fetchDetailTransaksi(widget.id);
+    namaAdmin = dataController.nama;
 
     if (detail != null) {
       setState(() {
@@ -72,7 +74,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 children: [
                   Text(
                     'Rincian Transaksi',
-                    style: AppStyles.subheadingText.copyWith(fontWeight: FontWeight.bold),
+                    style: AppStyles.subheadingText
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                       onPressed: () => Navigator.pop(context),
@@ -100,7 +103,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     btrbText(
-                                        topText: 'Nama Pasien', botText: detail?.namaPasien ?? ''),
+                                        topText: 'Nama Pasien',
+                                        botText: detail?.namaPasien ?? ''),
                                     SizedBox(
                                       width: 32,
                                     ),
@@ -112,19 +116,24 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                 SizedBox(
                                   height: 16,
                                 ),
-                                btrbText(topText: 'Nomor RM', botText: detail?.idRm ?? '')
+                                btrbText(
+                                    topText: 'Nomor RM',
+                                    botText: detail?.idRm ?? '')
                               ],
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                btrbText(topText: 'Nama Dokter', botText: detail?.namaDokter ?? ''),
+                                btrbText(
+                                    topText: 'Nama Dokter',
+                                    botText: detail?.namaDokter ?? ''),
                                 SizedBox(
                                   height: 16,
                                 ),
                                 btrbText(
                                     topText: 'Biaya Jasa Dokter',
-                                    botText: detail?.biayaDokter.toString() ?? ''),
+                                    botText:
+                                        detail?.biayaDokter.toString() ?? ''),
                               ],
                             ),
                             Column(
@@ -136,9 +145,13 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   style: AppStyles.contentText,
                                 ),
                                 Text(
-                                  'Admin: ${detail?.namaAdministrasi ?? ''}',
+                                  'Admin: $namaAdmin',
                                   style: AppStyles.contentText,
                                 ),
+                                // Text(
+                                // 'Admin: ${detail?.namaAdministrasi ?? ''}',
+                                // style: AppStyles.contentText,
+                                // ),
                               ],
                             ),
                           ],
@@ -151,22 +164,26 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                           children: [
                             Text(
                               'Daftar Obat',
-                              style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.sidebarText
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                             listObat.isEmpty
                                 ? Center(
                                     child: Text(
                                     'Tidak ada ada',
-                                    style:
-                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
+                                    style: AppStyles.statusText
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText.copyWith(
-                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                                      headingRowColor: WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText
+                                          .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: AppStyles.textColor),
+                                      headingRowColor:
+                                          WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -192,24 +209,32 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                         DataColumn(label: Text('Harga Satuan')),
                                         DataColumn(label: Text('Total')),
                                       ],
-                                      rows: List.generate(listObat.length, (index) {
+                                      rows: List.generate(listObat.length,
+                                          (index) {
                                         var data = listObat[index];
                                         total += listObat[index].hargaTotal;
                                         satuanObat =
-                                            listObat[index].hargaTotal / listObat[index].jumlah;
+                                            listObat[index].hargaTotal /
+                                                listObat[index].jumlah;
                                         // print(listObat[index]);
                                         return DataRow(cells: [
-                                          DataCell(Text((index + 1).toString())),
-                                          DataCell(Text(data.namaObat?.isNotEmpty == true
-                                              ? data.namaObat!
-                                              : (data.namaRacikan ?? ''))),
+                                          DataCell(
+                                              Text((index + 1).toString())),
+                                          DataCell(Text(
+                                              data.namaObat?.isNotEmpty == true
+                                                  ? data.namaObat!
+                                                  : (data.namaRacikan ?? ''))),
                                           DataCell(Text(data.keterangan)),
-                                          DataCell(Text(data.jumlah.toString())),
+                                          DataCell(
+                                              Text(data.jumlah.toString())),
                                           DataCell(Text(data.satuan ?? '')),
-                                          DataCell(Text(data.hargaSatuan.toString() == 'null'
+                                          DataCell(Text(data.hargaSatuan
+                                                      .toString() ==
+                                                  'null'
                                               ? satuanObat.toString()
                                               : data.hargaSatuan.toString())),
-                                          DataCell(Text(data.hargaTotal.toString())),
+                                          DataCell(
+                                              Text(data.hargaTotal.toString())),
                                         ]);
                                       }),
                                     ),
@@ -217,22 +242,26 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             GreyDivider(),
                             Text(
                               'Daftar Tindakan',
-                              style: AppStyles.sidebarText.copyWith(fontWeight: FontWeight.bold),
+                              style: AppStyles.sidebarText
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                             listTindakan.isEmpty
                                 ? Center(
                                     child: Text(
                                     'Tidak ada data',
-                                    style:
-                                        AppStyles.statusText.copyWith(fontWeight: FontWeight.bold),
+                                    style: AppStyles.statusText
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ))
                                 : ConstrainedBox(
                                     constraints: BoxConstraints(maxHeight: 300),
                                     child: DataTable2(
                                       // style
-                                      headingTextStyle: AppStyles.sidebarText.copyWith(
-                                          fontWeight: FontWeight.w600, color: AppStyles.textColor),
-                                      headingRowColor: WidgetStateProperty.resolveWith(
+                                      headingTextStyle: AppStyles.sidebarText
+                                          .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: AppStyles.textColor),
+                                      headingRowColor:
+                                          WidgetStateProperty.resolveWith(
                                         (states) => Colors.white,
                                       ),
                                       headingRowDecoration: BoxDecoration(
@@ -256,21 +285,29 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                         DataColumn(
                                           label: Text('No.'),
                                         ),
-                                        DataColumn(label: Text('Nama Tindakan')),
+                                        DataColumn(
+                                            label: Text('Nama Tindakan')),
                                         DataColumn(label: Text('Jumlah')),
-                                        DataColumn(label: Text('Harga Tindakan')),
+                                        DataColumn(
+                                            label: Text('Harga Tindakan')),
                                         DataColumn(label: Text('Harga Total')),
                                       ],
-                                      rows: List.generate(listTindakan.length, (index) {
+                                      rows: List.generate(listTindakan.length,
+                                          (index) {
                                         var data = listTindakan[index];
-                                        total += listTindakan[index].totalHargaTindakan;
+                                        total += listTindakan[index]
+                                            .totalHargaTindakan;
                                         // print(listTindakan[index]);
                                         return DataRow(cells: [
-                                          DataCell(Text((index + 1).toString())),
+                                          DataCell(
+                                              Text((index + 1).toString())),
                                           DataCell(Text(data.namaTindakan)),
-                                          DataCell(Text(data.jumlah.toString())),
-                                          DataCell(Text(data.hargaTindakan.toString())),
-                                          DataCell(Text(data.totalHargaTindakan.toString())),
+                                          DataCell(
+                                              Text(data.jumlah.toString())),
+                                          DataCell(Text(
+                                              data.hargaTindakan.toString())),
+                                          DataCell(Text(data.totalHargaTindakan
+                                              .toString())),
                                         ]);
                                       }),
                                     ),
@@ -292,7 +329,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                       children: [
                         Text(
                           'TOTAL JUMLAH BAYAR: \tRp${total.toString()},00',
-                          style: AppStyles.contentText.copyWith(fontWeight: FontWeight.bold),
+                          style: AppStyles.contentText
+                              .copyWith(fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -321,17 +359,21 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                         Navigator.pop(context);
                                         showDialog(
                                             context: context,
-                                            builder: (context) => LoadingAlert(),
+                                            builder: (context) =>
+                                                LoadingAlert(),
                                             barrierDismissible: false);
 
                                         try {
                                           final pdfData =
-                                              await PdfApi.cetakTagihan(detail!, total, satuanObat);
+                                              await PdfApi.cetakTagihan(
+                                                  detail!, total, satuanObat);
                                           if (!context.mounted) return;
                                           Navigator.pop(context);
-                                          await Printing.layoutPdf(onLayout: (format) => pdfData)
+                                          await Printing.layoutPdf(
+                                                  onLayout: (format) => pdfData)
                                               .catchError((error) {
-                                            throw Exception("Failed to print: $error");
+                                            throw Exception(
+                                                "Failed to print: $error");
                                           });
                                         } catch (e) {
                                           if (!context.mounted) return;
@@ -341,7 +383,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                               builder: (context) => SucfailAlert(
                                                   isSuccess: false,
                                                   boldText: "Gagal",
-                                                  italicText: "Gagal membuat data: $e"));
+                                                  italicText:
+                                                      "Gagal membuat data: $e"));
                                         }
                                       },
                                     ));

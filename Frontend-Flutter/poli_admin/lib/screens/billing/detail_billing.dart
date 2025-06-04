@@ -48,6 +48,7 @@ class _DetailBillingState extends State<DetailBilling> {
   List<Obat> listObat = [];
   List<Tindakan> listTindakan = [];
   bool isLoading = true;
+  String? namaAdmin;
 
   final DataController dataController = DataController();
   final _formKey = GlobalKey<FormState>();
@@ -60,6 +61,7 @@ class _DetailBillingState extends State<DetailBilling> {
 
   Future<void> urutan() async {
     detail = await dataController.fetchDetailTransaksi(widget.id);
+    namaAdmin = dataController.nama;
 
     if (detail != null) {
       setState(() {
@@ -139,7 +141,6 @@ class _DetailBillingState extends State<DetailBilling> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return SelectionArea(
       child: Scaffold(
         backgroundColor: AppStyles.backgroundColor,
@@ -208,9 +209,13 @@ class _DetailBillingState extends State<DetailBilling> {
                                         style: AppStyles.contentText,
                                       ),
                                       Text(
-                                        'Nama administrasi: ${detail!.namaAdministrasi}',
+                                        'Nama administrasi: $namaAdmin',
                                         style: AppStyles.contentText,
                                       ),
+                                      // Text(
+                                        // 'Nama administrasi: ${detail!.namaAdministrasi}',
+                                        // style: AppStyles.contentText,
+                                      // ),
                                       Text(
                                         'Yang Ditugaskan: ${detail!.karyawanYangDitugaskan}',
                                         style: AppStyles.contentText,

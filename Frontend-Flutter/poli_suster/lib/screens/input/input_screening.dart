@@ -112,6 +112,7 @@ class _InputScreeningState extends State<InputScreening> {
 
           dataController.antrianNow = null;
           dataController.detailPasien = null;
+          dataController.riwayatPasien.clear();
 
           widget.onScreeningComplete();
 
@@ -179,6 +180,7 @@ class _InputScreeningState extends State<InputScreening> {
 
         dataController.antrianNow = null;
         dataController.detailPasien = null;
+        dataController.riwayatPasien.clear();
 
         widget.onScreeningComplete();
 
